@@ -2,5 +2,41 @@
 
 
 {%block content%}
-<h1>SignUp</h1>
+<main class="container min-vh-100" style="justify-content: center; align-content: center;">
+
+    <div class="row">
+        <div class="col-md-4 offset-md-4 mt-5">
+            <form method="POST" class="card card-body card-body-bg" style="background-color:#1848a1 ;">
+                <h1 class="text-center">SIGN UP!</h1>
+                <label class="text-danger text-center"> {{error}}</label>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="text-light" for="username"> Username: </label>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Username..."
+                        style="background-color: #b4b4b4; border-color: transparent;" required>
+                </div>
+                <div class="mb-3">
+                    <label class="text-light" for="password1"> Password: </label>
+                    <input type="password" name="password1" class="form-control" id="password1"
+                        placeholder="Password..." style="background-color: #b4b4b4; border-color: transparent;"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label class="text-light" for="password2"> Repeat Password: </label>
+                    <input type="password" name="password2" class="form-control" id="password2"
+                        placeholder="Password..." style="background-color: #b4b4b4; border-color: transparent;"
+                        required>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn text-light" style="background-color: #0097b2;">Sign Up</button>
+                </div>
+                <div class="text-center mt-2">
+                    <a href="{%url 'login'%}" class="text-light">Login instead?</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
 {% endblock%}

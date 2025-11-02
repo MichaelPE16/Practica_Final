@@ -20,6 +20,7 @@
 
 <body>
     <!--Here we go over the navbar section-->
+    {%if user.is_autenticated%}
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
@@ -93,6 +94,7 @@
 
         </aside>
     </div>
+    {%endif%}
 
 
     <!--rest of the content coming from other pages-->
