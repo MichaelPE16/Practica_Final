@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+#here the modules to start pagination
+from django.core.paginator import Paginator
+
 
 
 # Create your views here.
@@ -12,13 +16,16 @@ def home(request):
 def contract(request): 
     return render(request, 'contract.html')
 
-def dashboard(request): 
+@login_required
+def dashboard(request):
     return render(request, 'dashboard.html')
 
+@login_required
 def inventory(request): 
     return render(request, 'inventory.html')
 
-def leads(request): 
+@login_required
+def leads(request):
     return render(request, 'leads.html')
 
 def login_page(request):
@@ -50,17 +57,26 @@ def signup_page(request):
             
     return render(request, 'signup.html', {'form': UserCreationForm, 'error': 'Passwords do not match'})
 
+@login_required
 def meets(request): 
     return render(request, 'meets.html')
 
+@login_required
 def reports(request): 
     return render(request, 'reports.html')
 
+@login_required
 def sales(request): 
     return render(request, 'sales.html')
 
+@login_required
 def show_details(request, id_details): 
     return render(request, 'show_details.html')
 
+@login_required
 def show_forms(request, id_forms): 
     return render(request, 'show_forms.html')
+
+def signout(request): 
+    logout(request)
+    return redirect('login')

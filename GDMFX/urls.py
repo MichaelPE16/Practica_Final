@@ -16,5 +16,6 @@ urlpatterns =[
     path('show_details/<int:id_detalles>', views.show_details, name='show_details'),
     path('show_forms/<int:id_forms>', views.show_forms, name='show_forms'),
     path('signup', views.signup_page, name='signup'),
+    path('logout', views.signout, name='logout'),
 ]
 

@@ -1,3 +1,28 @@
 body {
     background-color: #212529;
 }
+
+carousel {
+    margin: 100px;
+    width: 90%;
+    border: 5px solid red;
+    display: flex;
+}
+
+group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
+
+box {
+    height: 5em;
+    padding: 1em;
+    background-color: cornflowerblue;
+    font-size: 3rem;
+    border-radius: .2em;
+    text-align: center;
+    align-content: center;
+
+}
