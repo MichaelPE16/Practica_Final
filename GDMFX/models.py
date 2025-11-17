@@ -1,3 +1,88 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
+
+class Vehicles(models.Model): 
+    vin = models.CharField(max_length=17, unique=True)
+    brand = models.CharField(max_length=50)
+    model = models.CharField(max_length=50)
+    CONDITION_CHOICES = [
+        ('Used', 'Used'),
+        ('New', 'New'),
+    ]
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES)
+    km = models.IntegerField(default=0)
+    color = models.CharField(max_length=50)
+    price_adquisition = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    selling_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    integration_date = models.DateField(null=True, blank=True)
+    STATUS_CHOICES = [
+        ('Available', 'Available'),
+        ('Sold', 'Sold'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.vin
+    
+
+class Leads(models.Model): 
+    name = models.CharField(max_length=150)
+    interested = models.ForeignKey(Vehicles, on_delete=models.SET_NULL, null=True, blank=True)
+    source = models.CharField(max_length=150)
+    LEAD_STATUS_CHOICES = [
+        ('Interested', 'Interested'),
+        ('Contacted', 'Contacted'),
+        ('Qualified', 'Qualified'),
+    ]
+    status = models.CharField(max_length=20, choices=LEAD_STATUS_CHOICES, default='Interested')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    contact_date = models.DateTimeField(null=True, blank=True)
+    bullet = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self) -> str:
+        return self.name
+
+class Sales(models.Model): 
+    lead = models.OneToOneField(Leads, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # References the vehicle that was sold in this sale; can be null if not assigned yet.
+    vehicle_sold = models.ForeignKey(Vehicles, on_delete=models.SET_NULL, null=True, blank=True)
+    PHASE_CHOICES = [
+        ('Test Drive', 'Test Drive'), 
+        ('In progress', 'In progress'), 
+        ('Closed', 'Closed'),
+    ]
+    phase = models.CharField(max_length=20, choices=PHASE_CHOICES, default='')
+    selling_date = models.DateField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"Sale for {self.lead.name}"
+
+
+class Contract(models.Model):
+
+    customer_name = models.CharField(max_length=150)
+    id_document = models.CharField(max_length=13, unique=True)
+    email = models.EmailField(max_length=50)
+    phone = models.CharField(max_length=12)
+    address = models.CharField(max_length=150)
+    register_date = models.DateTimeField(auto_now_add=True)
+    vehicle_sold = models.ForeignKey(Vehicles, on_delete=models.PROTECT)
+    price_sold = models.DecimalField(max_digits=12, decimal_places=2)
+    sign_date = models.DateField(null=True)
+    received = models.DateField(null=True)
+    file_pdf = models.FileField(upload_to='contracts/', null=True)
+    CUSTOMER_TYPE_CHOICES = [
+        ('Customer', 'Customer'),
+        ('Business', 'Business'),
+    ]
+    customer_type = models.CharField(max_length=10, choices=CUSTOMER_TYPE_CHOICES)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"Contract for {self.customer_name}"
+    
