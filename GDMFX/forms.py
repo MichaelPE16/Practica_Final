@@ -7,10 +7,9 @@ from django import forms
 class SalesForm(ModelForm): 
     class Meta: 
         model = Sales
-        fields = ['lead', 'created_at', 'vehicle_sold', 'phase', 'selling_date', 'user']
+        fields = ['lead', 'vehicle_sold', 'phase', 'selling_date', 'user']
         widgets = {
             'lead':forms.Select(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'Lead Name' }),
-            'created_at': forms.DateTimeInput, 
             'vehicle_sold':forms.Select(attrs={'class':'form-control bg-transparent border-info text-bg-dark' }), 
             'phase':forms.Select(attrs={'class':'form-control bg-transparent border-info text-bg-dark' }), 
             'selling_date': forms.DateInput,
@@ -20,14 +19,13 @@ class SalesForm(ModelForm):
 class ContractForm(ModelForm): 
     class Meta: 
         model = Contract
-        fields = ['customer_name', 'id_document', 'email', 'phone', 'address', 'register_date', 'vehicle_sold', 'price_sold', 'sign_date', 'received', 'file_pdf', 'customer_type', 'user']
+        fields = ['customer_name', 'id_document', 'email', 'phone', 'address', 'vehicle_sold', 'price_sold', 'sign_date', 'received', 'file_pdf', 'customer_type', 'user']
         widgets = {
             'customer_name':forms.TextInput(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'Customer Name' }),
             'id_document': forms.TextInput(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'GOV ID' }), 
             'email':forms.EmailInput(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'Email' }), 
             'phone':forms.NumberInput(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'Phone number' }), 
             'address':forms.Textarea(attrs={'class':'form-control bg-transparent border-info text-bg-dark ', 'PlaceHolder': 'Address' }), 
-            'register_date':forms.DateTimeField, 
             'vehicle_sold':forms.Select(attrs={'class':'form-control bg-transparent border-info text-bg-dark '}), 
             'price_sold': forms.NumberInput(attrs={'class':'form-control bg-transparent border-info text-bg-dark', 'placeholder': 'Price Sold'}),
             'sign_date': forms.DateInput(attrs={'class': 'form-control bg-transparent border-info text-bg-dark'}),

@@ -4,6 +4,25 @@
 {%block content%}
 <h1>LEADS</h1>
 
+
+{% for lead in leads%}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col">
+            <ul class="list-group">
+                <a href="{%url 'show_details' lead.id%}">
+                    <li class="list-group-item d-flex">
+                        <strong class="ms-2 p-2">{{lead.name}}</strong>
+                        <strong class="ms-2 p-2">{{lead.status}}</strong>
+                        <strong class="ms-2 p-2">{{lead.contact_date}}</strong>
+
+                    </li>
+                </a>
+            </ul>
+        </div>
+    </div>
+</div>
+{%endfor%}
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-end">
         <li class="page-item disabled">

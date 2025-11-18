@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 #here the modules to start pagination
 from django.core.paginator import Paginator
+from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm
+from .models import Contract, Leads, Sales, Vehicles
 
 
 
@@ -14,7 +16,9 @@ def home(request):
     return render(request, 'home.html')
 
 def contract(request): 
-    return render(request, 'contract.html')
+    contract = get_object_or_404(Contract, user = request.user)
+
+    return render(request, 'contract.html', {'contracts': contract})
 
 @login_required
 def dashboard(request):
@@ -22,11 +26,14 @@ def dashboard(request):
 
 @login_required
 def inventory(request): 
-    return render(request, 'inventory.html')
+    vehicle = Vehicles.objects.filter(user=request.user)
+    return render(request, 'leads.html',{'vehicles': vehicle} )
 
 @login_required
 def leads(request):
-    return render(request, 'leads.html')
+    leads = Leads.objects.filter(user=request.user)
+    return render(request, 'leads.html',{'leads': leads} )
+
 
 def login_page(request):
     if request.method == "GET":
@@ -67,14 +74,20 @@ def reports(request):
 
 @login_required
 def sales(request): 
-    return render(request, 'sales.html')
+    sale = get_object_or_404(Sales, user = request.user)
+
+    return render(request, 'sales.html', {'vehicles': sale})
 
 @login_required
 def show_details(request, id_details): 
-    return render(request, 'show_details.html')
+    vehicle = get_object_or_404(Vehicles, pk = id_details, user = request.user)
+    contract = get_object_or_404(Contract, pk = id_details, user = request.user)
+    lead = get_object_or_404(Leads, pk = id_details, user = request.user)
+    sale = get_object_or_404(Sales, pk = id_details, user = request.user)
+    return render(request, 'show_details.html', {'vehicles': vehicle, 'contracts': contract, 'leads': lead,'sales': sale })
 
 @login_required
-def show_forms(request, id_forms): 
+def show_forms(request, id_forms):
     return render(request, 'show_forms.html')
 
 def signout(request): 
