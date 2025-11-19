@@ -2,5 +2,152 @@
 
 
 {%block content%}
-<H1>DETAILS</H1>
-{% endblock%}
+
+<style>
+    /* COLORES CORPORATIVOS */
+    :root {
+        --color-primary: #1848a0;
+        /* Azul Fuerte */
+        --color-success: #00bf63;
+        /* Verde Éxito */
+        --color-danger: #ff3131;
+        /* Rojo Peligro */
+        --color-bg: #f4f7f6;
+        /* Fondo Ligero */
+    }
+
+    body {
+        background-color: var(--color-bg);
+        font-family: 'Arial', sans-serif;
+    }
+
+    .card-header {
+        background-color: var(--color-primary);
+        /* Encabezado Azul */
+        color: white;
+        font-weight: 700;
+        border-bottom: 2px solid var(--color-success);
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+    }
+
+    .detail-value {
+        font-weight: 400;
+        color: #000;
+        font-size: 1.1rem;
+    }
+
+    /* Estilos para el precio de venta */
+    .selling-price {
+        color: var(--color-success);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    /* Estilos para el botón de edición */
+    .btn-custom-edit {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+    }
+
+    .btn-custom-edit:hover {
+        background-color: #103370;
+        /* Un tono más oscuro en hover */
+        color: white;
+    }
+</style>
+Información Clave del Stock
+<!-- Muestra el status con un badge de color -->
+{% if vehicle.status == 'Sold' %}
+<span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">VENDIDO</span>
+{% elif vehicle.status == 'Available' %}
+<span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">DISPONIBLE</span>
+{% else %}
+<span class="badge bg-warning text-dark" style="font-size: 0.95rem;">{{ vehicle.status }}</span>
+{% endif %}
+</div>
+
+<div class="card-body p-4">
+
+    <!-- SECCIÓN 1: IDENTIFICACIÓN Y ESTADO -->
+    <div class="row g-4 mb-4 border-bottom pb-3">
+
+        <div class="col-md-3 col-6">
+            <p class="detail-label">Marca:</p>
+            <p class="detail-value">{{ vehicle.brand }}</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <p class="detail-label">Modelo:</p>
+            <p class="detail-value">{{ vehicle.model }}</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <p class="detail-label">Condición:</p>
+            <p class="detail-value">{{ vehicle.get_condition_display }}</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <p class="detail-label">Kilometraje (Km):</p>
+            <p class="detail-value">{{ vehicle.km|default:"N/A" }}</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <p class="detail-label">Color:</p>
+            <p class="detail-value">{{ vehicle.color }}</p>
+        </div>
+        <div class="col-md-9 col-12">
+            <p class="detail-label">ID Único (VIN):</p>
+            <p class="detail-value font-monospace text-muted">{{ vehicle.vin }}</p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: INFORMACIÓN DE PRECIOS Y FECHAS -->
+    <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-dollar-sign"></i> Resumen
+        Financiero</h5>
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <p class="detail-label">Precio de Venta (Público):</p>
+            <p class="selling-price">
+                ${{ vehicle.selling_price|default:"0.00" }}
+            </p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <p class="detail-label">Costo de Adquisición (Interno):</p>
+            <!-- Usamos el color de peligro para datos sensibles -->
+            <p class="detail-value" style="color: var(--color-danger);">
+                ${{ vehicle.price_adquisition|default:"N/A" }}
+            </p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <p class="detail-label">Fecha de Integración:</p>
+            <p class="detail-value">{{ vehicle.integration_date|date:"d M Y"|default:"N/A" }}</p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: INFORMACIÓN DE GESTIÓN -->
+    <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-user-tag"></i> Gestión</h5>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <p class="detail-label">Registrado por Vendedor:</p>
+            <p class="detail-value">{{ vehicle.user.username }}</p>
+        </div>
+    </div>
+
+    <!-- Opcional: Botón de Acción -->
+    <div class="mt-4 text-center">
+        <!-- Usamos el color Azul Fuerte para el botón de edición -->
+        <a href="#" class="btn btn-custom-edit shadow">
+            <i class="fas fa-edit"></i> Editar Vehículo
+        </a>
+    </div>
+
+
+</div> <!-- /card-body -->
+</div> <!-- /card -->
+
+</div> <!-- /container -->
+
+{% endblock %}

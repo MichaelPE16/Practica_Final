@@ -1,0 +1,100 @@
+{% extends 'base.html'%}
+
+{%block content%}
+<div class="container my-5">
+    
+    <!-- Tarjeta Principal de Detalles -->
+    <div class="card shadow border-0">
+        
+        <div class="card-header d-flex justify-content-between align-items-center">
+            Información Legal y Comercial
+            <!-- Badge para el tipo de cliente -->
+            {% if contract.customer_type == 'Business' %}
+                <span class="badge" style="background-color: var(--color-info); color: black; font-size: 0.95rem;">EMPRESA</span>
+            {% else %}
+                <span class="badge" style="background-color: #5a6268; font-size: 0.95rem;">PARTICULAR</span>
+            {% endif %}
+        </div>
+
+        <div class="card-body p-4">
+            
+            <!-- SECCIÓN 1: DATOS DEL COMPRADOR -->
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-user-check"></i> Datos del Comprador</h5>
+            <div class="row g-4 mb-4 border-bottom pb-3">
+                
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Documento de Identidad:</p>
+                    <p class="detail-value">{{ contract.id_document }}</p>
+                </div>
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Email / Teléfono:</p>
+                    <p class="detail-value">{{ contract.email }} / {{ contract.phone }}</p>
+                </div>
+                <div class="col-12">
+                    <p class="detail-label">Dirección Registrada:</p>
+                    <p class="detail-value">{{ contract.address }}</p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: DATOS FINALES DE LA VENTA -->
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-dollar-sign"></i> Resumen de la Transacción</h5>
+            <div class="row mb-4 border-bottom pb-3">
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Precio Final de Venta:</p>
+                    <p class="price-sold">
+                        ${{ contract.price_sold|default:"0.00" }}
+                    </p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Vehículo Vendido (VIN):</p>
+                    <p class="detail-value">{{ contract.vehicle_sold.vin }}</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Registrado por:</p>
+                    <p class="detail-value">{{ contract.user.username }}</p>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN 3: FECHAS Y DOCUMENTACIÓN -->
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-calendar-check"></i> Hitos Legales</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Fecha de Firma (Legal):</p>
+                    <p class="detail-value">
+                        {% if contract.sign_date %}
+                            <span style="color: var(--color-success); font-weight: 600;">{{ contract.sign_date|date:"d M Y" }}</span>
+                        {% else %}
+                            <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE FIRMA</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Fecha de Entrega (Received):</p>
+                    <p class="detail-value">
+                        {% if contract.received %}
+                            <span style="color: var(--color-success); font-weight: 600;">{{ contract.received|date:"d M Y" }}</span>
+                        {% else %}
+                            <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE ENTREGA</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <p class="detail-label">Contrato Digital (PDF):</p>
+                    <p class="detail-value">
+                        {% if contract.file_pdf %}
+                            <!-- Botón para descargar o ver el PDF -->
+                            <a href="#" class="btn btn-sm btn-file-pdf">
+                                <i class="fas fa-file-pdf"></i> Ver Documento
+                            </a>
+                        {% else %}
+                            <span class="text-danger">Archivo No Subido</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+        </div> <!-- /card-body -->
+    </div> <!-- /card -->
+    
+</div> <!-- /container -->
+{%endblock%}

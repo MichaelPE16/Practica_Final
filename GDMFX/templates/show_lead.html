@@ -1,0 +1,77 @@
+{% extends 'base.html'%}
+
+{%block content%}
+<div class="container my-5">
+    
+    <!-- Tarjeta Principal de Detalles -->
+    <div class="card shadow border-0">
+        
+        <div class="card-header d-flex justify-content-between align-items-center">
+            Información de Calificación y Presupuesto
+            <!-- Muestra el status con un badge de color -->
+            {% if leads.status == 'Qualified' %}
+                <span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">CALIFICADO</span>
+            {% elif lead.status == 'Contacted' %}
+                <span class="badge" style="background-color: var(--color-info); color: black; font-size: 0.95rem;">CONTACTADO</span>
+            {% else %}
+                <span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">INTERESADO</span>
+            {% endif %}
+        </div>
+
+        <div class="card-body p-4">
+            
+            <!-- SECCIÓN 1: DATOS CLAVE DEL INTERÉS -->
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-bullseye"></i> Foco del Lead</h5>
+            <div class="row g-4 mb-4 border-bottom pb-3">
+                
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Vehículo de Interés:</p>
+                    <!-- Muestra la marca y modelo del vehículo relacionado (asumiendo que interested tiene esos atributos) -->
+                    {% if leads.interested %}
+                        <p class="detail-value">{{ leads.interested.brand }} {{ lead.interested.model }}</p>
+                    {% else %}
+                        <p class="detail-value text-muted">Interés general o no especificado.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Origen del Lead:</p>
+                    <p class="detail-value">{{ leads.source }}</p>
+                </div>
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Vendedor Asignado:</p>
+                    <p class="detail-value">{{ leads.user.username|default:"No Asignado" }}</p>
+                </div>
+                <div class="col-md-6 col-12">
+                    <p class="detail-label">Fecha de Contacto:</p>
+                    <p class="detail-value">{{ leads.contact_date|date:"d M Y h:i a" }}</p>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: CALIFICACIÓN FINANCIERA -->
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-hand-holding-usd"></i> Capacidad de Compra</h5>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <p class="detail-label">Presupuesto/Valor de Permuta (Bullet):</p>
+                    <p class="bullet-value">
+                        ${{ leads.bullet|default:"0.00" }}
+                    </p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <p class="detail-label">Primer Estado de Calificación:</p>
+                    <p class="detail-value">{{ leads.get_status_display }}</p>
+                </div>
+            </div>
+
+            <!-- Opcional: Botón de Acción -->
+            <div class="mt-4 text-center">
+                <!-- Botón de acción principal: Editar/Avanzar Fase -->
+                <a href="#" class="btn btn-custom-action shadow">
+                    <i class="fas fa-level-up-alt"></i> Calificar / Asignar
+                </a>
+            </div>
+
+        </div> <!-- /card-body -->
+    </div> <!-- /card -->
+    
+</div> <!-- /container -->
+{%endblock%}

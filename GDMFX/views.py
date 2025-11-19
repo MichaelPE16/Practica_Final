@@ -78,11 +78,27 @@ def sales(request):
 
 @login_required
 def show_details(request, id_details): 
-    vehicle = get_object_or_404(Vehicles, pk = id_details, user = request.user)
-    contract = get_object_or_404(Contract, pk = id_details, user = request.user)
-    lead = get_object_or_404(Leads, pk = id_details, user = request.user)
-    sale = get_object_or_404(Sales, pk = id_details, user = request.user)
-    return render(request, 'show_details.html', {'vehicles': vehicle, 'contracts': contract, 'leads': lead,'sales': sale })
+
+    vehicle = get_object_or_404(Vehicles, pk= id_details, user = request.user)
+    return render(request, 'show_details.html', {'vehicle': vehicle})
+
+@login_required
+def show_sales(request, id_sales): 
+
+    sale = get_object_or_404(Sales, pk= id_sales, user = request.user)
+    return render(request, 'show_sales.html', {'sales': sale})
+
+@login_required
+def show_lead(request, id_lead): 
+
+    lead = get_object_or_404(Leads, pk= id_lead, user = request.user)
+    return render(request, 'show_lead.html', {'leads': lead})
+
+@login_required
+def show_contract(request, id_contract): 
+
+    contract = get_object_or_404(Contract, pk= id_contract, user = request.user)
+    return render(request, 'show_contract.html', {'contract': contract})
 
 @login_required
 def show_forms(request, id_forms):
