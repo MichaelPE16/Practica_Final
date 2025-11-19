@@ -16,9 +16,8 @@ def home(request):
     return render(request, 'home.html')
 
 def contract(request): 
-    contract = get_object_or_404(Contract, user = request.user)
-
-    return render(request, 'contract.html', {'contracts': contract})
+    contract = Contract.objects.filter(user=request.user)
+    return render(request, 'contract.html',{'contracts': contract} )
 
 @login_required
 def dashboard(request):
@@ -27,7 +26,7 @@ def dashboard(request):
 @login_required
 def inventory(request): 
     vehicle = Vehicles.objects.filter(user=request.user)
-    return render(request, 'leads.html',{'vehicles': vehicle} )
+    return render(request, 'inventory.html',{'vehicles': vehicle} )
 
 @login_required
 def leads(request):
@@ -74,9 +73,8 @@ def reports(request):
 
 @login_required
 def sales(request): 
-    sale = get_object_or_404(Sales, user = request.user)
-
-    return render(request, 'sales.html', {'vehicles': sale})
+    sale = Sales.objects.filter(user=request.user)
+    return render(request, 'sales.html',{'sales': sale} )
 
 @login_required
 def show_details(request, id_details): 

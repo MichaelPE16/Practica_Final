@@ -4,6 +4,17 @@
 {%block content%}
 <h1>LEADS</h1>
 
+<div class="row">
+    <div class="col">
+        <ul>
+            <li class=" d-flex align-items-center">
+                <strong style="min-width: 200px;">NAME</strong>
+                <strong class="ms-5" style="margin-left: 0 !important;">STATUS</strong>
+                <strong style="margin-left:780px ;">DATE</strong>
+            </li>
+        </ul>
+    </div>
+</div>
 
 {% for lead in leads%}
 <div class="container mt-2">
@@ -11,10 +22,10 @@
         <div class="col">
             <ul class="list-group">
                 <a href="{%url 'show_details' lead.id%}">
-                    <li class="list-group-item d-flex">
-                        <strong class="ms-2 p-2">{{lead.name}}</strong>
-                        <strong class="ms-2 p-2">{{lead.status}}</strong>
-                        <strong class="ms-2 p-2">{{lead.contact_date}}</strong>
+                    <li class="list-group-item d-flex align-items-center">
+                        <strong class=" p-2" style="min-width: 200px;">{{lead.name}}</strong>
+                        <strong class="ms-5 p-2" style="margin-left: 0 !important;">{{lead.status}}</strong>
+                        <strong class="ms-auto p-2 b-0">{{lead.contact_date}}</strong>
 
                     </li>
                 </a>
