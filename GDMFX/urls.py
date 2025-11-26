@@ -18,6 +18,7 @@ urlpatterns =[
     path('show_sales/<int:id_sales>', views.show_sales, name='show_sales'),
     path('show_lead/<int:id_lead>', views.show_lead, name='show_lead'),
     path('show_forms/<int:id_forms>', views.show_forms, name='show_forms'),
+    path('upload_contract_pdf/<int:id_contract>', views.upload_contract_pdf, name='upload_contract_pdf'),
     path('signup', views.signup_page, name='signup'),
     path('logout', views.signout, name='logout'),
 ]

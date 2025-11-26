@@ -98,7 +98,27 @@ def show_lead(request, id_lead):
 def show_contract(request, id_contract): 
 
     contract = get_object_or_404(Contract, pk= id_contract, user = request.user)
-    return render(request, 'show_contract.html', {'contract': contract})
+    pdf_exists = False
+    if contract.file_pdf and contract.file_pdf.name:
+        try:
+            pdf_exists = contract.file_pdf.storage.exists(contract.file_pdf.name)
+        except Exception:
+            pdf_exists = False
+    return render(request, 'show_contract.html', {'contract': contract, 'pdf_exists': pdf_exists})
+
+@login_required
+def upload_contract_pdf(request, id_contract):
+    contract = get_object_or_404(Contract, pk=id_contract, user=request.user)
+    if request.method != 'POST' or 'pdf_file' not in request.FILES:
+        return redirect('show_contract', id_contract=id_contract)
+    pdf = request.FILES['pdf_file']
+    content_type = getattr(pdf, 'content_type', '')
+    name_lower = pdf.name.lower()
+    if content_type != 'application/pdf' and not name_lower.endswith('.pdf'):
+        return redirect('show_contract', id_contract=id_contract)
+    filename = f"contract_{contract.id}.pdf"
+    contract.file_pdf.save(filename, pdf, save=True)
+    return redirect('show_contract', id_contract=id_contract)
 
 @login_required
 def show_forms(request, id_forms):
