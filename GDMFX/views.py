@@ -9,15 +9,20 @@ from django.core.paginator import Paginator
 from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm
 from .models import Contract, Leads, Sales, Vehicles
 
-
+ITEMS_PER_PAGE = 10
 
 # Create your views here.
 def home(request): 
     return render(request, 'home.html')
 
+@login_required
 def contract(request): 
     contract = Contract.objects.filter(user=request.user)
-    return render(request, 'contract.html',{'contracts': contract} )
+    # Pagination
+    paginator = Paginator(contract, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'contract.html',{'contracts': page_obj} )
 
 @login_required
 def dashboard(request):
@@ -26,12 +31,20 @@ def dashboard(request):
 @login_required
 def inventory(request): 
     vehicle = Vehicles.objects.filter(user=request.user)
-    return render(request, 'inventory.html',{'vehicles': vehicle} )
+    # Pagination
+    paginator = Paginator(vehicle, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'inventory.html',{'vehicles': page_obj} )
 
 @login_required
 def leads(request):
     leads = Leads.objects.filter(user=request.user)
-    return render(request, 'leads.html',{'leads': leads} )
+    # Pagination
+    paginator = Paginator(leads, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'leads.html',{'leads': page_obj} )   
 
 
 def login_page(request):
@@ -74,7 +87,11 @@ def reports(request):
 @login_required
 def sales(request): 
     sale = Sales.objects.filter(user=request.user)
-    return render(request, 'sales.html',{'sales': sale} )
+    # Pagination
+    paginator = Paginator(sale, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'sales.html',{'sales': page_obj} )
 
 @login_required
 def show_details(request, id_details): 

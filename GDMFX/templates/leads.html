@@ -1,50 +1,115 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
+{% load static %}
 
+{% block content %}
+<div class="container mt-3">
 
-{%block content%}
-<h1>LEADS</h1>
+    <h1 style="color: #1848a0;">LEADS</h1>
 
-<div class="row">
-    <div class="col">
-        <ul>
-            <li class=" d-flex align-items-center">
-                <strong style="min-width: 200px;">NAME</strong>
-                <strong class="ms-5" style="margin-left: 0 !important;">STATUS</strong>
-                <strong style="margin-left:780px ;">DATE</strong>
-            </li>
-        </ul>
+    <!-- Estilos de la Cabecera/Header de la Lista (Ajuste de Columnas) -->
+    <!-- Mantenemos la estructura de columnas basada en porcentajes para alineación -->
+    <div class="row mb-2 d-none d-md-flex" style="font-weight: 600; color: #333; border-bottom: 1px solid #aaa; padding-bottom: 5px;">
+        <div class="col-12">
+            <div class="d-flex align-items-center">
+                <!-- CABECERA 1: NAME (30% del ancho) -->
+                <strong class="p-2" style="width: 30%;">NAME</strong>
+                <!-- CABECERA 2: STATUS (30% del ancho) -->
+                <strong class="p-2" style="width: 30%;">STATUS</strong>
+                <!-- CABECERA 3: INTERESTED VEHICLE (20% del ancho) -->
+                <strong class="p-2" style="width: 20%;">VEHICLE INTEREST</strong>
+                <!-- CABECERA 4: DATE (Alineado a la derecha, 20% del ancho) -->
+                <strong class="ms-auto p-2 text-end" style="width: 20%;">DATE</strong>
+            </div>
+        </div>
     </div>
-</div>
 
-{% for lead in leads%}
-<div class="container mt-2">
-    <div class="row">
+    <!-- ITERACIÓN SOBRE LOS LEADS (Usando leads.object_list) -->
+    {% for lead in leads.object_list %}
+    <div class="row mt-1">
         <div class="col">
             <ul class="list-group">
-                <a href="{%url 'show_lead' lead.id%}">
-                    <li class="list-group-item d-flex align-items-center">
-                        <strong class=" p-2" style="min-width: 200px;">{{lead.name}}</strong>
-                        <strong class="ms-5 p-2" style="margin-left: 0 !important;">{{lead.status}}</strong>
-                        <strong class="ms-auto p-2 b-0">{{lead.contact_date}}</strong>
+                <!-- El <a> envuelve al <li> para que toda la fila sea clickeable -->
+                <a href="{% url 'show_lead' lead.id %}" style="text-decoration: none;">
+                    <!-- Usamos list-group-item-action para el efecto hover -->
+                    <li class="list-group-item d-flex align-items-center list-group-item-action border-0">
+                        
+                        <!-- Columna 1: NAME -->
+                        <div class="p-2" style="width: 30%;">
+                            <strong style="color: #000;">{{ lead.name }}</strong>
+                        </div>
+                        
+                        <!-- Columna 2: STATUS (Usando colores condicionales) -->
+                        <div class="p-2" style="width: 30%;">
+                            {% if lead.status == 'Qualified' %}
+                                <span class="badge bg-success">{{ lead.get_status_display }}</span>
+                            {% elif lead.status == 'Contacted' %}
+                                <span class="badge bg-warning text-dark">{{ lead.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ lead.get_status_display }}</span>
+                            {% endif %}
+                        </div>
 
+                        <!-- Columna 3: VEHICLE INTEREST -->
+                        <div class="p-2" style="width: 20%; color: #333;">
+                            {% if lead.interested %}
+                                <span class="text-secondary">{{ lead.interested.model }}</span>
+                            {% else %}
+                                <span class="text-muted">General Inquiry</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Columna 4: DATE (Alineado a la derecha) -->
+                        <div class="ms-auto p-2 text-end" style="width: 20%;">
+                            <!-- Muestra la fecha de contacto -->
+                            <strong class="text-muted">{{ lead.contact_date|date:"d M Y h:i a" }}</strong>
+                        </div>
+                        
                     </li>
                 </a>
             </ul>
         </div>
     </div>
+    {% empty %}
+    <div class="alert alert-info mt-3" role="alert">
+        No hay leads registrados para este usuario.
+    </div>
+    {% endfor %}
+
+    <!-- Paginación (Implementación de la lógica de Django) -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-end">
+            
+            {% if leads.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ leads.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+            {% endif %}
+
+            <!-- Números de Página -->
+            {% for i in leads.paginator.page_range %}
+                {% if leads.number == i %}
+                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if leads.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ leads.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" tabindex="-1" aria-disabled="true">Next</a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
 </div>
-{%endfor%}
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-end">
-        <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#">Next</a>
-        </li>
-    </ul>
-</nav>
-{% endblock%}
+{% endblock %}
