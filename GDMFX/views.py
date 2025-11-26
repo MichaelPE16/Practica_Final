@@ -120,10 +120,74 @@ def upload_contract_pdf(request, id_contract):
     contract.file_pdf.save(filename, pdf, save=True)
     return redirect('show_contract', id_contract=id_contract)
 
-@login_required
-def show_forms(request, id_forms):
-    return render(request, 'show_forms.html')
+# @login_required
+# def show_forms(request, id_forms):
+#     return render(request, 'show_forms.html')
 
 def signout(request): 
     logout(request)
     return redirect('login')
+
+@login_required
+def new_vehicle(request):
+    if request.method == 'GET':
+        form = VehicleForm()
+        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+        form.fields['user'].initial = request.user
+        return render(request, 'inventory_form.html', {'form': form})
+    form = VehicleForm(request.POST)
+    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+    if form.is_valid():
+        vehicle = form.save(commit=False)
+        vehicle.user = request.user
+        vehicle.save()
+        return redirect('inventory')
+    return render(request, 'inventory_form.html', {'form': form})
+
+@login_required
+def new_lead(request):
+    if request.method == 'GET':
+        form = LeadsForm()
+        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+        form.fields['user'].initial = request.user
+        return render(request, 'lead_form.html', {'form': form})
+    form = LeadsForm(request.POST)
+    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+    if form.is_valid():
+        lead = form.save(commit=False)
+        lead.user = request.user
+        lead.save()
+        return redirect('leads')
+    return render(request, 'lead_form.html', {'form': form})
+
+@login_required
+def new_sale(request):
+    if request.method == 'GET':
+        form = SalesForm()
+        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+        form.fields['user'].initial = request.user
+        return render(request, 'sales_form.html', {'form': form})
+    form = SalesForm(request.POST)
+    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+    if form.is_valid():
+        sale = form.save(commit=False)
+        sale.user = request.user
+        sale.save()
+        return redirect('sales')
+    return render(request, 'sales_form.html', {'form': form})
+
+@login_required
+def new_contract(request):
+    if request.method == 'GET':
+        form = ContractForm()
+        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+        form.fields['user'].initial = request.user
+        return render(request, 'contract_form.html', {'form': form})
+    form = ContractForm(request.POST, request.FILES)
+    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+    if form.is_valid():
+        contract = form.save(commit=False)
+        contract.user = request.user
+        contract.save()
+        return redirect('contract')
+    return render(request, 'contract_form.html', {'form': form})
