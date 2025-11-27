@@ -13,6 +13,7 @@
                 <!-- CABECERA 1: VIN (30% del ancho) -->
                 <strong class="p-2" style="width: 30%;">VIN</strong>
                 <!-- CABECERA 2: BRAND / MODEL (40% del ancho) -->
+                 <strong class="p-2" style="width: 10%;">STATUS</strong>
                 <strong class="p-2" style="width: 40%;">BRAND / MODEL</strong>
                 <!-- CABECERA 3: DATE (Alineado a la derecha, 30% del ancho) -->
                 <strong class="ms-auto p-2 text-end" style="width: 30%;">DATE</strong>
@@ -22,7 +23,6 @@
 
     <!-- ITERACIÓN SOBRE LOS VEHÍCULOS (El loop ahora usa vehicles.object_list) -->
     {% for vehicle in vehicles.object_list %}
-        {%if vehicle.status == 'Available'%}
         <div class="row mt-1">
         <div class="col">
             <ul class="list-group">
@@ -34,6 +34,11 @@
                         <!-- Columna 1: VIN -->
                         <div class="p-2" style="width: 30%;">
                             <strong style="color: #000;">{{ vehicle.vin }}</strong>
+                        </div>
+                        
+                        <!-- Columna 2: STATUS -->
+                        <div class="p-2" style="width: 10%; color: #333;">
+                            <strong style="color: #000;">{{ vehicle.status }}</strong>
                         </div>
                         
                         <!-- Columna 2: BRAND / MODEL -->
@@ -52,7 +57,6 @@
             </ul>
         </div>
     </div>
-    {%endif%}
     {% empty %}
     <div class="alert alert-info mt-3" role="alert">
         No hay vehículos registrados para este usuario.
