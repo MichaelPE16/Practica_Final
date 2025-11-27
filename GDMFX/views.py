@@ -194,11 +194,10 @@ def new_sale(request):
 def new_contract(request):
     if request.method == 'GET':
         form = ContractForm()
-        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
-        form.fields['user'].initial = request.user
+
         return render(request, 'contract_form.html', {'form': form})
     form = ContractForm(request.POST, request.FILES)
-    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
+
     if form.is_valid():
         contract = form.save(commit=False)
         contract.user = request.user
@@ -214,35 +213,36 @@ def update_vehicle(request, id_vehicle):
     vehicle = get_object_or_404(Vehicles, pk=id_vehicle, user=request.user)
     if request.method == 'GET':
         form = VehicleForm(instance=vehicle)
-        return render(request, 'update_inventory.html', {'form': form, 'vehicle': vehicle})
+        return render(request, 'update_inventory.html', {'form': form})
     form = VehicleForm(request.POST, instance=vehicle)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
         return redirect('inventory')
-    return render(request, 'update_inventory.html', {'form': form, 'vehicle': vehicle})
+    return render(request, 'update_inventory.html', {'form': form})
 
 @login_required
 def update_lead(request, id_lead):
     lead = get_object_or_404(Leads, pk=id_lead, user=request.user)
     if request.method == 'GET':
         form = LeadsForm(instance=lead)
-        return render(request, 'update_lead.html', {'form': form, 'leads': lead})
+        return render(request, 'update_lead.html', {'form': form})
     form = LeadsForm(request.POST, instance=lead)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
         return redirect('leads')
-    return render(request, 'update_lead.html', {'form': form, 'leads': lead})
+    return render(request, 'update_lead.html', {'form': form})
+    
 
 @login_required
 def update_sale(request, id_sale):
     sale = get_object_or_404(Sales, pk=id_sale, user=request.user)
     if request.method == 'GET':
         form = SalesForm(instance=sale)
-        return render(request, 'update_sell.html', {'form': form, 'sales': sale})
+        return render(request, 'update_sell.html', {'form': form})
 
     form = SalesForm(request.POST, instance=sale)
     if form.is_valid():
@@ -251,28 +251,43 @@ def update_sale(request, id_sale):
 
         if obj.vehicle_sold:
             car = get_object_or_404(Vehicles, pk=obj.vehicle_sold.id, user=request.user)
-            if obj.phase == "Closed":
+        if obj.phase == "Closed":
+            # Update Lead status to Qualified
+            obj.lead.status = "Qualified"
+            obj.lead.save()
+
+            if obj.vehicle_sold:
+                car = get_object_or_404(Vehicles, pk=obj.vehicle_sold.id, user=request.user)
                 car.status = "Sold"
                 car.save()
+
+                # Create Contract if it doesn't exist
+                if not Contract.objects.filter(vehicle_sold=obj.vehicle_sold).exists():
+                    Contract.objects.create(
+                        customer_name=obj.lead.name,
+                        vehicle_sold=obj.vehicle_sold,
+                        price_sold=obj.vehicle_sold.selling_price if obj.vehicle_sold.selling_price else 0,
+                        user=request.user
+                    )
 
         obj.save()
         return redirect('sales')
 
-    return render(request, 'update_sell.html', {'form': form, 'sales': sale})
+    return render(request, 'update_sell.html', {'form': form})
 
 @login_required
 def update_contract(request, id_contract):
     contract = get_object_or_404(Contract, pk=id_contract, user=request.user)
     if request.method == 'GET':
         form = ContractForm(instance=contract)
-        return render(request, 'update_contract.html', {'form': form, 'contract': contract})
+        return render(request, 'update_contract.html', {'form': form})
     form = ContractForm(request.POST, request.FILES, instance=contract)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
         return redirect('contract')
-    return render(request, 'update_contract.html', {'form': form, 'contract': contract})
+    return render(request, 'update_contract.html', {'form': form})
 
 
 # Here we create the update for the existing data in the sales, inventory, contracts and leads

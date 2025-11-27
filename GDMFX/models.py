@@ -66,21 +66,21 @@ class Sales(models.Model):
 class Contract(models.Model):
 
     customer_name = models.CharField(max_length=150)
-    id_document = models.CharField(max_length=13, unique=True)
-    email = models.EmailField(max_length=50)
-    phone = models.CharField(max_length=12)
-    address = models.CharField(max_length=150)
+    id_document = models.CharField(max_length=13, unique=True, null=True, blank=True)
+    email = models.EmailField(max_length=50, null=True, blank=True)
+    phone = models.CharField(max_length=12, null=True, blank=True)
+    address = models.CharField(max_length=150, null=True, blank=True)
     register_date = models.DateTimeField(auto_now_add=True)
     vehicle_sold = models.ForeignKey(Vehicles, on_delete=models.PROTECT)
     price_sold = models.DecimalField(max_digits=12, decimal_places=2)
-    sign_date = models.DateField(null=True)
-    received = models.DateField(null=True)
-    file_pdf = models.FileField(upload_to='contracts/', null=True)
+    sign_date = models.DateField(null=True, blank=True)
+    received = models.DateField(null=True, blank=True)
+    file_pdf = models.FileField(upload_to='contracts/', null=True, blank=True)
     CUSTOMER_TYPE_CHOICES = [
         ('Customer', 'Customer'),
         ('Business', 'Business'),
     ]
-    customer_type = models.CharField(max_length=10, choices=CUSTOMER_TYPE_CHOICES)
+    customer_type = models.CharField(max_length=10, choices=CUSTOMER_TYPE_CHOICES, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
