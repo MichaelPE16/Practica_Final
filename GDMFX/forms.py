@@ -16,7 +16,7 @@ class SalesForm(ModelForm):
             
             # INPUTS: Usamos text-black. Si tu fondo es oscuro, DEBERÍA ser text-white
             # Asumiendo que tu fondo de página es oscuro, cambiamos a text-white para que se vea:
-            'selling_date': forms.DateInput(attrs={'class': 'form-control bg-transparent border-info text-white'}), 
+            'selling_date': forms.DateInput(attrs={'class': 'form-control bg-transparent border-info text-dark'}), 
             'user': forms.Select(attrs={'class': 'form-control bg-transparent border-info text-dark'})
         }
 
