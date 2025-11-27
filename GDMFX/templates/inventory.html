@@ -22,7 +22,8 @@
 
     <!-- ITERACIÓN SOBRE LOS VEHÍCULOS (El loop ahora usa vehicles.object_list) -->
     {% for vehicle in vehicles.object_list %}
-    <div class="row mt-1">
+        {%if vehicle.status == 'Available'%}
+        <div class="row mt-1">
         <div class="col">
             <ul class="list-group">
                 <!-- El <a> envuelve al <li> para que toda la fila sea clickeable -->
@@ -51,6 +52,7 @@
             </ul>
         </div>
     </div>
+    {%endif%}
     {% empty %}
     <div class="alert alert-info mt-3" role="alert">
         No hay vehículos registrados para este usuario.
