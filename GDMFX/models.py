@@ -55,7 +55,7 @@ class Sales(models.Model):
         ('In progress', 'In progress'), 
         ('Closed', 'Closed'),
     ]
-    phase = models.CharField(max_length=20, choices=PHASE_CHOICES, default='')
+    phase = models.CharField(max_length=20, choices=PHASE_CHOICES, default='Test Drive')
     selling_date = models.DateField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

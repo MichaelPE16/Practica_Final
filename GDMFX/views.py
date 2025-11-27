@@ -181,11 +181,8 @@ def new_lead(request):
 def new_sale(request):
     if request.method == 'GET':
         form = SalesForm()
-        form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
-        form.fields['user'].initial = request.user
         return render(request, 'sales_form.html', {'form': form})
     form = SalesForm(request.POST)
-    form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
     if form.is_valid():
         sale = form.save(commit=False)
         sale.user = request.user
@@ -246,12 +243,21 @@ def update_sale(request, id_sale):
     if request.method == 'GET':
         form = SalesForm(instance=sale)
         return render(request, 'update_sell.html', {'form': form, 'sales': sale})
+
     form = SalesForm(request.POST, instance=sale)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
+
+        if obj.vehicle_sold:
+            car = get_object_or_404(Vehicles, pk=obj.vehicle_sold.id, user=request.user)
+            if obj.phase == "Closed":
+                car.status = "Sold"
+                car.save()
+
         obj.save()
         return redirect('sales')
+
     return render(request, 'update_sell.html', {'form': form, 'sales': sale})
 
 @login_required
