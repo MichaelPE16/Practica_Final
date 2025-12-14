@@ -93,6 +93,7 @@ def sales(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'sales.html',{'sales': page_obj} )
 
+#Este muestra los detalles de un vehiculo
 @login_required
 def show_details(request, id_details): 
 
@@ -249,8 +250,6 @@ def update_sale(request, id_sale):
         obj = form.save(commit=False)
         obj.user = request.user
 
-        if obj.vehicle_sold:
-            car = get_object_or_404(Vehicles, pk=obj.vehicle_sold.id, user=request.user)
         if obj.phase == "Closed":
             # Update Lead status to Qualified
             obj.lead.status = "Qualified"
@@ -261,8 +260,8 @@ def update_sale(request, id_sale):
                 car.status = "Sold"
                 car.save()
 
-                # Create Contract if it doesn't exist
-                if not Contract.objects.filter(vehicle_sold=obj.vehicle_sold).exists():
+                # Create Contract if it doesn't exist, create it automatically
+                if not Contract.objects.filter(vehicle_sold=obj.vehicle_sold, user=request.user).exists():
                     Contract.objects.create(
                         customer_name=obj.lead.name,
                         vehicle_sold=obj.vehicle_sold,

@@ -81,6 +81,20 @@
                     </a>
 
                 </li>
+                #Aqui van los links de los forms
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link dropdown-toggle" id="formsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Forms</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="formsDropdown">
+                        <li><a class="dropdown-item" href="{%url 'new_vehicle'%}">Inventory</a></li>
+                        <li><a class="dropdown-item" href="{%url 'new_contract'%}">Contracts</a></li>
+                        <li><a class="dropdown-item" href="{%url 'new_lead'%}">Leads</a></li>
+                        <li><a class="dropdown-item" href="{%url 'new_sale'%}">Sales</a></li>
+                    </ul>
+                </li>
 
             </ul>
 
