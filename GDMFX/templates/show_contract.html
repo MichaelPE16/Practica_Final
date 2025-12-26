@@ -2,26 +2,28 @@
 
 {%block content%}
 <div class="container mt-3 mb-0">
-    
+
     <!-- Tarjeta Principal de Detalles -->
     <div class="card shadow border-0">
-        
+
         <div class="card-header d-flex justify-content-between align-items-center">
             Información Legal y Comercial
             <!-- Badge para el tipo de cliente -->
             {% if contract.customer_type == 'Business' %}
-                <span class="badge" style="background-color: var(--color-info); color: black; font-size: 0.95rem;">EMPRESA</span>
+            <span class="badge"
+                style="background-color: var(--color-info); color: black; font-size: 0.95rem;">EMPRESA</span>
             {% else %}
-                <span class="badge" style="background-color: #5a6268; font-size: 0.95rem;">PARTICULAR</span>
+            <span class="badge" style="background-color: #5a6268; font-size: 0.95rem;">PARTICULAR</span>
             {% endif %}
         </div>
 
         <div class="card-body p-3">
-            
+
             <!-- SECCIÓN 1: DATOS DEL COMPRADOR -->
-            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-user-check"></i> Datos del Comprador</h5>
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-user-check"></i> Datos del Comprador
+            </h5>
             <div class="row g-3 mb-3 border-bottom pb-2">
-                
+
                 <div class="col-md-6 col-12">
                     <p class="detail-label">Documento de Identidad:</p>
                     <p class="detail-value">{{ contract.id_document }}</p>
@@ -37,7 +39,8 @@
             </div>
 
             <!-- SECCIÓN 2: DATOS FINALES DE LA VENTA -->
-            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-dollar-sign"></i> Resumen de la Transacción</h5>
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-dollar-sign"></i> Resumen de la
+                Transacción</h5>
             <div class="row mb-3 border-bottom pb-2">
                 <div class="col-md-4 mb-3">
                     <p class="detail-label">Precio Final de Venta:</p>
@@ -54,17 +57,18 @@
                     <p class="detail-value">{{ contract.user.username }}</p>
                 </div>
             </div>
-            
+
             <!-- SECCIÓN 3: FECHAS Y DOCUMENTACIÓN -->
-            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-calendar-check"></i> Hitos Legales</h5>
+            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-calendar-check"></i> Hitos Legales
+            </h5>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <p class="detail-label">Fecha de Firma (Legal):</p>
                     <p class="detail-value">
                         {% if contract.sign_date %}
-                            <span style="color: var(--color-success); font-weight: 600;">{{ contract.sign_date|date:"d M Y" }}</span>
+                        <span style="color: var(--color-success); font-weight: 600;">{{ contract.sign_date}}</span>
                         {% else %}
-                            <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE FIRMA</span>
+                        <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE FIRMA</span>
                         {% endif %}
                     </p>
                 </div>
@@ -72,9 +76,9 @@
                     <p class="detail-label">Fecha de Entrega (Received):</p>
                     <p class="detail-value">
                         {% if contract.received %}
-                            <span style="color: var(--color-success); font-weight: 600;">{{ contract.received|date:"d M Y" }}</span>
+                        <span style="color: var(--color-success); font-weight: 600;">{{contract.received}}</span>
                         {% else %}
-                            <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE ENTREGA</span>
+                        <span style="color: var(--color-danger); font-weight: 600;">PENDIENTE DE ENTREGA</span>
                         {% endif %}
                     </p>
                 </div>
@@ -82,35 +86,39 @@
                     <p class="detail-label">Contrato Digital (PDF):</p>
                     <p class="detail-value">
                         {% if pdf_exists %}
-                            <!-- Botón para descargar el PDF -->
-                             <span class="--color-success">{{contract.file_pdf}}</span>
-                            <a href="{{ contract.file_pdf.url }}" download="contrato{{contract.customer_name}}.pdf" class="btn btn-sm btn-outline-secondary ms-2">
-                                <i class="fas fa-download"></i> Descargar
-                            </a>
+                        <!-- Botón para descargar el PDF -->
+                        <span class="--color-success">{{contract.file_pdf}}</span>
+                        <a href="{{ contract.file_pdf.url }}" target="_blank"
+                            download="contrato_{{contract.customer_name}}.pdf"
+                            class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
                         {% else %}
-                            <form method="post" enctype="multipart/form-data" action="{% url 'upload_contract_pdf' contract.id %}">
-                                {% csrf_token %}
-                                <div class="input-group input-group-sm">
-                                    <input type="file" class="form-control" name="pdf_file" accept="application/pdf" required onchange="if(this.files[0].size > 204800){alert('El archivo no debe superar 200 KB'); this.value='';}">
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="fas fa-upload"></i> Subir PDF
-                                    </button>
-                                    
-                                </div>
-                            </form>
-                        {% endif %}
+                    <form method="post" enctype="multipart/form-data"
+                        action="{% url 'upload_contract_pdf' contract.id %}">
+                        {% csrf_token %}
+                        <div class="input-group input-group-sm">
+                            <input type="file" class="form-control" name="pdf_file" accept="application/pdf" required
+                                onchange="if(this.files[0].size > 204800){alert('El archivo no debe superar 200 KB'); this.value='';}">
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="fas fa-upload"></i> Subir PDF
+                            </button>
+
+                        </div>
+                    </form>
+                    {% endif %}
                     </p>
                 </div>
             </div>
-            
+
         </div> <!-- /card-body -->
         <div class="mt-3 text-center">
-        <!-- Usamos el color Azul Fuerte para el botón de edición -->
-        <a href="{%url 'update_contract' contract.id%}" class="btn btn-custom-edit shadow">
-            <i class="fas fa-edit"></i> Editar Contrato
-        </a>
-    </div>
+            <!-- Usamos el color Azul Fuerte para el botón de edición -->
+            <a href="{%url 'update_contract' contract.id%}" class="btn btn-custom-edit shadow">
+                <i class="fas fa-edit"></i> Editar Contrato
+            </a>
+        </div>
     </div> <!-- /card -->
-    
+
 </div> <!-- /container -->
 {%endblock%}

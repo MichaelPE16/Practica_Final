@@ -1,1 +1,6 @@
 testCredentials.txt
+db.sqlite3
+__pycache__
+wsgi.py
+asgi.py
+GDMFX.__pycache__
