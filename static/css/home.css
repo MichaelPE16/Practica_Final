@@ -2,27 +2,94 @@ body {
     background-color: #212529;
 }
 
-carousel {
-    margin: 100px;
-    width: 90%;
-    border: 5px solid red;
-    display: flex;
+/* Carousel Image Sizing */
+.h-carousel {
+    height: 75vh !important;
+    object-fit: cover !important;
+    min-height: 400px;
 }
 
-group {
-    display: flex;
+/* Ensure the carousel doesn't overflow */
+#mainCarousel {
+    max-height: 75vh !important;
+    overflow: hidden !important;
+}
+
+/* Brand Ticker Section */
+.ticker-wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    padding: 20px 0;
+    background-color: transparent;
+    /* inherit from section */
+    /* Optional: fade effect on sides */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.ticker-track {
+    display: flex !important;
+    flex-direction: row !important;
+    width: max-content;
+    animation: scroll 40s linear infinite;
+    gap: 0;
+    /* padding controls spacing on items */
+}
+
+.ticker-track:hover {
+    animation-play-state: paused;
+}
+
+.ticker-item {
+    flex: 0 0 auto;
+    padding: 0 60px;
+    /* Increased spacing */
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    gap: 1em;
+    /* Styles for logos */
+    filter: grayscale(100%) brightness(1.2);
+    opacity: 0.6;
+    transition: all 0.4s ease;
 }
 
-box {
-    height: 5em;
-    padding: 1em;
-    background-color: cornflowerblue;
-    font-size: 3rem;
-    border-radius: .2em;
-    text-align: center;
-    align-content: center;
+.ticker-item:hover {
+    filter: grayscale(0%) brightness(1);
+    opacity: 1;
+    transform: scale(1.1);
+}
 
+.ticker-item img {
+    height: 60px !important;
+    /* Enforce height */
+    width: auto !important;
+    max-width: 180px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Featured Inventory Image Sizing */
+.car-card {
+    overflow: hidden !important;
+    /* Ensure content respects border radius */
+}
+
+.car-card .card-img-top {
+    height: 250px !important;
+    object-fit: cover !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
