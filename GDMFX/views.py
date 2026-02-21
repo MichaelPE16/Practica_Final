@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 #here the modules to start pagination
 from django.core.paginator import Paginator
-from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm
-from .models import Contract, Leads, Sales, Vehicles
+from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform
+from .models import Contract, Leads, Sales, Vehicles, Meets
 
 ITEMS_PER_PAGE = 10
 
@@ -120,8 +120,34 @@ def signup_page(request):
     return render(request, 'signup.html', {'form': UserCreationForm, 'error': 'Passwords do not match'})
 
 @login_required
-def meets(request): 
-    return render(request, 'meets.html')
+def meets(request):
+    search = request.POST.get('search', '')
+    if request.method == 'POST' and search:
+        meetings = Meets.objects.filter(
+            Q(name__icontains=search) | Q(email__icontains=search),
+            user=request.user
+        ).order_by('-date')
+    else:
+        meetings = Meets.objects.filter(user=request.user).order_by('-date')
+    
+    paginator = Paginator(meetings, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'meets.html', {'meetings': page_obj})
+
+
+def appt(request):
+    if request.method == 'POST':
+        form = Apptform(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return render(request, 'appt.html', {'success': True})
+            except IntegrityError:
+                form.add_error('date', 'This time slot is already taken. Please choose another.')
+    else:
+        form = Apptform()
+    return render(request, 'appt.html', {'form': form})
 
 @login_required
 def reports(request): 

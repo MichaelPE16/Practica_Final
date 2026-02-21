@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Vehicles, Leads, Contract, Sales
+from .models import Vehicles, Leads, Contract, Sales, Meets
 
 
 class VehicleAdmin(admin.ModelAdmin): 
@@ -21,3 +21,8 @@ class SalesAdmin(admin.ModelAdmin):
     list_display = ('id', 'lead', 'user')
 
 admin.site.register(Sales, SalesAdmin)
+
+class MeetsAdmin(admin.ModelAdmin): 
+    list_display = ('id', 'name', 'user')
+
+admin.site.register(Meets, MeetsAdmin)

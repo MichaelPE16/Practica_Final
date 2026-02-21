@@ -29,6 +29,7 @@ urlpatterns =[
     path('upload_contract_pdf/<int:id_contract>', views.upload_contract_pdf, name='upload_contract_pdf'),
     path('signup', views.signup_page, name='signup'),
     path('logout', views.signout, name='logout'),
+    path('appt', views.appt, name='appt'),
     #creating the links for update: 
     # path('update_lead/<int:id_lead>', views.update_lead, name='update_lead'),
 ]

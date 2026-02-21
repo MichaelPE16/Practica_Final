@@ -182,6 +182,28 @@
         </div>
     </section>
 
+    <!-- Appointment CTA Section -->
+    <section class="container my-5">
+        <div
+            class="p-5 text-center bg-dark border border-secondary rounded-5 shadow-lg position-relative overflow-hidden">
+            <!-- Subtle background effect -->
+            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+                style="background: radial-gradient(circle at center, var(--bs-primary), transparent 70%);"></div>
+
+            <div class="position-relative">
+                <i class="fa-solid fa-calendar-check fa-3x text-primary mb-4"></i>
+                <h2 class="display-5 fw-bold text-white mb-3">Ready to Experience Your Next Vehicle?</h2>
+                <p class="lead text-secondary col-lg-8 mx-auto mb-5">
+                    Schedule a private viewing or test drive with our expert agents. We'll have everything ready for
+                    your arrival.
+                </p>
+                <a href="{% url 'appt' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow">
+                    Book Your Appointment
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Featured Inventory -->
     <section class="container mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">

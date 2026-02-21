@@ -86,3 +86,18 @@ class Contract(models.Model):
     def __str__(self) -> str:
         return f"Contract for {self.customer_name}"
     
+class Meets(models.Model):
+    message = models.CharField(max_length=150)
+    date = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField(max_length=50, null=True, blank=True)
+    address = models.CharField(max_length=150, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('date', 'user')
+        verbose_name_plural = "Meetings"
+
+    def __str__(self) -> str:
+        return f"Appt for {self.name} on {self.date}"

@@ -1,4 +1,4 @@
-from .models import Sales, Contract, Leads, Vehicles
+from .models import Sales, Contract, Leads, Vehicles, Meets
 from django.forms import ModelForm
 from django import forms
 
@@ -83,5 +83,19 @@ class VehicleForm(ModelForm):
             # SELECTS: Usamos bg-white y text-dark
             'condition': forms.Select(attrs={'class': 'form-control bg-dark border-secondary text-light'}), 
             'status': forms.Select(attrs={'class': 'form-control bg-dark border-secondary text-light'}),
+            'user': forms.Select(attrs={'class': 'form-control bg-dark border-secondary text-light'})
+        }
+
+class Apptform(ModelForm): 
+    class Meta: 
+        model = Meets
+        fields = ['name', 'phone', 'email', 'address', 'message', 'date', 'user']
+        widgets = { 
+            'name': forms.TextInput(attrs={'class': 'form-control bg-dark border-secondary text-light', 'PlaceHolder': 'Customer Name'}),
+            'phone': forms.NumberInput(attrs={'class': 'form-control bg-dark border-secondary text-light', 'PlaceHolder': 'Phone number'}), 
+            'email': forms.EmailInput(attrs={'class': 'form-control bg-dark border-secondary text-light', 'PlaceHolder': 'Email'}), 
+            'address': forms.Textarea(attrs={'class': 'form-control bg-dark border-secondary text-light', 'PlaceHolder': 'Address'}), 
+            'message': forms.Textarea(attrs={'class': 'form-control bg-dark border-secondary text-light', 'PlaceHolder': 'Message'}), 
+            'date': forms.DateTimeInput(attrs={'class': 'form-control bg-dark border-secondary text-light datetimepicker', 'placeholder': 'Select Date & Time'}),
             'user': forms.Select(attrs={'class': 'form-control bg-dark border-secondary text-light'})
         }
