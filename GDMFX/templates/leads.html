@@ -35,10 +35,9 @@
                         <div class="col-md-3">
                             <select class="form-select bg-dark text-light border-secondary" name="status">
                                 <option selected>All Statuses</option>
-                                <option value="New">New</option>
+                                <option value="Interested">Interested</option>
                                 <option value="Contacted">Contacted</option>
                                 <option value="Qualified">Qualified</option>
-                                <option value="Lost">Lost</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -65,8 +64,8 @@
                     <span class="badge bg-success">{{ lead.get_status_display }}</span>
                     {% elif lead.status == 'Contacted' %}
                     <span class="badge bg-warning text-dark">{{ lead.get_status_display }}</span>
-                    {% elif lead.status == 'Lost' %}
-                    <span class="badge bg-danger">{{ lead.get_status_display }}</span>
+                    {% elif lead.status == 'Interested' %}
+                    <span class="badge bg-primary">{{ lead.get_status_display }}</span>
                     {% else %}
                     <span class="badge bg-secondary">{{ lead.get_status_display }}</span>
                     {% endif %}

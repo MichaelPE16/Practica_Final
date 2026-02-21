@@ -24,12 +24,12 @@
             Información de Calificación y Presupuesto
             <!-- Muestra el status con un badge de color -->
             {% if leads.status == 'Qualified' %}
-            <span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">CALIFICADO</span>
-            {% elif lead.status == 'Contacted' %}
+            <span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">QUALIFIED</span>
+            {% elif leads.status == 'Contacted' %}
             <span class="badge"
-                style="background-color: var(--color-info); color: black; font-size: 0.95rem;">CONTACTADO</span>
+                style="background-color: var(--color-info); color: black; font-size: 0.95rem;">CONTACTED</span>
             {% else %}
-            <span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">INTERESADO</span>
+            <span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">INTERESTED</span>
             {% endif %}
         </div>
 
@@ -43,7 +43,7 @@
                     <p class="detail-label">Vehículo de Interés:</p>
                     <!-- Muestra la marca y modelo del vehículo relacionado (asumiendo que interested tiene esos atributos) -->
                     {% if leads.interested %}
-                    <p class="detail-value">{{ leads.interested.brand }} {{ lead.interested.model }}</p>
+                    <p class="detail-value">{{ leads.interested.brand }} {{ leads.interested.model }}</p>
                     {% else %}
                     <p class="detail-value text-muted">Interés general o no especificado.</p>
                     {% endif %}
