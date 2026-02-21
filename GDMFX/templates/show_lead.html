@@ -1,96 +1,193 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
+{% load static %}
 
-{%block content%}
-<style>
-    .detail-label {
-        font-weight: 600;
-        color: white;
-        margin-bottom: 0;
-        font-size: 0.9rem;
-    }
+{% block page_title %}Lead Details{% endblock %}
 
-    .detail-value {
-        font-weight: 400;
-        color: white;
-        font-size: 1.1rem;
-    }
-</style>
-<div class="container my-5">
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'leads' %}"
+                        class="text-primary text-decoration-none">Leads</a>
+                </li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ leads.name }}</li>
+            </ol>
+        </nav>
+        <h1 class="h2 mb-0 text-white fw-bold">{{ leads.name }}</h1>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'leads' %}" class="btn btn-outline-secondary me-2 rounded-pill">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back
+        </a>
+        <a href="{% url 'update_lead' leads.id %}" class="btn btn-primary rounded-pill px-4">
+            <i class="fa-solid fa-user-pen me-2"></i>Update Lead
+        </a>
+    </div>
+</div>
 
-    <!-- Tarjeta Principal de Detalles -->
-    <div class="card shadow border-0">
-
-        <div class="card-header d-flex justify-content-between align-items-center">
-            Información de Calificación y Presupuesto
-            <!-- Muestra el status con un badge de color -->
-            {% if leads.status == 'Qualified' %}
-            <span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">QUALIFIED</span>
-            {% elif leads.status == 'Contacted' %}
-            <span class="badge"
-                style="background-color: var(--color-info); color: black; font-size: 0.95rem;">CONTACTED</span>
-            {% else %}
-            <span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">INTERESTED</span>
-            {% endif %}
+<div class="row g-4">
+    <!-- Lead Core Info -->
+    <div class="col-lg-8">
+        <div class="card bg-dark border-secondary shadow-lg mb-4">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h5 class="card-title mb-0 text-white"><i class="fa-solid fa-id-card me-2 text-primary"></i>Contact
+                    Information</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Full Name</label>
+                        <p class="text-white fs-5 mb-0">{{ leads.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Lead
+                            Source</label>
+                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-share-nodes me-2 text-secondary"></i>{{
+                            leads.source }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Contact
+                            Date</label>
+                        <p class="text-white fs-5 mb-0"><i
+                                class="fa-regular fa-calendar-check me-2 text-secondary"></i>{{
+                            leads.contact_date|date:"F j, Y H:i" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Assigned
+                            Agent</label>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center"
+                                style="width: 24px; height: 24px;">
+                                <i class="fa-solid fa-user text-white" style="font-size: 0.7rem;"></i>
+                            </div>
+                            <span class="text-white fs-5">{{ leads.user.username|default:"Unassigned" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card-body p-4">
-
-            <!-- SECCIÓN 1: DATOS CLAVE DEL INTERÉS -->
-            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-bullseye"></i> Foco del Lead</h5>
-            <div class="row g-4 mb-4 border-bottom pb-3">
-
-                <div class="col-md-6 col-12">
-                    <p class="detail-label">Vehículo de Interés:</p>
-                    <!-- Muestra la marca y modelo del vehículo relacionado (asumiendo que interested tiene esos atributos) -->
-                    {% if leads.interested %}
-                    <p class="detail-value">{{ leads.interested.brand }} {{ leads.interested.model }}</p>
-                    {% else %}
-                    <p class="detail-value">Interés general o no especificado.</p>
-                    {% endif %}
-                </div>
-                <div class="col-md-6 col-12">
-                    <p class="detail-label">Origen del Lead:</p>
-                    <p class="detail-value">{{ leads.source }}</p>
-                </div>
-                <div class="col-md-6 col-12">
-                    <p class="detail-label">Vendedor Asignado:</p>
-                    <p class="detail-value">{{ leads.user.username|default:"No Asignado" }}</p>
-                </div>
-                <div class="col-md-6 col-12">
-                    <p class="detail-label">Fecha de Contacto:</p>
-                    <p class="detail-value">{{ leads.contact_date|date:"d M Y h:i a" }}</p>
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h5 class="card-title mb-0 text-white"><i class="fa-solid fa-bullseye me-2 text-warning"></i>Interests &
+                    Capacity</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Target
+                            Vehicle</label>
+                        {% if leads.interested %}
+                        <a href="{% url 'show_details' leads.interested.id %}" class="text-decoration-none">
+                            <div
+                                class="p-3 rounded bg-secondary bg-opacity-10 border border-secondary border-opacity-25 card-hover-simple">
+                                <h6 class="text-primary fw-bold mb-1">{{ leads.interested.brand }} {{
+                                    leads.interested.model }}</h6>
+                                <p class="text-secondary small mb-0"><i class="fa-solid fa-fingerprint me-1"></i>{{
+                                    leads.interested.vin }}</p>
+                            </div>
+                        </a>
+                        {% else %}
+                        <p class="text-secondary fst-italic">No specific vehicle selected yet</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Budget / Trade-in
+                            Value</label>
+                        <div class="p-3 rounded bg-success bg-opacity-10 border border-success border-opacity-25">
+                            <h3 class="text-success fw-bold mb-0">${{ leads.bullet|default:"0.00" }}</h3>
+                            <p class="text-secondary extra-small text-uppercase mb-0">Financial capacity indicator</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- SECCIÓN 2: CALIFICACIÓN FINANCIERA -->
-            <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-hand-holding-usd"></i> Capacidad de
-                Compra</h5>
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <p class="detail-label">Presupuesto/Valor de Permuta (Bullet):</p>
-                    <p class="bullet-value">
-                        ${{ leads.bullet|default:"0.00" }}
-                    </p>
+    <!-- Lead Status & Actions -->
+    <div class="col-lg-4">
+        <div class="card bg-dark border-secondary shadow-lg mb-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="status-indicator-lead mb-3">
+                        {% if leads.status == 'Qualified' %}
+                        <div class="display-4 text-success"><i class="fa-solid fa-award"></i></div>
+                        <h4 class="text-white fw-bold mt-2">Qualified</h4>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                        {% elif leads.status == 'Contacted' %}
+                        <div class="display-4 text-warning"><i class="fa-solid fa-comments"></i></div>
+                        <h4 class="text-white fw-bold mt-2">Contacted</h4>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-warning" style="width: 66%"></div>
+                        </div>
+                        {% else %}
+                        <div class="display-4 text-primary"><i class="fa-solid fa-user-plus"></i></div>
+                        <h4 class="text-white fw-bold mt-2">New Interest</h4>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary" style="width: 33%"></div>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <p class="detail-label">Primer Estado de Calificación:</p>
-                    <p class="detail-value">{{ leads.get_status_display }}</p>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm rounded-pill"><i
+                            class="fa-solid fa-envelope me-2"></i>Send Email</button>
+                    <button class="btn btn-outline-secondary btn-sm rounded-pill"><i
+                            class="fa-solid fa-phone me-2"></i>Log Call</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Opcional: Botón de Acción -->
-            <div class="mt-4 text-center">
-                <!-- Botón de acción principal: Editar/Avanzar Fase -->
-                <a href="#" class="btn btn-custom-action shadow">
-                    <form action="{% url 'update_lead' leads.id %}" method="get">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-custom-action shadow">Actualizar Lead</button>
-                    </form>
-                </a>
+        <div class="card bg-secondary bg-opacity-10 border-secondary border-opacity-25 text-white">
+            <div class="card-header bg-transparent border-secondary border-opacity-25 py-3">
+                <h6 class="mb-0 fw-bold">Management Timeline</h6>
             </div>
+            <div class="card-body py-3">
+                <div class="timeline-simple">
+                    <div class="d-flex mb-3">
+                        <div class="me-3 position-relative">
+                            <div class="bg-primary rounded-circle" style="width: 10px; height: 10px; margin-top: 5px;">
+                            </div>
+                            <div class="timeline-line bg-secondary position-absolute"
+                                style="width: 2px; height: 100%; top: 15px; left: 4px; opacity: 0.2;"></div>
+                        </div>
+                        <div>
+                            <p class="small text-white mb-0">Lead Discovered</p>
+                            <p class="extra-small text-secondary">{{ leads.contact_date|date:"F d" }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <div class="bg-secondary bg-opacity-50 rounded-circle"
+                                style="width: 10px; height: 10px; margin-top: 5px;"></div>
+                        </div>
+                        <div>
+                            <p class="small text-secondary mb-0">Current Status: <strong>{{ leads.get_status_display
+                                    }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        </div> <!-- /card-body -->
-    </div> <!-- /card -->
+<style>
+    .card-hover-simple {
+        transition: all 0.2s;
+    }
 
-</div> <!-- /container -->
-{%endblock%}
+    .card-hover-simple:hover {
+        background: rgba(13, 110, 253, 0.05) !important;
+        border-color: rgba(13, 110, 253, 0.3) !important;
+    }
+
+    .extra-small {
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}

@@ -1,153 +1,156 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
+{% load static %}
 
+{% block page_title %}Vehicle Details{% endblock %}
 
-{%block content%}
-
-<style>
-    /* COLORES CORPORATIVOS */
-    :root {
-        --color-primary: #1848a0;
-        /* Azul Fuerte */
-        --color-success: #00bf63;
-        /* Verde Éxito */
-        --color-danger: #ff3131;
-        /* Rojo Peligro */
-        --color-bg: #f4f7f6;
-        /* Fondo Ligero */
-    }
-
-    body {
-        background-color: var(--color-bg);
-        font-family: 'Arial', sans-serif;
-    }
-
-    .card-header {
-        background-color: var(--color-primary);
-        /* Encabezado Azul */
-        color: white;
-        font-weight: 700;
-        border-bottom: 2px solid var(--color-success);
-    }
-
-    .detail-label {
-        font-weight: 600;
-        color: white;
-        margin-bottom: 0;
-        font-size: 0.9rem;
-    }
-
-    .detail-value {
-        font-weight: 400;
-        color: white;
-        font-size: 1.1rem;
-    }
-
-    /* Estilos para el precio de venta */
-    .selling-price {
-        color: var(--color-success);
-        font-weight: 700;
-        font-size: 2rem;
-    }
-
-    /* Estilos para el botón de edición */
-    .btn-custom-edit {
-        background-color: var(--color-primary);
-        color: white;
-        border: none;
-    }
-
-    .btn-custom-edit:hover {
-        background-color: #103370;
-        /* Un tono más oscuro en hover */
-        color: white;
-    }
-</style>
-Información Clave del Stock
-<!-- Muestra el status con un badge de color -->
-{% if vehicle.status == 'Sold' %}
-<span class="badge" style="background-color: var(--color-danger); font-size: 0.95rem;">VENDIDO</span>
-{% elif vehicle.status == 'Available' %}
-<span class="badge" style="background-color: var(--color-success); font-size: 0.95rem;">DISPONIBLE</span>
-{% else %}
-<span class="badge bg-warning text-dark" style="font-size: 0.95rem;">{{ vehicle.status }}</span>
-{% endif %}
-</div>
-
-<div class="card-body p-4">
-
-    <!-- SECCIÓN 1: IDENTIFICACIÓN Y ESTADO -->
-    <div class="row g-4 mb-4 border-bottom pb-3">
-
-        <div class="col-md-3 col-6">
-            <p class="detail-label">Marca:</p>
-            <p class="detail-value">{{ vehicle.brand }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="detail-label">Modelo:</p>
-            <p class="detail-value">{{ vehicle.model }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="detail-label">Condición:</p>
-            <p class="detail-value">{{ vehicle.get_condition_display }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="detail-label">Kilometraje (Km):</p>
-            <p class="detail-value">{{ vehicle.km|default:"N/A" }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="detail-label">Color:</p>
-            <p class="detail-value">{{ vehicle.color }}</p>
-        </div>
-        <div class="col-md-9 col-12">
-            <p class="detail-label">ID Único (VIN):</p>
-            <p class="detail-value font-monospace">{{ vehicle.vin }}</p>
-        </div>
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'inventory' %}"
+                        class="text-primary text-decoration-none">Inventory</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ vehicle.brand }} {{ vehicle.model
+                    }}</li>
+            </ol>
+        </nav>
+        <h1 class="h2 mb-0 text-white fw-bold">{{ vehicle.brand }} {{ vehicle.model }}</h1>
     </div>
-
-    <!-- SECCIÓN 2: INFORMACIÓN DE PRECIOS Y FECHAS -->
-    <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-dollar-sign"></i> Resumen
-        Financiero</h5>
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <p class="detail-label">Precio de Venta (Público):</p>
-            <p class="selling-price">
-                ${{ vehicle.selling_price|default:"0.00" }}
-            </p>
-        </div>
-        <div class="col-md-4 mb-3">
-            <p class="detail-label">Costo de Adquisición (Interno):</p>
-            <!-- Usamos el color de peligro para datos sensibles -->
-            <p class="detail-value" style="color: var(--color-danger);">
-                ${{ vehicle.price_adquisition|default:"N/A" }}
-            </p>
-        </div>
-        <div class="col-md-4 mb-3">
-            <p class="detail-label">Fecha de Integración:</p>
-            <p class="detail-value">{{ vehicle.integration_date|date:"d M Y"|default:"N/A" }}</p>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 3: INFORMACIÓN DE GESTIÓN -->
-    <h5 class="mb-3" style="color: var(--color-primary);"><i class="fas fa-user-tag"></i> Gestión</h5>
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <p class="detail-label">Registrado por Vendedor:</p>
-            <p class="detail-value">{{ vehicle.user.username }}</p>
-        </div>
-    </div>
-
-    <!-- Opcional: Botón de Acción -->
-    <div class="mt-4 text-center">
-        <!-- Usamos el color Azul Fuerte para el botón de edición -->
-        <a href="{%url 'update_vehicle' vehicle.id%}" class="btn btn-custom-edit shadow">
-            <i class="fas fa-edit"></i> Editar Vehículo
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'inventory' %}" class="btn btn-outline-secondary me-2 rounded-pill">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back
+        </a>
+        <a href="{% url 'update_vehicle' vehicle.id %}" class="btn btn-primary rounded-pill px-4">
+            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Vehicle
         </a>
     </div>
+</div>
 
+<div class="row g-4">
+    <!-- Main Information -->
+    <div class="col-lg-8">
+        <div class="card bg-dark border-secondary shadow-lg mb-4">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h5 class="card-title mb-0 text-white"><i class="fa-solid fa-car me-2 text-primary"></i>General
+                    Information</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Brand</label>
+                        <p class="text-white fs-5 mb-0">{{ vehicle.brand }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Model</label>
+                        <p class="text-white fs-5 mb-0">{{ vehicle.model }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Condition</label>
+                        <span
+                            class="badge {% if vehicle.condition == 'New' %}bg-success{% else %}bg-info text-dark{% endif %} rounded-pill px-3 py-2">
+                            {{ vehicle.get_condition_display }}
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Mileage</label>
+                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-road me-2 text-secondary"></i>{{
+                            vehicle.km|default:"0" }} km</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Color</label>
+                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-palette me-2 text-secondary"></i>{{
+                            vehicle.color }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">VIN
+                            Number</label>
+                        <p class="text-white font-monospace fs-5 mb-0">{{ vehicle.vin }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</div> <!-- /card-body -->
-</div> <!-- /card -->
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h5 class="card-title mb-0 text-white"><i
+                        class="fa-solid fa-money-bill-transfer me-2 text-success"></i>Financial Details</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4 text-center">
+                    <div class="col-md-6 border-end border-secondary">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Acquisition
+                            Cost</label>
+                        <h3 class="text-danger fw-bold mb-0">${{ vehicle.price_adquisition|default:"0.00" }}</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Target Selling
+                            Price</label>
+                        <h3 class="text-success fw-bold mb-0">${{ vehicle.selling_price|default:"0.00" }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-</div> <!-- /container -->
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+        <div class="card bg-dark border-secondary shadow-lg mb-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="status-indicator mb-3">
+                        {% if vehicle.status == 'Available' %}
+                        <div class="display-4 text-success"><i class="fa-solid fa-circle-check"></i></div>
+                        <h4 class="text-white fw-bold mt-2">Available</h4>
+                        <p class="text-secondary small">Ready for sale</p>
+                        {% else %}
+                        <div class="display-4 text-danger"><i class="fa-solid fa-circle-xmark"></i></div>
+                        <h4 class="text-white fw-bold mt-2">Sold</h4>
+                        <p class="text-secondary small">Asset liquidated</p>
+                        {% endif %}
+                    </div>
+                    <hr class="border-secondary">
+                </div>
 
+                <div class="mb-3">
+                    <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Integration
+                        Date</label>
+                    <p class="text-white mb-0"><i class="fa-regular fa-calendar-days me-2 text-primary"></i>{{
+                        vehicle.integration_date|date:"F j, Y"|default:"Not set" }}</p>
+                </div>
+
+                <div class="mb-0">
+                    <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Managed By</label>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center"
+                            style="width: 24px; height: 24px;">
+                            <i class="fa-solid fa-user text-white" style="font-size: 0.7rem;"></i>
+                        </div>
+                        <span class="text-white">{{ vehicle.user.username }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-primary border-primary shadow text-white overflow-hidden position-relative">
+            <div class="card-body p-4 position-relative z-1">
+                <h5 class="fw-bold mb-3">Investment Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Asset Role:</span>
+                    <span class="fw-bold text-dark bg-white rounded px-2 small">
+                        {% if vehicle.status == 'Available' %}Active Asset{% else %}Liquidated Asset{% endif %}
+                    </span>
+                </div>
+                <p class="small opacity-75 mb-0">Values are based on initial appraisal and market targeting.</p>
+            </div>
+            <i class="fa-solid fa-chart-line position-absolute bottom-0 end-0 opacity-25 p-3"
+                style="font-size: 5rem; transform: translateY(20px);"></i>
+        </div>
+    </div>
+</div>
+
+<style>
+    .breadcrumb-item+.breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.3);
+    }
+</style>
 {% endblock %}

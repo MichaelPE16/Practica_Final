@@ -1,84 +1,193 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
+{% load static %}
 
-{%block content%}
-<div class="container my-5">
+{% block page_title %}Sale Overview{% endblock %}
 
-    <!-- Tarjeta Principal de Detalles -->
-    <div class="card shadow border-0">
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'sales' %}"
+                        class="text-primary text-decoration-none">Sales</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Sale Details</li>
+            </ol>
+        </nav>
+        <h1 class="h2 mb-0 text-white fw-bold">Sale: {{ sales.lead.name }}</h1>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'sales' %}" class="btn btn-outline-secondary me-2 rounded-pill">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back
+        </a>
+        <a href="{% url 'update_sale' sales.id %}" class="btn btn-primary rounded-pill px-4">
+            <i class="fa-solid fa-arrows-rotate me-2"></i>Advance Phase
+        </a>
+    </div>
+</div>
 
-        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white fw-bold">
-            Información Clave de la Negociación
-            <!-- Badge dinámico según fase -->
-            {% if sales.phase == 'Closed' %}
-            <span class="badge bg-success fs-6">CERRADA</span>
-            {% elif sales.phase == 'Test Drive' %}
-            <span class="badge bg-warning text-dark fs-6">TEST DRIVE</span>
-            {% else %}
-            <span class="badge bg-primary fs-6">EN PROGRESO</span>
-            {% endif %}
+<style>
+    .w-phase-test {
+        width: 33%;
+    }
+
+    .w-phase-progress {
+        width: 66%;
+    }
+
+    .w-phase-closed {
+        width: 100%;
+    }
+</style>
+
+<div class="row g-4">
+    <!-- Sale Progress & Core Info -->
+    <div class="col-lg-8">
+        <div class="card bg-dark border-secondary shadow-lg mb-4 overflow-hidden">
+            <div
+                class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 text-white"><i
+                        class="fa-solid fa-chart-line me-2 text-primary"></i>Negotiation Progress</h5>
+                <span
+                    class="badge {% if sales.phase == 'Closed' %}bg-success{% elif sales.phase == 'Test Drive' %}bg-warning text-dark{% else %}bg-primary{% endif %} rounded-pill px-3">
+                    {{ sales.get_phase_display }}
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row text-center mb-5">
+                    <div class="col-4">
+                        <div
+                            class="phase-step {% if sales.phase != 'Test Drive' %}completed text-success{% else %}active text-primary{% endif %}">
+                            <i
+                                class="fa-solid {% if sales.phase != 'Test Drive' %}fa-circle-check{% else %}fa-circle-dot{% endif %} fs-4 mb-2"></i>
+                            <p class="small fw-bold mb-0">Test Drive</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div
+                            class="phase-step {% if sales.phase == 'Closed' %}completed text-success{% elif sales.phase == 'In progress' %}active text-warning{% else %}pending text-secondary{% endif %}">
+                            <i
+                                class="fa-solid {% if sales.phase == 'Closed' %}fa-circle-check{% elif sales.phase == 'In progress' %}fa-circle-dot{% else %}fa-circle{% endif %} fs-4 mb-2"></i>
+                            <p class="small fw-bold mb-0">In Progress</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div
+                            class="phase-step {% if sales.phase == 'Closed' %}active text-success{% else %}pending text-secondary{% endif %}">
+                            <i
+                                class="fa-solid {% if sales.phase == 'Closed' %}fa-circle-dot{% else %}fa-circle{% endif %} fs-4 mb-2"></i>
+                            <p class="small fw-bold mb-0">Closed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 border-end border-secondary">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Customer
+                            Profile</label>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-secondary bg-opacity-25 rounded p-2 me-3">
+                                <i class="fa-solid fa-user-tie text-primary fs-3"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">{{ sales.lead.name }}</h6>
+                                <p class="text-secondary small mb-0">{{ sales.lead.source }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Negotiation
+                            Vehicle</label>
+                        {% if sales.vehicle_sold %}
+                        <div class="d-flex align-items-center">
+                            <div class="bg-secondary bg-opacity-25 rounded p-2 me-3">
+                                <i class="fa-solid fa-car text-success fs-3"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">{{ sales.vehicle_sold.brand }} {{
+                                    sales.vehicle_sold.model }}</h6>
+                                <p class="text-secondary font-monospace small mb-0">{{ sales.vehicle_sold.vin }}</p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-secondary fst-italic py-2">No vehicle assigned to this sale</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="progress rounded-0" style="height: 4px;">
+                <div class="progress-bar {% if sales.phase == 'Closed' %}bg-success w-phase-closed{% elif sales.phase == 'In progress' %}bg-warning w-phase-progress{% else %}bg-primary w-phase-test{% endif %}"
+                    role="progressbar"
+                    aria-valuenow="{% if sales.phase == 'Closed' %}100{% elif sales.phase == 'In progress' %}66{% elif sales.phase == 'Test Drive' %}33{% else %}0{% endif %}"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
+    </div>
 
-        <div class="card-body p-4">
-
-            <!-- SECCIÓN 1: DATOS DEL CLIENTE Y VENDEDOR -->
-            <h5 class="mb-3 text-primary"><i class="fas fa-users"></i> Actores Clave</h5>
-            <div class="row g-4 mb-4 border-bottom pb-3">
-                <div class="col-md-6">
-                    <p class="fw-semibold text-white mb-1">Cliente Potencial:</p>
-                    <p class="fs-5">{{ sales.lead.name }}</p>
+    <!-- Sale Stats & Timeline -->
+    <div class="col-lg-4">
+        <div class="card bg-dark border-secondary shadow-lg mb-4">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Timeline</label>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="text-center">
+                            <p class="text-white small mb-0 fw-bold">Started</p>
+                            <p class="text-secondary extra-small">{{ sales.created_at|date:"M d" }}</p>
+                        </div>
+                        <div class="bg-secondary opacity-25" style="width: 40px; height: 1px;"></div>
+                        <div class="text-center">
+                            <p class="text-white small mb-0 fw-bold">Closed</p>
+                            <p
+                                class="{% if sales.selling_date %}text-success{% else %}text-secondary{% endif %} extra-small">
+                                {{ sales.selling_date|date:"M d"|default:"TBD" }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <p class="fw-semibold text-white mb-1">Vendedor Asignado:</p>
-                    <p class="fs-5">{{ sales.user.username }}</p>
+
+                <div class="mb-4">
+                    <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Owned By</label>
+                    <div
+                        class="p-3 rounded bg-secondary bg-opacity-10 border border-secondary border-opacity-25 d-flex align-items-center">
+                        <div class="bg-primary rounded-circle p-2 me-3">
+                            <i class="fa-solid fa-briefcase text-white small"></i>
+                        </div>
+                        <div>
+                            <p class="text-white mb-0 fw-bold">{{ sales.user.username }}</p>
+                            <p class="text-secondary extra-small mb-0">Senior Representative</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert bg-success bg-opacity-10 border border-success border-opacity-25 text-white mb-0">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-shield-halved text-success me-3 fs-4"></i>
+                        <div>
+                            <p class="small fw-bold mb-0">SECURE TRANSACTION</p>
+                            <p class="extra-small opacity-75 mb-0">All negotiations are logged for audit purposes.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- SECCIÓN 2: ESTADO Y FECHAS -->
-            <h5 class="mb-3 text-primary"><i class="fas fa-clock"></i> Progreso y Fechas</h5>
-            <div class="row mb-4">
-                <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-white mb-1">Fase Actual:</p>
-                    <p class="fs-4 text-primary">{{ sales.get_phase_display }}</p>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-white mb-1">Fecha de Creación:</p>
-                    <p class="fw-bold text-primary fs-5">{{ sales.created_at|date:"d M Y h:i a" }}</p>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-white mb-1">Fecha de Cierre (Final):</p>
-                    <p class="fw-bold {% if sale.phase == 'Closed' %}text-success{% else %}text-white{% endif %} fs-5">
-                        {{ sales.selling_date|date:"d M Y"|default:"Pendiente" }}
-                    </p>
-                </div>
-            </div>
+<style>
+    .phase-step {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-            <!-- SECCIÓN 3: VEHÍCULO ASOCIADO -->
-            <h5 class="mb-3 text-primary"><i class="fas fa-car-side"></i> Vehículo en Negociación</h5>
-            <div class="row">
-                {% if sales.vehicle_sold %}
-                <div class="col-md-6 mb-3">
-                    <p class="fw-semibold text-white mb-1">Modelo:</p>
-                    <p class="fs-5">{{ sales.vehicle_sold.brand }} {{ sales.vehicle_sold.model }}</p>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <p class="fw-semibold text-white mb-1">VIN:</p>
-                    <p class="font-monospace text-white">{{ sales.vehicle_sold.vin }}</p>
-                </div>
-                {% else %}
-                <div class="col-12 text-white">
-                    <p>Aún no hay un vehículo específico asignado a esta venta.</p>
-                </div>
-                {% endif %}
-            </div>
+    .phase-step.pending {
+        opacity: 0.4;
+    }
 
-            <!-- Botón de Acción -->
-            <div class="mt-4 text-center">
-                <a href="{% url 'update_sale' sales.id %}" class="btn btn-primary shadow">
-                    <i class="fas fa-arrow-alt-circle-right"></i> Avanzar Fase de Venta
-                </a>
-            </div>
+    .extra-small {
+        font-size: 0.75rem;
+    }
 
-        </div><!-- /card-body -->
-    </div><!-- /card -->
-</div><!-- /container -->
+    .breadcrumb-item+.breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.3);
+    }
+</style>
 {% endblock %}
