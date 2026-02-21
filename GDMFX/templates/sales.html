@@ -1,101 +1,131 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_title %}Sales{% endblock %}
+
 {% block content %}
-<div class="container mt-3">
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h1 class="h3 mb-0 text-white fw-bold">Sales Overview</h1>
+        <p class="text-muted small mb-0">Track your completed transactions</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'new_sale' %}" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>Record Sale
+        </a>
+    </div>
+</div>
 
-    <h1 style="color: #1848a0;">SALES</h1>
-
-    <!-- Estilos de la Cabecera/Header de la Lista (Ajuste de Columnas) -->
-    <div class="row mb-2 d-none d-md-flex" style="font-weight: 600; color: #333; border-bottom: 1px solid #aaa; padding-bottom: 5px;">
-        <div class="col-12">
-            <div class="d-flex align-items-center">
-                <!-- CABECERA 1: CUSTOMER (30% del ancho) -->
-                <strong class="p-2" style="width: 30%;">CUSTOMER</strong>
-                <!-- CABECERA 2: VEHICLE (30% del ancho) -->
-                <strong class="p-2" style="width: 40%;">VEHICLE</strong>
-                <!-- CABECERA 3: DATE (Alineado a la derecha, 20% del ancho) -->
-                <strong class="ms-auto p-2 text-end" style="width: 30%;">DATE</strong>
+<!-- Filters Placeholder -->
+<form method="POST">
+    {% csrf_token %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-body p-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-light"><i
+                                        class="fa-solid fa-magnifying-glass"></i></span>
+                                <input type="text" class="form-control bg-dark text-light border-secondary"
+                                    placeholder="Search by customer or VIN..." name="search">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</form>
 
-    <!-- ITERACIÓN SOBRE LAS VENTAS (El loop ya es correcto: sales.object_list) -->
+<!-- Sales Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for sale in sales.object_list %}
-    <div class="row mt-1">
-        <div class="col">
-            <ul class="list-group">
-                <!-- El <a> envuelve al <li> para que toda la fila sea clickeable -->
-                <a href="{% url 'show_sales' sale.id %}" style="text-decoration: none;">
-                    <!-- Usamos list-group-item-action para el efecto hover (como en la imagen) -->
-                    <li class="list-group-item d-flex align-items-center list-group-item-action border-0">
-                        
-                        <!-- Columna 1: LEAD NAME -->
-                        <div class="p-2" style="width: 30%;">
-                            <strong style="color: #000;">{{ sale.lead.name }}</strong>
-                        </div>
-                        
-                        <!-- Columna 2: VEHICLE (Muestra el VIN del vehículo vendido) -->
-                        <div class="p-2" style="width: 40%; color: #333;">
+    <div class="col">
+        <a href="{% url 'show_sales' sale.id %}" class="text-decoration-none">
+            <div class="card card-premium h-100 card-hover">
+                <div class="card-header d-flex justify-content-between align-items-center border-bottom-0 pb-0">
+                    <div>
+                        <h5 class="card-title text-white fw-bold mb-0">
+                            <i class="fa-solid fa-user me-2 text-primary"></i>{{ sale.lead.name }}
+                        </h5>
+                    </div>
+                    <span class="badge bg-success rounded-pill">Sold</span>
+                </div>
+
+                <div class="card-body pt-2">
+                    <p class="text-muted small mb-2">
+                        <i class="fa-regular fa-calendar-check me-1"></i> {{ sale.created_at|date:"M d, Y" }}
+                    </p>
+
+                    <div class="p-2 rounded bg-secondary bg-opacity-10 mb-3">
+                        <small class="d-block text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Vehicle
+                            Sold</small>
+                        <span class="text-light fw-medium font-monospace">
                             {% if sale.vehicle_sold %}
-                                {{ sale.vehicle_sold.vin }}
+                            <i class="fa-solid fa-car me-1"></i> {{ sale.vehicle_sold.vin }}
                             {% else %}
-                                <span class="text-muted">N/A</span>
+                            <span class="text-muted">N/A</span>
                             {% endif %}
-                        </div>
-                        
-                        <!-- Columna 3: DATE (Alineado a la derecha) -->
-                        <div class="ms-auto p-2 text-end" style="width: 30%;">
-                            <!-- Muestra la fecha de creación (como en la imagen: Nov. 19, 2025, 9:20 a.m.) -->
-                            <strong class="text-muted">{{ sale.created_at|date:"M. d, Y, h:i a" }}</strong>
-                        </div>
-                        
-                    </li>
-                </a>
-            </ul>
-        </div>
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-primary small fw-bold">View Receipt <i
+                                class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
+            </div>
+        </a>
     </div>
     {% empty %}
-    <div class="alert alert-info mt-3" role="alert">
-        No hay ventas registradas para este usuario.
+    <div class="col-12">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="fa-solid fa-circle-info me-3 fs-4"></i>
+            <div>
+                No sales recorded yet. <a href="{% url 'new_sale' %}" class="alert-link">Record your first sale</a>.
+            </div>
+        </div>
     </div>
     {% endfor %}
-
-    <!-- Paginación (Se mantiene la lógica que ya implementamos) -->
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-end">
-            
-            {% if sales.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ sales.previous_page_number }}">Previous</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" tabindex="-1" aria-disabled="true">Previous</a>
-                </li>
-            {% endif %}
-
-            <!-- Números de Página: Muestra solo 1, 2, 3, etc. -->
-            {% for i in sales.paginator.page_range %}
-                {% if sales.number == i %}
-                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
-            {% endfor %}
-            
-            {% if sales.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ sales.next_page_number }}">Next</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" tabindex="-1" aria-disabled="true">Next</a>
-                </li>
-            {% endif %}
-
-        </ul>
-    </nav>
-
 </div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-5">
+    <ul class="pagination justify-content-center">
+        {% if sales.has_previous %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary"
+                href="?page={{ sales.previous_page_number }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link bg-dark text-muted border-secondary">Previous</span>
+        </li>
+        {% endif %}
+
+        {% for i in sales.paginator.page_range %}
+        {% if sales.number == i %}
+        <li class="page-item active" aria-current="page"><span class="page-link border-primary">{{ i }}</span></li>
+        {% else %}
+        <li class="page-item"><a class="page-link bg-dark text-white border-secondary" href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if sales.has_next %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary" href="?page={{ sales.next_page_number }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link bg-dark text-muted border-secondary">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
 {% endblock %}

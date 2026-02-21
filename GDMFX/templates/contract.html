@@ -1,101 +1,148 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_title %}Contracts{% endblock %}
+
 {% block content %}
-<div class="container mt-3">
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h1 class="h3 mb-0 text-white fw-bold">Contracts</h1>
+        <p class="text-white">Manage legal agreements and documentation</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'new_contract' %}" class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i>New Contract
+        </a>
+    </div>
+</div>
 
-    <h1 style="color: #1848a0;">CONTRACTS</h1>
-
-    <!-- Estilos de la Cabecera/Header de la Lista (Ajuste de Columnas) -->
-    <div class="row mb-2 d-none d-md-flex" style="font-weight: 600; color: #333; border-bottom: 1px solid #aaa; padding-bottom: 5px;">
-        <div class="col-12">
-            <div class="d-flex align-items-center">
-                <!-- CABECERA 1: CUSTOMER (30% del ancho) -->
-                <strong class="p-2" style="width: 30%;">CUSTOMER NAME</strong>
-                <!-- CABECERA 2: VEHICLE SOLD (40% del ancho) -->
-                <strong class="p-2" style="width: 40%;">VEHICLE SOLD (VIN)</strong>
-                <!-- CABECERA 3: DATE (Alineado a la derecha, 30% del ancho) -->
-                <strong class="ms-auto p-2 text-end" style="width: 30%;">REGISTER DATE</strong>
+<!-- Filters Placeholder -->
+<form method="POST">
+    {% csrf_token %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-body p-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-light"><i
+                                        class="fa-solid fa-user"></i></span>
+                                <input type="text" name="search"
+                                    class="form-control bg-dark text-light border-secondary"
+                                    placeholder="Search by customer...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-light"><i
+                                        class="fa-solid fa-id-card"></i></span>
+                                <input type="text" name="ID" class="form-control bg-dark text-light border-secondary"
+                                    placeholder="Search by Customer's ID...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</form>
 
-    <!-- ITERACIÓN SOBRE LOS CONTRATOS (Usando contracts.object_list) -->
+<!-- Contracts Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for contract in contracts.object_list %}
-    <div class="row mt-1">
-        <div class="col">
-            <ul class="list-group">
-                <!-- El <a> envuelve al <li> para que toda la fila sea clickeable -->
-                <a href="{% url 'show_contract' contract.id %}" style="text-decoration: none;">
-                    <!-- Usamos list-group-item-action para el efecto hover -->
-                    <li class="list-group-item d-flex align-items-center list-group-item-action border-0">
-                        
-                        <!-- Columna 1: CUSTOMER NAME -->
-                        <div class="p-2" style="width: 30%;">
-                            <strong style="color: #000;">{{ contract.customer_name }}</strong>
-                        </div>
-                        
-                        <!-- Columna 2: VEHICLE SOLD -->
-                        <div class="p-2" style="width: 40%; color: #333;">
+    <div class="col">
+        <a href="{% url 'show_contract' contract.id %}" class="text-decoration-none">
+            <div class="card card-premium h-100 card-hover">
+                <div class="card-header d-flex justify-content-between align-items-center border-bottom-0 pb-0">
+                    <div>
+                        <h5 class="card-title text-white fw-bold mb-0">
+                            {{ contract.customer_name }}
+                        </h5>
+                    </div>
+                    <span class="badge bg-secondary rounded-pill"><i class="fa-solid fa-file-contract"></i></span>
+                </div>
+
+                <div class="card-body pt-2">
+                    <p class="text-white small mb-2">
+                        <i class="fa-regular fa-calendar me-1"></i> {{ contract.register_date|date:"M d, Y" }}
+                    </p>
+
+                    <div class="p-2 rounded bg-secondary bg-opacity-10 mb-3">
+                        <small class="d-block text-white text-uppercase fw-bold" style="font-size: 0.7rem;">Vehicle
+                            Linked</small>
+                        <span class="text-white fw-medium">
                             {% if contract.vehicle_sold %}
-                                <span class="text-secondary">{{ contract.vehicle_sold.brand }}</span> <strong>{{ contract.vehicle_sold.vin }}</strong>
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-car me-2 text-primary"></i>
+                                <div>
+                                    <span>{{ contract.vehicle_sold.brand }}</span>
+                                    <div class="font-monospace small text-white">{{ contract.vehicle_sold.vin }}</div>
+                                </div>
+                            </div>
                             {% else %}
-                                <span class="text-danger">Vehículo Eliminado</span>
+                            <span class="text-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Vehicle
+                                Removed</span>
                             {% endif %}
-                        </div>
-                        
-                        <!-- Columna 3: DATE (Alineado a la derecha) -->
-                        <div class="ms-auto p-2 text-end" style="width: 30%;">
-                            <!-- Muestra la fecha de registro/creación -->
-                            <strong class="text-muted">{{ contract.register_date|date:"d M Y h:i a" }}</strong>
-                        </div>
-                        
-                    </li>
-                </a>
-            </ul>
-        </div>
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-primary small fw-bold">View Contract <i
+                                class="fa-solid fa-arrow-right ms-1"></i></span>
+                    </div>
+                </div>
+            </div>
+        </a>
     </div>
     {% empty %}
-    <div class="alert alert-info mt-3" role="alert">
-        No hay contratos registrados para este usuario.
+    <div class="col-12">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="fa-solid fa-circle-info me-3 fs-4"></i>
+            <div>
+                No contracts found. <a href="{% url 'new_contract' %}" class="alert-link">Create a new contract</a>.
+            </div>
+        </div>
     </div>
     {% endfor %}
-
-    <!-- Paginación (Implementación de la lógica de Django) -->
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-end">
-            
-            {% if contracts.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ contracts.previous_page_number }}">Previous</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" tabindex="-1" aria-disabled="true">Previous</a>
-                </li>
-            {% endif %}
-
-            <!-- Números de Página -->
-            {% for i in contracts.paginator.page_range %}
-                {% if contracts.number == i %}
-                    <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }}</a></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
-            {% endfor %}
-            
-            {% if contracts.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ contracts.next_page_number }}">Next</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" tabindex="-1" aria-disabled="true">Next</a>
-                </li>
-            {% endif %}
-
-        </ul>
-    </nav>
-
 </div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-5">
+    <ul class="pagination justify-content-center">
+        {% if contracts.has_previous %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary"
+                href="?page={{ contracts.previous_page_number }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link bg-dark text-muted border-secondary">Previous</span>
+        </li>
+        {% endif %}
+
+        {% for i in contracts.paginator.page_range %}
+        {% if contracts.number == i %}
+        <li class="page-item active" aria-current="page"><span class="page-link border-primary">{{ i }}</span></li>
+        {% else %}
+        <li class="page-item"><a class="page-link bg-dark text-white border-secondary" href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if contracts.has_next %}
+        <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary"
+                href="?page={{ contracts.next_page_number }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link bg-dark text-muted border-secondary">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
 {% endblock %}

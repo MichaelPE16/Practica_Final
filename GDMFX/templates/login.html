@@ -1,35 +1,56 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
-{%block content%}
-<main class="container min-vh-100" style="justify-content: center; align-content: center;">
-    <div class="row">
-        <div class="col-md-4 offset-md-4 mt-5">
-            <form method="POST" class="card card-body card-body-bg" style="background-color:#1848a1 ;">
-                <h1 class="text-center mb-3 text-light">Login</h1>
-                <label class="text-center" style="color: #ff3131;"> {{error}}</label>
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label class="text-light" for="username"> Username: </label>
-                    <input type="text" name="username" class="form-control" id="username" placeholder="Username..."
-                        style="background-color: #b4b4b4; border-color: transparent;" required>
+{% block auth_content %}
+<div class="row w-100 justify-content-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+        <div class="card card-premium border-0">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-white">Welcome Back</h2>
+                    <p class="text-muted small">Sign in to continue to GDMFX</p>
                 </div>
 
-                <div class="mb-3">
-                    <label class="text-light" for="[password]"> Password: </label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="Password..."
-                        style="background-color: #b4b4b4; border-color: transparent;" required>
+                {% if error %}
+                <div class="alert alert-danger text-center mb-4 text-small" role="alert">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i> {{ error }}
                 </div>
-                <div class="text-center" class="text-dark">
-                    <button class="btn text-dark" style="background-color: #b4b4b4;"><b>Login</b></button>
-                </div>
-                <div class="text-center mt-2">
-                    <a href="{%url 'signup'%}" class="text-light">Sign Up Today!</a>
-                </div>
-            </form>
+                {% endif %}
 
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="username">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="fa-solid fa-user"></i></span>
+                            <input type="text" name="username" class="form-control bg-dark text-light border-secondary"
+                                id="username" placeholder="Enter your username" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="fa-solid fa-lock"></i></span>
+                            <input type="password" name="password"
+                                class="form-control bg-dark text-light border-secondary" id="password"
+                                placeholder="Enter your password" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-primary py-2 fw-bold" type="submit">Login</button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">New to GDMFX?</span>
+                        <a href="{% url 'signup' %}" class="fw-bold ms-1">Create Account</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</main>
-
-{% endblock%}
+</div>
+{% endblock %}

@@ -10,11 +10,11 @@
             Información Clave de la Negociación
             <!-- Badge dinámico según fase -->
             {% if sales.phase == 'Closed' %}
-                <span class="badge bg-success fs-6">CERRADA</span>
+            <span class="badge bg-success fs-6">CERRADA</span>
             {% elif sales.phase == 'Test Drive' %}
-                <span class="badge bg-warning text-dark fs-6">TEST DRIVE</span>
+            <span class="badge bg-warning text-dark fs-6">TEST DRIVE</span>
             {% else %}
-                <span class="badge bg-primary fs-6">EN PROGRESO</span>
+            <span class="badge bg-primary fs-6">EN PROGRESO</span>
             {% endif %}
         </div>
 
@@ -24,11 +24,11 @@
             <h5 class="mb-3 text-primary"><i class="fas fa-users"></i> Actores Clave</h5>
             <div class="row g-4 mb-4 border-bottom pb-3">
                 <div class="col-md-6">
-                    <p class="fw-semibold text-muted mb-1">Cliente Potencial:</p>
+                    <p class="fw-semibold text-white mb-1">Cliente Potencial:</p>
                     <p class="fs-5">{{ sales.lead.name }}</p>
                 </div>
                 <div class="col-md-6">
-                    <p class="fw-semibold text-muted mb-1">Vendedor Asignado:</p>
+                    <p class="fw-semibold text-white mb-1">Vendedor Asignado:</p>
                     <p class="fs-5">{{ sales.user.username }}</p>
                 </div>
             </div>
@@ -37,16 +37,16 @@
             <h5 class="mb-3 text-primary"><i class="fas fa-clock"></i> Progreso y Fechas</h5>
             <div class="row mb-4">
                 <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-muted mb-1">Fase Actual:</p>
+                    <p class="fw-semibold text-white mb-1">Fase Actual:</p>
                     <p class="fs-4 text-primary">{{ sales.get_phase_display }}</p>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-muted mb-1">Fecha de Creación:</p>
+                    <p class="fw-semibold text-white mb-1">Fecha de Creación:</p>
                     <p class="fw-bold text-primary fs-5">{{ sales.created_at|date:"d M Y h:i a" }}</p>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <p class="fw-semibold text-muted mb-1">Fecha de Cierre (Final):</p>
-                    <p class="fw-bold {% if sale.phase == 'Closed' %}text-success{% else %}text-muted{% endif %} fs-5">
+                    <p class="fw-semibold text-white mb-1">Fecha de Cierre (Final):</p>
+                    <p class="fw-bold {% if sale.phase == 'Closed' %}text-success{% else %}text-white{% endif %} fs-5">
                         {{ sales.selling_date|date:"d M Y"|default:"Pendiente" }}
                     </p>
                 </div>
@@ -56,18 +56,18 @@
             <h5 class="mb-3 text-primary"><i class="fas fa-car-side"></i> Vehículo en Negociación</h5>
             <div class="row">
                 {% if sales.vehicle_sold %}
-                    <div class="col-md-6 mb-3">
-                        <p class="fw-semibold text-muted mb-1">Modelo:</p>
-                        <p class="fs-5">{{ sales.vehicle_sold.brand }} {{ sales.vehicle_sold.model }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <p class="fw-semibold text-muted mb-1">VIN:</p>
-                        <p class="font-monospace text-muted">{{ sales.vehicle_sold.vin }}</p>
-                    </div>
+                <div class="col-md-6 mb-3">
+                    <p class="fw-semibold text-white mb-1">Modelo:</p>
+                    <p class="fs-5">{{ sales.vehicle_sold.brand }} {{ sales.vehicle_sold.model }}</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <p class="fw-semibold text-white mb-1">VIN:</p>
+                    <p class="font-monospace text-white">{{ sales.vehicle_sold.vin }}</p>
+                </div>
                 {% else %}
-                    <div class="col-12 text-muted">
-                        <p>Aún no hay un vehículo específico asignado a esta venta.</p>
-                    </div>
+                <div class="col-12 text-white">
+                    <p>Aún no hay un vehículo específico asignado a esta venta.</p>
+                </div>
                 {% endif %}
             </div>
 

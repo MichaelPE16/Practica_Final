@@ -120,7 +120,7 @@
         <main class="main">
             <!-- Top Navbar for Internal Context -->
             <nav class="navbar navbar-top mb-4">
-                <div class="container-fluid">
+                <div class="container-fluid px-0">
                     <h2 class="h5 mb-0 fw-bold">{% block page_title %}Overview{% endblock %}</h2>
                     <div class="ms-auto d-flex align-items-center">
                         <span class="text-secondary small me-3 d-none d-md-inline">{{ user.username }}</span>
@@ -133,6 +133,18 @@
             </nav>
 
             <div class="content-container">
+                <!-- Global Messages/Alerts -->
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 {% block content %}
                 <!-- Child templates content goes here -->
                 {% endblock %}

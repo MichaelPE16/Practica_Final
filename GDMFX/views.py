@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -17,7 +18,16 @@ def home(request):
 
 @login_required
 def contract(request): 
-    contract = Contract.objects.filter(user=request.user)
+    if request.method == "POST": 
+        search =request.POST['search']
+        idcontact = request.POST['ID']
+        contract = Contract.objects.filter(user=request.user, customer_name__contains = search, id_document__contains =idcontact )
+        paginator = Paginator(contract, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'contract.html',{'contracts': page_obj} )
+    else: 
+        contract = Contract.objects.filter(user=request.user)
     # Pagination
     paginator = Paginator(contract, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -30,21 +40,54 @@ def dashboard(request):
 
 @login_required
 def inventory(request): 
-    vehicle = Vehicles.objects.filter(user=request.user)
+    if request.method == 'POST': 
+        search = request.POST['search']
+        status = request.POST['status']
+        vehicle = Vehicles.objects.filter(user=request.user, brand__contains = search, status = status)
+        if status == 'All Statuses':
+            vehicle = Vehicles.objects.filter(user=request.user, brand__contains = search)
+        if search == '':
+            vehicle = Vehicles.objects.filter(user=request.user, status = status)
+        if search == '' and status == 'All Statuses':
+            vehicle = Vehicles.objects.filter(user=request.user)
+        paginator = Paginator(vehicle, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'inventory.html',
+        {'vehicles': page_obj} )
+    else: 
+        vehicle = Vehicles.objects.filter(user=request.user)
     # Pagination
     paginator = Paginator(vehicle, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'inventory.html',{'vehicles': page_obj} )
+    return render(request, 'inventory.html',
+    {'vehicles': page_obj} )
 
 @login_required
 def leads(request):
-    leads = Leads.objects.filter(user=request.user)
-    # Pagination
-    paginator = Paginator(leads, ITEMS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'leads.html',{'leads': page_obj} )   
+    if request.method == 'POST':
+        search = request.POST['search']
+        status = request.POST['status']
+        leads = Leads.objects.filter(user=request.user, name__contains=search, status=status)
+        if status == 'All Statuses':
+            leads = Leads.objects.filter(user=request.user, name__contains=search)
+        if search == '':
+            leads = Leads.objects.filter(user=request.user, status=status)
+        if search == '' and status == 'All Statuses':
+            leads = Leads.objects.filter(user=request.user)
+        
+        paginator = Paginator(leads, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'leads.html', {'leads': page_obj})
+    else:
+        leads = Leads.objects.filter(user=request.user)
+        # Pagination
+        paginator = Paginator(leads, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'leads.html', {'leads': page_obj})
 
 
 def login_page(request):
@@ -66,7 +109,7 @@ def signup_page(request):
     if request.method == 'GET': 
         return render(request, 'signup.html', {'form': UserCreationForm})
     else: 
-        if request.POST['password1'] == request.POST['password2']: 
+        if request.POST['password1'] == request.POST['password2']:
             try:
                 user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
                 user.save()
@@ -86,12 +129,26 @@ def reports(request):
 
 @login_required
 def sales(request): 
-    sale = Sales.objects.filter(user=request.user)
-    # Pagination
-    paginator = Paginator(sale, ITEMS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'sales.html',{'sales': page_obj} )
+    if request.method == "POST": 
+        search = request.POST['search']
+        if search:
+            sale = Sales.objects.filter(
+                Q(lead__name__contains=search) | Q(vehicle_sold__vin__contains=search),
+                user=request.user
+            )
+        else:
+            sale = Sales.objects.filter(user=request.user)
+        paginator = Paginator(sale, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'sales.html',{'sales': page_obj} )
+    else: 
+        sale = Sales.objects.filter(user=request.user)
+        # Pagination
+        paginator = Paginator(sale, ITEMS_PER_PAGE)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'sales.html',{'sales': page_obj} )
 
 #Este muestra los detalles de un vehiculo
 @login_required
@@ -182,8 +239,11 @@ def new_lead(request):
 def new_sale(request):
     if request.method == 'GET':
         form = SalesForm()
+        form.fields['user'].queryset = User.objects.filter(pk= request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'sales_form.html', {'form': form})
     form = SalesForm(request.POST)
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         sale = form.save(commit=False)
         sale.user = request.user
@@ -195,10 +255,11 @@ def new_sale(request):
 def new_contract(request):
     if request.method == 'GET':
         form = ContractForm()
-
+        form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'contract_form.html', {'form': form})
     form = ContractForm(request.POST, request.FILES)
-
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         contract = form.save(commit=False)
         contract.user = request.user
@@ -214,8 +275,11 @@ def update_vehicle(request, id_vehicle):
     vehicle = get_object_or_404(Vehicles, pk=id_vehicle, user=request.user)
     if request.method == 'GET':
         form = VehicleForm(instance=vehicle)
+        form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'update_inventory.html', {'form': form})
     form = VehicleForm(request.POST, instance=vehicle)
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
@@ -228,8 +292,11 @@ def update_lead(request, id_lead):
     lead = get_object_or_404(Leads, pk=id_lead, user=request.user)
     if request.method == 'GET':
         form = LeadsForm(instance=lead)
+        form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'update_lead.html', {'form': form})
     form = LeadsForm(request.POST, instance=lead)
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
@@ -243,9 +310,12 @@ def update_sale(request, id_sale):
     sale = get_object_or_404(Sales, pk=id_sale, user=request.user)
     if request.method == 'GET':
         form = SalesForm(instance=sale)
+        form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'update_sell.html', {'form': form})
 
     form = SalesForm(request.POST, instance=sale)
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
@@ -279,8 +349,11 @@ def update_contract(request, id_contract):
     contract = get_object_or_404(Contract, pk=id_contract, user=request.user)
     if request.method == 'GET':
         form = ContractForm(instance=contract)
+        form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
+        form.fields['user'].initial = request.user
         return render(request, 'update_contract.html', {'form': form})
     form = ContractForm(request.POST, request.FILES, instance=contract)
+    form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user

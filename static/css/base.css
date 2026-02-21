@@ -1,26 +1,144 @@
 /* --- Global Reset & Professional Theme --- */
 :root {
-    --sidebar-bg: #111111;
-    --sidebar-link-hover: #1a1a1a;
-    --primary-blue: #0d6efd;
-    --main-bg: #1a1a1a;
-    --text-muted: #888888;
+    /* Colors */
+    --main-bg: #121212;
+    --secondary-bg: #1a1a1a;
+    --card-bg: #1e1e1e;
+
+    /* Text */
+    --text-main: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --text-light: #ffffff;
+
+    /* Accents */
+    --primary-color: #0d6efd;
+    --primary-hover: #0b5ed7;
+    --danger-color: #dc3545;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+
+    /* Sidebar */
+    --sidebar-bg: #0a0a0a;
+    --sidebar-link-hover: #1e1e1e;
     --sidebar-width-collapsed: 70px;
     --sidebar-width-expanded: 260px;
+
+    /* Effects */
     --transition-speed: 0.25s;
+    --box-shadow-card: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --box-shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.4);
+    --border-color: #333333;
 }
 
 body {
     background-color: var(--main-bg);
-    color: #e0e0e0;
+    color: var(--text-main);
     font-family: 'Inter', sans-serif;
     margin: 0;
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
 a {
     text-decoration: none;
     transition: 0.3s;
+    color: var(--primary-color);
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* --- Card Styles (Premium) --- */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--box-shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: var(--text-main);
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-hover);
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* --- Form Styles --- */
+.form-control,
+.form-select {
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+    color: var(--text-light);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #333;
+    border-color: var(--primary-color);
+    color: var(--text-light);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control::placeholder {
+    color: #888;
+}
+
+.form-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* --- Button Styles --- */
+.btn {
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
 }
 
 /* --- Sidebar Design --- */
@@ -37,7 +155,7 @@ a {
     bottom: 0;
     height: 100vh;
     left: 0;
-    border-right: 1px solid #222;
+    border-right: 1px solid var(--border-color);
 }
 
 #sidebar.expand {
@@ -49,23 +167,47 @@ a {
 .sidebar-header {
     padding: 1.2rem 0;
     height: 70px;
+    display: flex;
+    /* Ensure alignment */
+    align-items: center;
+    /* Vertically center */
+    justify-content: flex-start;
+    /* Align to start */
 }
 
 #toggle-btn {
     background: transparent;
     cursor: pointer;
     border: 0;
+    min-width: var(--sidebar-width-collapsed);
+    /* Use min-width instead of fixed width */
     width: var(--sidebar-width-collapsed);
     text-align: center;
+    color: var(--text-light);
+    display: flex;
+    /* Use flexbox */
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    height: 100%;
+    /* Take full height of header */
 }
 
 #toggle-btn i {
-    font-size: 1.2rem;
-    color: #fff;
+    font-size: 1.4rem;
+    color: var(--text-light);
+}
+
+.sidebar-logo {
+    margin-left: 10px;
+    /* Add some spacing */
+    overflow: hidden;
+    /* Hide overflow */
 }
 
 .sidebar-logo a {
-    color: #fff;
+    color: var(--text-light);
     font-size: 1.3rem;
     white-space: nowrap;
     opacity: 0;
@@ -81,15 +223,36 @@ a {
     padding: 1rem 0;
     flex: 1 1 auto;
     list-style: none;
-    /* overflow removed to allow tooltips to show */
+    overflow-y: auto;
+    /* Allow scrolling if menu is long */
+    overflow-x: hidden;
+}
+
+#sidebar:not(.expand) .sidebar-nav {
+    overflow: visible;
+}
+
+/* Scrollbar styles for sidebar */
+.sidebar-nav::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 5px;
 }
 
 .sidebar-header-label {
     padding: 1rem 1.625rem 0.5rem;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    font-weight: 600;
     display: none;
 }
 
@@ -102,15 +265,17 @@ a {
     color: #b5b5b5;
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     white-space: nowrap;
     border-left: 3px solid transparent;
+    text-decoration: none;
 }
 
 .sidebar-link i {
     font-size: 1.1rem;
-    width: 20px;
-    margin-right: 1.2rem;
+    min-width: 30px;
+    /* Ensure consistent icon width */
+    margin-right: 10px;
     text-align: center;
 }
 
@@ -118,11 +283,12 @@ a {
 .sidebar-link.active {
     color: #fff;
     background-color: var(--sidebar-link-hover);
-    border-left-color: var(--primary-blue);
+    border-left-color: var(--primary-color);
+    text-decoration: none;
 }
 
 .sidebar-link.active i {
-    color: var(--primary-blue);
+    color: var(--primary-color);
 }
 
 #sidebar:not(.expand) .sidebar-link span {
@@ -150,7 +316,7 @@ a {
     left: 100%;
     top: 50%;
     transform: translateY(-50%);
-    background-color: var(--primary-blue);
+    background-color: var(--primary-color);
     color: #fff;
     padding: 0.5rem 1rem;
     width: max-content;
@@ -176,14 +342,18 @@ a {
 
 /* Footer & Logout */
 .sidebar-footer {
-    border-top: 1px solid #222;
-    padding: 1rem 0;
+    border-top: 1px solid var(--border-color);
+    padding: 0;
+}
+
+.logout-link {
+    padding: 1rem 1.625rem;
 }
 
 .logout-link:hover {
     background-color: rgba(220, 53, 69, 0.1);
-    border-left-color: #dc3545;
-    color: #dc3545;
+    border-left-color: var(--danger-color);
+    color: var(--danger-color);
 }
 
 /* --- Main Content Synchronization --- */
@@ -193,8 +363,7 @@ a {
     width: auto;
     min-height: 100vh;
     padding: 0;
-    background-color: #0f0f0f;
-    /* Slightly darker than sidebar for depth */
+    background-color: var(--main-bg);
 }
 
 body.sidebar-expanded .main {
@@ -203,13 +372,25 @@ body.sidebar-expanded .main {
 
 .navbar-top {
     height: 70px;
-    background-color: #121212;
-    border-bottom: 1px solid #222;
-    padding: 0 1.5rem;
+    background-color: var(--secondary-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
 }
 
 .content-container {
-    padding: 1.5rem;
+    padding: 2rem;
+}
+
+/* --- Auth Pages --- */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-bg);
+    padding: 1rem;
 }
 
 /* --- Responsive Adjustments --- */
@@ -223,7 +404,17 @@ body.sidebar-expanded .main {
         width: 100%;
     }
 
+    #toggle-btn {
+        /* Allow toggle button to be visible/usable even effectively off-screen initially if needed, 
+            but usually we want a mobile specific header or trigger. 
+            For now, keeping previous behavior but fixing layout. */
+    }
+
     .main {
         margin-left: 0 !important;
+    }
+
+    .content-container {
+        padding: 1rem;
     }
 }
