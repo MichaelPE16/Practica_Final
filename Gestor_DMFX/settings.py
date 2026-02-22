@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'GDMFX',
+    'GDMFXapi',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
