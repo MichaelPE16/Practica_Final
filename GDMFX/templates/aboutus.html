@@ -1,0 +1,47 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block content %}
+<section class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-white">About Us</h1>
+        <div class="bg-primary mx-auto rounded" style="width: 80px; height: 4px;"></div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card bg-dark border-secondary h-100 shadow p-4 rounded-4">
+                <div class="card-body">
+                    <h3 class="card-title text-primary mb-3"><i class="fa-solid fa-bullseye me-2"></i>Our Mission</h3>
+                    <p class="card-text text-secondary lead">
+                        At GDMFX CRM, our mission is to empower automotive dealerships with cutting-edge technology and
+                        unparalleled service. We strive to create synergy between the customer experience and managing a
+                        scalable fleet effortlessly. Our professional infrastructure ensures that every aspect of your
+                        business operates at maximum efficiency.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark border-secondary h-100 shadow p-4 rounded-4">
+                <div class="card-body">
+                    <h3 class="card-title text-primary mb-3"><i class="fa-solid fa-eye me-2"></i>Our Vision</h3>
+                    <p class="card-text text-secondary lead">
+                        We envision a future where elite dealer systems are accessible, intuitive, and seamlessly
+                        integrated into every workflow. With state-of-the-art tools and real-time analytics, we're
+                        building the foundations for sustainable growth, exceptional user confidence, and long-term
+                        industry dominance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 text-center">
+            <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1200&auto=format&fit=crop&q=80"
+                alt="Our Team Workspace" class="img-fluid rounded-4 shadow-lg border border-secondary"
+                style="max-height: 400px; object-fit: cover; width: 100%;">
+        </div>
+    </div>
+</section>
+{% endblock content %}

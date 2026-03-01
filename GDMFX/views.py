@@ -387,6 +387,8 @@ def update_contract(request, id_contract):
         return redirect('contract')
     return render(request, 'update_contract.html', {'form': form})
 
+def aboutus(request):
+    return render(request, 'aboutus.html')
 
 # Here we create the update for the existing data in the sales, inventory, contracts and leads
 

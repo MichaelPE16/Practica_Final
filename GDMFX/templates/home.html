@@ -29,7 +29,8 @@
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item mx-2">
-                        <a class="nav-link active" href="#"><i class="fa-solid fa-gauge-high me-1"></i>About us</a>
+                        <a class="nav-link active" href="{% url 'aboutus' %}"><i
+                                class="fa-solid fa-gauge-high me-1"></i>About us</a>
                     </li>
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="#"><i class="fa-solid fa-car me-1"></i>
@@ -62,7 +63,7 @@
             </div>
         </div>
     </nav>
-
+    {% block content %}
     <!-- Main Hero Carousel -->
     <header id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -268,6 +269,7 @@
             </div>
         </div>
     </section>
+    {% endblock content %}
 
     <!-- Footer -->
     <footer class="bg-black py-5 border-top border-dark mt-5">
