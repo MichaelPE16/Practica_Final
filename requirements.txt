@@ -4,10 +4,16 @@ dj-database-url==3.1.0
 Django==6.0.2
 djangorestframework==3.16.1
 iniconfig==2.3.0
-packaging==25.0
+narwhals==2.17.0
+numpy==2.4.2
+packaging==26.0
+pandas==3.0.1
+plotly==6.6.0
 pluggy==1.6.0
 psycopg2-binary==2.9.11
 Pygments==2.19.2
 pytest==8.4.2
+python-dateutil==2.9.0.post0
+six==1.17.0
 sqlparse==0.5.5
 tzdata==2025.3

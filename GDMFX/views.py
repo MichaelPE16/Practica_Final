@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+import pandas as pd
+import plotly.express as px
+from plotly.offline import plot
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -36,7 +39,116 @@ def contract(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # Get filters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    brand_filter = request.GET.get('brand')
+
+    # Base QuerySets
+    sales_qs = Sales.objects.filter(user=request.user)
+    vehicles_qs = Vehicles.objects.filter(user=request.user)
+    leads_qs = Leads.objects.filter(user=request.user)
+    contracts_qs = Contract.objects.filter(user=request.user)
+
+    # Apply date filters if provided
+    if start_date:
+        sales_qs = sales_qs.filter(selling_date__gte=start_date)
+        contracts_qs = contracts_qs.filter(sign_date__gte=start_date)
+        leads_qs = leads_qs.filter(contact_date__gte=start_date)
+    if end_date:
+        sales_qs = sales_qs.filter(selling_date__lte=end_date)
+        contracts_qs = contracts_qs.filter(sign_date__lte=end_date)
+        leads_qs = leads_qs.filter(contact_date__lte=end_date)
+    
+    if brand_filter and brand_filter != 'All Brands':
+        vehicles_qs = vehicles_qs.filter(brand=brand_filter)
+        contracts_qs = contracts_qs.filter(vehicle_sold__brand=brand_filter)
+        sales_qs = sales_qs.filter(vehicle_sold__brand=brand_filter)
+
+    # KPIs
+    total_sales = sales_qs.filter(phase='Closed').count()
+    total_revenue = contracts_qs.aggregate(total=Sum('price_sold'))['total'] or 0
+    total_leads = leads_qs.count()
+    inventory_value = vehicles_qs.filter(status='Available').aggregate(total=Sum('price_adquisition'))['total'] or 0
+
+    # Common layout for dark theme
+    dark_layout = dict(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#e0e0e0', family="Inter, sans-serif"),
+        margin=dict(l=40, r=20, t=40, b=40)
+    )
+
+    # 1. Sales Trend (Line Chart) over Months
+    sales_trend_html = ""
+    contracts_list = list(contracts_qs.values('sign_date', 'price_sold'))
+    if contracts_list:
+        df_contracts = pd.DataFrame(contracts_list)
+        df_contracts['sign_date'] = pd.to_datetime(df_contracts['sign_date'])
+        df_contracts = df_contracts.dropna(subset=['sign_date'])
+        if not df_contracts.empty:
+            df_trend = df_contracts.groupby(df_contracts['sign_date'].dt.to_period('M')).agg({'price_sold':'sum'}).reset_index()
+            df_trend['sign_date'] = df_trend['sign_date'].dt.to_timestamp()
+            fig = px.line(df_trend, x='sign_date', y='price_sold', title='Revenue Trend ($)', markers=True)
+            fig.update_layout(**dark_layout)
+            fig.update_traces(line_color='#0d6efd')
+            sales_trend_html = plot(fig, output_type='div', include_plotlyjs=False)
+
+    # 2. Lead Status Distribution (Pie Chart)
+    lead_status_html = ""
+    leads_list = list(leads_qs.values('status'))
+    if leads_list:
+        df_leads = pd.DataFrame(leads_list)
+        df_lead_status = df_leads['status'].value_counts().reset_index()
+        df_lead_status.columns = ['status', 'count']
+        fig = px.pie(df_lead_status, names='status', values='count', hole=0.4, title='Leads by Status',
+                     color_discrete_sequence=px.colors.sequential.Teal)
+        fig.update_layout(**dark_layout)
+        lead_status_html = plot(fig, output_type='div', include_plotlyjs=False)
+
+    # 3. Dispersions: Price vs KM (Scatter)
+    scatter_html = ""
+    vehicles_list = list(vehicles_qs.filter(condition='Used').values('km', 'selling_price', 'brand', 'model'))
+    if vehicles_list:
+        df_veh = pd.DataFrame(vehicles_list)
+        df_veh['selling_price'] = df_veh['selling_price'].astype(float)
+        df_veh = df_veh.dropna(subset=['km', 'selling_price'])
+        if not df_veh.empty:
+            df_veh['vehicle_name'] = df_veh['brand'] + " " + df_veh['model']
+            fig = px.scatter(df_veh, x='km', y='selling_price', color='brand', hover_name='vehicle_name', title='Price vs Mileage (Used)')
+            fig.update_layout(**dark_layout)
+            scatter_html = plot(fig, output_type='div', include_plotlyjs=False)
+
+    # 4. Inventory by Brand
+    inventory_html = ""
+    avail_veh_list = list(vehicles_qs.filter(status='Available').values('brand'))
+    if avail_veh_list:
+        df_inv = pd.DataFrame(avail_veh_list)
+        df_inv_counts = df_inv['brand'].value_counts().reset_index()
+        df_inv_counts.columns = ['brand', 'count']
+        fig = px.bar(df_inv_counts, x='brand', y='count', title='Available Inventory by Brand', color='brand',
+                     color_discrete_sequence=px.colors.qualitative.Pastel)
+        fig.update_layout(**dark_layout)
+        inventory_html = plot(fig, output_type='div', include_plotlyjs=False)
+        
+    all_brands = Vehicles.objects.filter(user=request.user).values_list('brand', flat=True).distinct()
+
+    context = {
+        'total_sales': total_sales,
+        'total_revenue': total_revenue,
+        'total_leads': total_leads,
+        'inventory_value': inventory_value,
+        'sales_trend_html': sales_trend_html,
+        'lead_status_html': lead_status_html,
+        'scatter_html': scatter_html,
+        'inventory_html': inventory_html,
+        'all_brands': sorted(list(all_brands)),
+        'start_date': start_date or '',
+        'end_date': end_date or '',
+        'brand_filter': brand_filter or '',
+        'active_brands_list': [brand_filter] if brand_filter else ['All Brands'],
+    }
+    return render(request, 'dashboard.html', context)
 
 @login_required
 def inventory(request): 

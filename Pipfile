@@ -9,6 +9,8 @@ django = "*"
 psycopg2-binary = "*"
 dj-database-url = "*"
 djangorestframework = "*"
+plotly = "*"
+pandas = "*"
 
 [dev-packages]
 
