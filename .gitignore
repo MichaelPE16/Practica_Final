@@ -4,7 +4,7 @@ __pycache__
 wsgi.py
 asgi.py
 GDMFX.__pycache__
-.env
 pipfile.lock
 venv
 pipfile
+.env

@@ -10,6 +10,9 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 #here the modules to start pagination
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.conf import settings
 from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform
 from .models import Contract, Leads, Sales, Vehicles, Meets
 
@@ -521,3 +524,34 @@ def aboutus(request):
 #         form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
 #         form.fields['user'].initial = request.user
 #     return render(request, 'lead_form.html', {'form': form})
+
+#View for the contact form
+
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        full_message = f"Message from: {name} ({email})\n\nSubject: {subject}\n\nMessage:\n{message}"
+        
+        try:
+            # Dealer email where messages will be received
+            dealer_email = getattr(settings, 'EMAIL_HOST_USER', 'your_email@gmail.com')
+            
+            send_mail(
+                subject=f"New Contact Form Submission: {subject}",
+                message=full_message,
+                from_email=email,
+                recipient_list=[dealer_email],
+                fail_silently=False,
+            )
+            messages.success(request, 'Your message has been sent successfully. We will get back to you shortly!')
+        except Exception as e:
+            messages.error(request, f'There was an error sending your message: {str(e)}. Please configure EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in settings.py.')
+            
+        return redirect('contact')
+        
+    return render(request, 'contact.html')
+

@@ -31,6 +31,7 @@ urlpatterns =[
     path('logout', views.signout, name='logout'),
     path('appt', views.appt, name='appt'),
     path('aboutus', views.aboutus, name='aboutus'),
+    path('contact/', views.contact_view, name='contact'),
     #creating the links for update: 
     # path('update_lead/<int:id_lead>', views.update_lead, name='update_lead'),
 ]
