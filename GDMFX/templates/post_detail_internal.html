@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GDMFX | View Post Details{% endblock %}
+{% block page_title %}Manage Comments: {{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Post Summary Panel -->
+    <div class="col-lg-4 mb-4">
+        <div class="card bg-dark border-secondary shadow rounded-4 sticky-top" style="top: 100px;">
+            <div class="card-header border-secondary bg-black p-3">
+                <h5 class="mb-0 text-white"><i class="fa-solid fa-circle-info me-2 text-primary"></i>Post Info</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary small mb-1">Title</p>
+                <h6 class="text-white mb-3">{{ post.title }}</h6>
+
+                <p class="text-secondary small mb-1">Published</p>
+                <h6 class="text-white mb-3">{{ post.publication_date|date:"F j, Y, g:i a" }}</h6>
+
+                <p class="text-secondary small mb-1">Author</p>
+                <h6 class="text-white mb-3">{{ post.author.username }}</h6>
+
+                <p class="text-secondary small mb-1">Status</p>
+                {% if post.allow_comments %}
+                <span
+                    class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2"><i
+                        class="fa-solid fa-check me-1"></i> Comments Enabled</span>
+                {% else %}
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-3 py-2"><i
+                        class="fa-solid fa-xmark me-1"></i> Comments Disabled</span>
+                {% endif %}
+
+                <div class="mt-4 pt-4 border-top border-secondary text-center">
+                    <h2 class="display-4 text-primary fw-bold mb-0">{{ comments.count }}</h2>
+                    <p class="text-secondary text-uppercase small fw-bold">Total Threads</p>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'blog_list' %}" class="btn btn-outline-primary btn-sm rounded-pill px-4"
+                        target="_blank">
+                        View Public Page <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Moderation Area -->
+    <div class="col-lg-8">
+        <h4 class="text-white mb-4"><i class="fa-solid fa-comments me-2"></i>Customer Discussions</h4>
+
+        {% for comment in comments %}
+        <div class="card bg-black border-secondary mb-4 shadow rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h6 class="text-white mb-0">{{ comment.author_email }}</h6>
+                        <small class="text-secondary">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                    <span class="badge bg-dark border border-danger text-danger px-3 py-2 rounded-pill">
+                        <i class="fa-solid fa-heart me-1"></i> {{ comment.heart_reactions }}
+                    </span>
+                </div>
+
+                <p class="text-white opacity-75 fs-5">"{{ comment.content }}"</p>
+
+                <!-- Replies Thread -->
+                <div class="replies-wrapper ms-4 mt-4 ps-3 border-start border-primary border-2">
+                    {% for reply in comment.replies.all %}
+                    <div class="bg-dark p-3 rounded-3 mb-3 border border-secondary">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-primary fw-bold small"><i class="fa-solid fa-shield-halved me-1"></i>
+                                Dealer Reply</span>
+                            <small class="text-secondary">{{ reply.created_at|date:"M j, g:i a" }}</small>
+                        </div>
+                        <p class="text-light mb-0 small">{{ reply.content }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="text-secondary small fst-italic mb-3">No dealer reply yet.</div>
+                    {% endfor %}
+
+                    <!-- Reply Form for Dealer -->
+                    <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 reply-toggle-btn" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#replyForm{{ comment.id }}">
+                        <i class="fa-solid fa-reply me-1"></i> Write Reply
+                    </button>
+
+                    <div class="collapse" id="replyForm{{ comment.id }}">
+                        <form method="POST" action="{% url 'dealer_reply' comment.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="content"
+                                    class="form-control bg-dark border-secondary text-light rounded-start-pill ps-4"
+                                    placeholder="Type your official reply..." required>
+                                <button type="submit" class="btn btn-primary rounded-end-pill px-4">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5 bg-dark border border-secondary rounded-4 shadow">
+            <i class="fa-regular fa-comment-dots fa-3x text-secondary mb-3"></i>
+            <h4 class="text-white">No comments yet</h4>
+            <p class="text-secondary">When customers comment on this post, they will appear here.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+    // Just a tiny script to auto-focus the input when opening the reply collapse
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtns = document.querySelectorAll('.reply-toggle-btn');
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-bs-target');
+                setTimeout(() => {
+                    const input = document.querySelector(targetId + ' input');
+                    if (input) input.focus();
+                }, 300);
+            });
+        });
+    });
+</script>
+{% endblock content %}

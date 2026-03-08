@@ -12,6 +12,7 @@ djangorestframework = "*"
 plotly = "*"
 pandas = "*"
 python-dotenv = "*"
+pillow = "*"
 
 [dev-packages]
 

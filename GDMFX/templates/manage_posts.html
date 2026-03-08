@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GDMFX | Manage Blog Posts{% endblock %}
+{% block page_title %}Manage Blog & Announcements{% endblock %}
+
+{% block content %}
+<div class="card bg-dark border-secondary shadow rounded-4 mb-4">
+    <div class="card-header border-secondary bg-black p-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-white"><i class="fa-solid fa-file-pen me-2 text-primary"></i>Your Publishings</h5>
+        <a href="{% url 'create_post' %}" class="btn btn-sm btn-primary rounded-pill fw-bold">
+            <i class="fa-solid fa-plus me-1"></i> New Post
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover table-striped align-middle mb-0">
+                <thead>
+                    <tr class="text-secondary small text-uppercase">
+                        <th class="ps-4">Title</th>
+                        <th>Published Date</th>
+                        <th>Comments</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td class="ps-4 text-white fw-bold">{{ post.title }}</td>
+                        <td class="text-secondary">{{ post.publication_date|date:"F j, Y, g:i a" }}</td>
+                        <td>
+                            <span class="badge bg-secondary text-white rounded-pill"><i
+                                    class="fa-regular fa-comments me-1"></i> {{ post.comments.count }}</span>
+                        </td>
+                        <td>
+                            {% if post.allow_comments %}
+                            <span
+                                class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-2 py-1"><i
+                                    class="fa-solid fa-check"></i> Enabled</span>
+                            {% else %}
+                            <span
+                                class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-2 py-1"><i
+                                    class="fa-solid fa-xmark"></i> Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'update_post' post.id %}"
+                                class="btn btn-sm btn-outline-warning rounded-pill mx-1" title="Edit Post">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'dealer_post_detail' post.id %}"
+                                class="btn btn-sm btn-outline-info rounded-pill mx-1" title="Manage Comments">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <form method="POST" action="{% url 'delete_post' post.id %}" class="d-inline"
+                                onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill mx-1"
+                                    title="Delete Post">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-secondary">
+                            <i class="fa-solid fa-folder-open fa-3x mb-3"></i>
+                            <h5>No Posts Found</h5>
+                            <p>You haven't created any blog posts yet.</p>
+                            <a href="{% url 'create_post' %}" class="btn btn-primary rounded-pill px-4 mt-2">Create Your
+                                First Post</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

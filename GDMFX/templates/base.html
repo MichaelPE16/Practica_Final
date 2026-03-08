@@ -97,6 +97,14 @@
                 </li>
 
                 <li class="sidebar-item">
+                    <a href="{% url 'manage_posts' %}"
+                        class="sidebar-link {% if 'blog/post/manage' in request.path %}active{% endif %}">
+                        <i class="fa-solid fa-file-pen"></i>
+                        <span>Manage Blog</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
                     <a href="#" id="newEntryToggle" class="sidebar-link dropdown-toggle collapsed"
                         data-bs-toggle="collapse" data-bs-target="#formsSubmenu">
                         <i class="fa-solid fa-file-circle-plus"></i>

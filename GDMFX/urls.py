@@ -34,4 +34,15 @@ urlpatterns =[
     path('contact/', views.contact_view, name='contact'),
     #creating the links for update: 
     # path('update_lead/<int:id_lead>', views.update_lead, name='update_lead'),
+    
+    # --- Blog / Announcement URLs ---
+    path('blog/', views.blog_list, name='blog_list'),
+    path('blog/post/manage/', views.manage_posts, name='manage_posts'),
+    path('blog/post/new/', views.create_post, name='create_post'),
+    path('blog/post/<int:post_id>/update/', views.update_post, name='update_post'),
+    path('blog/post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+    path('blog/post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
+    path('blog/comment/<int:comment_id>/react/', views.react_comment, name='react_comment'),
+    path('blog/dealer/post/<int:post_id>/', views.dealer_post_detail, name='dealer_post_detail'),
+    path('blog/dealer/comment/<int:comment_id>/reply/', views.dealer_reply, name='dealer_reply'),
 ]

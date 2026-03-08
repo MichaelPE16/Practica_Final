@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GDMFX | New Blog Post{% endblock %}
+{% block page_title %}Create New Announcement / Blog Post{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark border-secondary shadow-lg rounded-4">
+            <div class="card-header border-secondary bg-black p-4 rounded-top-4">
+                <h4 class="mb-0 text-white"><i class="fa-solid fa-pen-nib me-2 text-primary"></i>Draft New Post</h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" action="{% url 'create_post' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary fw-bold small text-uppercase">Post Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary fw-bold small text-uppercase">Content</label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                        <div class="text-danger small mt-1">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary fw-bold small text-uppercase">Upload Images</label>
+                        <input type="file" name="images" id="images"
+                            class="form-control bg-dark border-secondary text-light" multiple accept="image/*">
+                        <small class="text-muted mt-1 d-block"><i class="fa-solid fa-circle-info me-1"></i>You can
+                            select multiple images by holding Ctrl/Cmd.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch custom-switch">
+                            {{ form.allow_comments }}
+                            <label class="form-check-label text-white ms-2"
+                                for="{{ form.allow_comments.id_for_label }}">
+                                Enable Public Comments
+                            </label>
+                        </div>
+                        <small class="text-muted">If disabled, the comment section will be hidden for this post.</small>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
+                    <div class="d-flex justify-content-end">
+                        <a href="{% url 'blog_list' %}"
+                            class="btn btn-outline-secondary rounded-pill fw-bold px-4 me-3">Cancel</a>
+                        <button type="submit" class="btn btn-primary rounded-pill fw-bold px-5 shadow">
+                            <i class="fa-solid fa-paper-plane me-2"></i>Publish Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom switch styling to match dark theme */
+    .custom-switch .form-check-input {
+        width: 2.5em;
+        height: 1.25em;
+        background-color: #343a40;
+        border-color: #6c757d;
+    }
+
+    .custom-switch .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+</style>
+{% endblock content %}

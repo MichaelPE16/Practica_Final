@@ -99,3 +99,14 @@ class Apptform(ModelForm):
             'date': forms.DateTimeInput(attrs={'class': 'form-control bg-dark border-secondary text-light datetimepicker', 'placeholder': 'Select Date & Time'}),
             'user': forms.Select(attrs={'class': 'form-control bg-dark border-secondary text-light'})
         }
+
+from .models import BlogPost
+class BlogPostForm(ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ['title', 'content', 'allow_comments']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control bg-dark border-secondary text-light', 'placeholder': 'Post Title'}),
+            'content': forms.Textarea(attrs={'class': 'form-control bg-dark border-secondary text-light', 'placeholder': 'Post Content', 'rows': 6}),
+            'allow_comments': forms.CheckboxInput(attrs={'class': 'form-check-input bg-dark border-secondary'}),
+        }

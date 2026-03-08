@@ -101,3 +101,32 @@ class Meets(models.Model):
 
     def __str__(self) -> str:
         return f"Appt for {self.name} on {self.date}"
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    publication_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    allow_comments = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+class PostImage(models.Model):
+    post = models.ForeignKey(BlogPost, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='blog_images/')
+    
+    def __str__(self):
+        return f"Image for {self.post.title}"
+
+class PostComment(models.Model):
+    post = models.ForeignKey(BlogPost, related_name='comments', on_delete=models.CASCADE)
+    author_email = models.EmailField(max_length=254)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_dealer_reply = models.BooleanField(default=False)
+    heart_reactions = models.IntegerField(default=0)
+    parent_comment = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Comment by {self.author_email} on {self.post.title}"

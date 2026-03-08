@@ -13,8 +13,9 @@ from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
-from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform
-from .models import Contract, Leads, Sales, Vehicles, Meets
+from django.http import JsonResponse
+from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform, BlogPostForm
+from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComment, PostImage
 
 ITEMS_PER_PAGE = 10
 
@@ -555,3 +556,135 @@ def contact_view(request):
         
     return render(request, 'contact.html')
 
+
+# --- Blog / Announcement Views ---
+
+def blog_list(request):
+    posts_qs = BlogPost.objects.all().order_by('-publication_date')
+    
+    # Search by title
+    search_query = request.GET.get('search', '')
+    if search_query:
+        posts_qs = posts_qs.filter(title__icontains=search_query)
+        
+    # Search by date
+    date_query = request.GET.get('date', '')
+    if date_query:
+        posts_qs = posts_qs.filter(publication_date__date=date_query)
+
+    paginator = Paginator(posts_qs, ITEMS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'blog_list.html', {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'date_query': date_query,
+    })
+
+def add_comment(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    if not post.allow_comments:
+        return redirect('blog_list')
+        
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        content = request.POST.get('content')
+        if email and content:
+            PostComment.objects.create(
+                post=post,
+                author_email=email,
+                content=content
+            )
+            messages.success(request, 'Your comment was posted successfully.')
+        else:
+            messages.error(request, 'Please provide both email and comment content.')
+    return redirect('blog_list')
+
+def react_comment(request, comment_id):
+    if request.method == 'POST':
+        comment = get_object_or_404(PostComment, id=comment_id)
+        comment.heart_reactions += 1
+        comment.save()
+        return JsonResponse({'success': True, 'hearts': comment.heart_reactions})
+    return JsonResponse({'success': False}, status=400)
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            
+            # Handle multiple images
+            images = request.FILES.getlist('images')
+            for image in images:
+                PostImage.objects.create(post=post, image=image)
+                
+            messages.success(request, 'Post created successfully.')
+            return redirect('blog_list')
+    else:
+        form = BlogPostForm()
+    return render(request, 'create_post.html', {'form': form})
+
+@login_required
+def manage_posts(request):
+    posts = BlogPost.objects.filter(author=request.user).order_by('-publication_date')
+    return render(request, 'manage_posts.html', {'posts': posts})
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id, author=request.user)
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, 'Post deleted successfully.')
+    return redirect('manage_posts')
+
+@login_required
+def update_post(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id, author=request.user)
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save()
+            images = request.FILES.getlist('images')
+            if images:
+                # Optionally delete old images here if requested, but normally we just append or allow deletion from a separate UI
+                # For simplicity, we just append new uploaded ones.
+                for image in images:
+                    PostImage.objects.create(post=post, image=image)
+            messages.success(request, 'Post updated successfully.')
+            return redirect('manage_posts')
+    else:
+        form = BlogPostForm(instance=post)
+    return render(request, 'update_post.html', {'form': form, 'post': post})
+
+@login_required
+def dealer_post_detail(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    # Get all top-level comments (not replies)
+    comments = post.comments.filter(parent_comment__isnull=True).order_by('-created_at')
+    return render(request, 'post_detail_internal.html', {'post': post, 'comments': comments})
+
+@login_required
+def dealer_reply(request, comment_id):
+    parent_comment = get_object_or_404(PostComment, id=comment_id)
+    post = parent_comment.post
+    
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            PostComment.objects.create(
+                post=post,
+                author_email=request.user.email or request.user.username + "@dealer.com",
+                content=content,
+                is_dealer_reply=True,
+                parent_comment=parent_comment
+            )
+            messages.success(request, 'Reply posted successfully.')
+        else:
+            messages.error(request, 'Reply content cannot be empty.')
+            
+    return redirect('dealer_post_detail', post_id=post.id)
