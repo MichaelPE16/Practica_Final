@@ -1,16 +1,16 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block page_title %}Contracts{% endblock %}
+{%block page_title%}Contracts{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h1 class="h3 mb-0 text-white fw-bold">Contracts</h1>
         <p class="text-white">Manage legal agreements and documentation</p>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'new_contract' %}" class="btn btn-primary">
+        <a href="{%url 'new_contract'%}" class="btn btn-primary">
             <i class="fa-solid fa-plus me-2"></i>New Contract
         </a>
     </div>
@@ -18,7 +18,7 @@
 
 <!-- Filters Placeholder -->
 <form method="POST">
-    {% csrf_token %}
+    {%csrf_token%}
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card bg-dark border-secondary">
@@ -53,14 +53,14 @@
 
 <!-- Contracts Grid -->
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for contract in contracts.object_list %}
+    {%for contract in contracts.object_list%}
     <div class="col">
-        <a href="{% url 'show_contract' contract.id %}" class="text-decoration-none">
+        <a href="{%url 'show_contract' contract.id%}" class="text-decoration-none">
             <div class="card card-premium h-100 card-hover">
                 <div class="card-header d-flex justify-content-between align-items-center border-bottom-0 pb-0">
                     <div>
                         <h5 class="card-title text-white fw-bold mb-0">
-                            {{ contract.customer_name }}
+                            {{contract.customer_name}}
                         </h5>
                     </div>
                     <span class="badge bg-secondary rounded-pill"><i class="fa-solid fa-file-contract"></i></span>
@@ -68,25 +68,25 @@
 
                 <div class="card-body pt-2">
                     <p class="text-white small mb-2">
-                        <i class="fa-regular fa-calendar me-1"></i> {{ contract.register_date|date:"M d, Y" }}
+                        <i class="fa-regular fa-calendar me-1"></i> {{contract.register_date|date:"M d, Y"}}
                     </p>
 
                     <div class="p-2 rounded bg-secondary bg-opacity-10 mb-3">
                         <small class="d-block text-white text-uppercase fw-bold" style="font-size: 0.7rem;">Vehicle
                             Linked</small>
                         <span class="text-white fw-medium">
-                            {% if contract.vehicle_sold %}
+                            {%if contract.vehicle_sold%}
                             <div class="d-flex align-items-center">
                                 <i class="fa-solid fa-car me-2 text-primary"></i>
                                 <div>
-                                    <span>{{ contract.vehicle_sold.brand }}</span>
-                                    <div class="font-monospace small text-white">{{ contract.vehicle_sold.vin }}</div>
+                                    <span>{{contract.vehicle_sold.brand}}</span>
+                                    <div class="font-monospace small text-white">{{contract.vehicle_sold.vin}}</div>
                                 </div>
                             </div>
-                            {% else %}
+                            {%else%}
                             <span class="text-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Vehicle
                                 Removed</span>
-                            {% endif %}
+                            {%endif%}
                         </span>
                     </div>
 
@@ -98,51 +98,51 @@
             </div>
         </a>
     </div>
-    {% empty %}
+    {%empty%}
     <div class="col-12">
         <div class="alert alert-info d-flex align-items-center" role="alert">
             <i class="fa-solid fa-circle-info me-3 fs-4"></i>
             <div>
-                No contracts found. <a href="{% url 'new_contract' %}" class="alert-link">Create a new contract</a>.
+                No contracts found. <a href="{%url 'new_contract'%}" class="alert-link">Create a new contract</a>.
             </div>
         </div>
     </div>
-    {% endfor %}
+    {%endfor%}
 </div>
 
 <!-- Pagination -->
 <nav aria-label="Page navigation" class="mt-5">
     <ul class="pagination justify-content-center">
-        {% if contracts.has_previous %}
+        {%if contracts.has_previous%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary"
-                href="?page={{ contracts.previous_page_number }}">Previous</a>
+                href="?page={{contracts.previous_page_number}}">Previous</a>
         </li>
-        {% else %}
+        {%else%}
         <li class="page-item disabled">
             <span class="page-link bg-dark text-white border-secondary">Previous</span>
         </li>
-        {% endif %}
+        {%endif%}
 
-        {% for i in contracts.paginator.page_range %}
-        {% if contracts.number == i %}
-        <li class="page-item active" aria-current="page"><span class="page-link border-primary">{{ i }}</span></li>
-        {% else %}
-        <li class="page-item"><a class="page-link bg-dark text-white border-secondary" href="?page={{ i }}">{{ i }}</a>
+        {%for i in contracts.paginator.page_range%}
+        {%if contracts.number == i%}
+        <li class="page-item active" aria-current="page"><span class="page-link border-primary">{{i}}</span></li>
+        {%else%}
+        <li class="page-item"><a class="page-link bg-dark text-white border-secondary" href="?page={{i}}">{{i}}</a>
         </li>
-        {% endif %}
-        {% endfor %}
+        {%endif%}
+        {%endfor%}
 
-        {% if contracts.has_next %}
+        {%if contracts.has_next%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary"
-                href="?page={{ contracts.next_page_number }}">Next</a>
+                href="?page={{contracts.next_page_number}}">Next</a>
         </li>
-        {% else %}
+        {%else%}
         <li class="page-item disabled">
             <span class="page-link bg-dark text-white border-secondary">Next</span>
         </li>
-        {% endif %}
+        {%endif%}
     </ul>
 </nav>
-{% endblock %}
+{%endblock%}

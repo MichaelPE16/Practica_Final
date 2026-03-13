@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block title %}GDMFX | New Blog Post{% endblock %}
-{% block page_title %}Create New Announcement / Blog Post{% endblock %}
+{%block title%}GDMFX | New Blog Post{%endblock%}
+{%block page_title%}Create New Announcement / Blog Post{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card bg-dark border-secondary shadow-lg rounded-4">
@@ -13,23 +13,23 @@
             </div>
 
             <div class="card-body p-4">
-                <form method="POST" action="{% url 'create_post' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
+                <form method="POST" action="{%url 'create_post'%}" enctype="multipart/form-data">
+                    {%csrf_token%}
 
                     <div class="mb-4">
                         <label class="form-label text-secondary fw-bold small text-uppercase">Post Title</label>
-                        {{ form.title }}
-                        {% if form.title.errors %}
-                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
-                        {% endif %}
+                        {{form.title}}
+                        {%if form.title.errors%}
+                        <div class="text-danger small mt-1">{{form.title.errors}}</div>
+                        {%endif%}
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-secondary fw-bold small text-uppercase">Content</label>
-                        {{ form.content }}
-                        {% if form.content.errors %}
-                        <div class="text-danger small mt-1">{{ form.content.errors }}</div>
-                        {% endif %}
+                        {{form.content}}
+                        {%if form.content.errors%}
+                        <div class="text-danger small mt-1">{{form.content.errors}}</div>
+                        {%endif%}
                     </div>
 
                     <div class="mb-4">
@@ -42,9 +42,9 @@
 
                     <div class="mb-4">
                         <div class="form-check form-switch custom-switch">
-                            {{ form.allow_comments }}
+                            {{form.allow_comments}}
                             <label class="form-check-label text-white ms-2"
-                                for="{{ form.allow_comments.id_for_label }}">
+                                for="{{form.allow_comments.id_for_label}}">
                                 Enable Public Comments
                             </label>
                         </div>
@@ -54,7 +54,7 @@
                     <hr class="border-secondary my-4">
 
                     <div class="d-flex justify-content-end">
-                        <a href="{% url 'blog_list' %}"
+                        <a href="{%url 'blog_list'%}"
                             class="btn btn-outline-secondary rounded-pill fw-bold px-4 me-3">Cancel</a>
                         <button type="submit" class="btn btn-primary rounded-pill fw-bold px-5 shadow">
                             <i class="fa-solid fa-paper-plane me-2"></i>Publish Post
@@ -80,4 +80,4 @@
         border-color: var(--bs-primary);
     }
 </style>
-{% endblock content %}
+{%endblock content%}

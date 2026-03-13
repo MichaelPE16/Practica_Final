@@ -1,16 +1,16 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block page_title %}Inventory{% endblock %}
+{%block page_title%}Inventory{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h1 class="h3 mb-0 text-white fw-bold">Vehicle Inventory</h1>
         <p class="text-white small mb-0">Manage your available stock and status</p>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'new_vehicle' %}" class="btn btn-primary">
+        <a href="{%url 'new_vehicle'%}" class="btn btn-primary">
             <i class="fa-solid fa-plus me-2"></i>Add Vehicle
         </a>
     </div>
@@ -18,7 +18,7 @@
 
 <!-- Filters / Search Bar (Visual Placeholder for now, can be expanded) -->
 <form method="POST">
-    {% csrf_token %}
+    {%csrf_token%}
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card bg-dark border-secondary">
@@ -51,14 +51,14 @@
 
 <!-- Vehicle Grid -->
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for vehicle in vehicles.object_list %}
+    {%for vehicle in vehicles.object_list%}
     <div class="col">
-        <a href="{% url 'show_details' vehicle.id %}" class="text-decoration-none">
+        <a href="{%url 'show_details' vehicle.id%}" class="text-decoration-none">
             <div class="card card-premium h-100 card-hover">
                 <div class="card-header d-flex justify-content-between align-items-start border-bottom-0 pb-0">
                     <div>
                         <span
-                            class="badge {% if vehicle.status == 'Available' %}bg-success{% elif vehicle.status == 'Sold' %}bg-danger{% else %}bg-secondary{% endif %} rounded-pill mb-2">
+                            class="badge {%if vehicle.status == 'Available'%}bg-success{%elif vehicle.status == 'Sold'%}bg-danger{%else%}bg-secondary{%endif%} rounded-pill mb-2">
                             {{vehicle.status}}
                         </span>
                     </div>
@@ -80,55 +80,55 @@
             </div>
         </a>
     </div>
-    {% empty %}
+    {%empty%}
     <div class="col-12">
         <div class="alert alert-info d-flex align-items-center" role="alert">
             <i class="fa-solid fa-circle-info me-3 fs-4"></i>
             <div>
-                No vehicles found in the inventory. <a href="{% url 'new_vehicle' %}" class="alert-link">Add your first
+                No vehicles found in the inventory. <a href="{%url 'new_vehicle'%}" class="alert-link">Add your first
                     vehicle</a>.
             </div>
         </div>
     </div>
-    {% endfor %}
+    {%endfor%}
 </div>
 
 <!-- Pagination -->
 <nav aria-label="Page navigation" class="mt-5">
     <ul class="pagination justify-content-center">
-        {% if vehicles.has_previous %}
+        {%if vehicles.has_previous%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary"
-                href="?page={{ vehicles.previous_page_number }}">Previous</a>
+                href="?page={{vehicles.previous_page_number}}">Previous</a>
         </li>
-        {% else %}
+        {%else%}
         <li class="page-item disabled">
             <span class="page-link bg-dark text-white border-secondary">Previous</span>
         </li>
-        {% endif %}
+        {%endif%}
 
-        {% for i in vehicles.paginator.page_range %}
-        {% if vehicles.number == i %}
+        {%for i in vehicles.paginator.page_range%}
+        {%if vehicles.number == i%}
         <li class="page-item active" aria-current="page">
-            <span class="page-link border-primary">{{ i }}</span>
+            <span class="page-link border-primary">{{i}}</span>
         </li>
-        {% else %}
+        {%else%}
         <li class="page-item">
-            <a class="page-link bg-dark text-white border-secondary" href="?page={{ i }}">{{ i }}</a>
+            <a class="page-link bg-dark text-white border-secondary" href="?page={{i}}">{{i}}</a>
         </li>
-        {% endif %}
-        {% endfor %}
+        {%endif%}
+        {%endfor%}
 
-        {% if vehicles.has_next %}
+        {%if vehicles.has_next%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary"
-                href="?page={{ vehicles.next_page_number }}">Next</a>
+                href="?page={{vehicles.next_page_number}}">Next</a>
         </li>
-        {% else %}
+        {%else%}
         <li class="page-item disabled">
             <span class="page-link bg-dark text-white border-secondary">Next</span>
         </li>
-        {% endif %}
+        {%endif%}
     </ul>
 </nav>
-{% endblock %}
+{%endblock%}

@@ -1,6 +1,6 @@
-{% extends 'home.html' %}
-{% load static %}
-{% block content %}
+{%extends 'home.html'%}
+{%load static%}
+{%block content%}
 <section class="container my-5 py-4">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
@@ -12,18 +12,18 @@
     <!-- Search & Filter -->
     <div class="card bg-dark border-secondary shadow mb-5 rounded-4">
         <div class="card-body p-4">
-            <form method="GET" action="{% url 'blog_list' %}" class="row g-3">
+            <form method="GET" action="{%url 'blog_list'%}" class="row g-3">
                 <div class="col-md-5">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Search Title</label>
                     <input type="text" name="search"
                         class="form-control bg-black border-secondary text-light rounded-pill px-4"
-                        placeholder="Search..." value="{{ search_query }}">
+                        placeholder="Search..." value="{{search_query}}">
                 </div>
                 <div class="col-md-5">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Filter By Date</label>
                     <input type="text" name="date"
                         class="form-control bg-black border-secondary text-light rounded-pill px-4 flatdatepicker"
-                        placeholder="Select Date" value="{{ date_query }}">
+                        placeholder="Select Date" value="{{date_query}}">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold shadow">
@@ -36,112 +36,109 @@
 
     <!-- Blog Posts Grid -->
     <div class="row g-5">
-        {% for post in page_obj %}
+        {%for post in page_obj%}
         <div class="col-lg-8 mx-auto">
             <div class="card bg-dark border-secondary h-100 shadow-lg rounded-4 overflow-hidden">
                 <!-- Image Carousel -->
-                {% if post.images.all %}
-                <div id="carouselPost{{ post.id }}" class="carousel slide" data-bs-ride="carousel">
-                    {% if post.images.all|length > 1 %}
+                {%if post.images.all%}
+                <div id="carouselPost{{post.id}}" class="carousel slide" data-bs-ride="carousel">
+                    {%if post.images.all|length > 1%}
                     <!-- prettier-ignore -->
                     <div class="carousel-indicators">
-                        {% for image in post.images.all %}
-                        <button type="button" data-bs-target="#carouselPost{{ post.id }}"
-                            data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" {% endif %}>
+                        {%for image in post.images.all%}
+                        <button type="button" data-bs-target="#carouselPost{{post.id}}"
+                            data-bs-slide-to="{{forloop.counter0}}" {%if forloop.first%}class="active" {%endif%}>
                         </button>
-                        {% endfor %}
+                        {%endfor%}
                     </div>
-                    {% endif %}
+                    {%endif%}
 
                     <div class="carousel-inner">
-                        {% for image in post.images.all %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}" style="height: 400px;">
-                            <img src="{{ image.image.url }}" class="d-block w-100 h-100 object-fit-cover"
+                        {%for image in post.images.all%}
+                        <div class="carousel-item {%if forloop.first%}active{%endif%}" style="height: 400px;">
+                            <img src="{{image.image.url}}" class="d-block w-100 h-100 object-fit-cover"
                                 alt="Post Image">
                         </div>
-                        {% endfor %}
+                        {%endfor%}
                     </div>
 
-                    {% if post.images.all|length > 1 %}
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselPost{{ post.id }}"
+                    {%if post.images.all|length > 1%}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselPost{{post.id}}"
                         data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselPost{{ post.id }}"
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselPost{{post.id}}"
                         data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
-                    {% endif %}
+                    {%endif%}
                 </div>
-                {% endif %}
+                {%endif%}
 
                 <!-- Post Content -->
                 <div class="card-body p-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="badge bg-primary px-3 py-2 rounded-pill"><i
-                                class="fa-regular fa-calendar me-2"></i>{{ post.publication_date|date:"F j, Y" }}</span>
-                        <span class="text-secondary small fw-bold"><i class="fa-solid fa-user me-2"></i>{{
-                            post.author.username }}</span>
+                                class="fa-regular fa-calendar me-2"></i>{{post.publication_date|date:"F j, Y"}}</span>
+                        <span class="text-secondary small fw-bold"><i class="fa-solid fa-user me-2"></i>{{post.author.username}}</span>
                     </div>
 
-                    <h2 class="card-title text-white fw-bold mb-4">{{ post.title }}</h2>
+                    <h2 class="card-title text-white fw-bold mb-4">{{post.title}}</h2>
                     <p class="card-text text-secondary mb-4" style="line-height: 1.8;">
-                        {{ post.content|linebreaksbr }}
+                        {{post.content|linebreaksbr}}
                     </p>
 
                     <hr class="border-secondary my-5">
 
                     <!-- Comments Section -->
                     <div class="comments-section mt-4">
-                        <h4 class="text-white mb-4"><i class="fa-regular fa-comments me-2 text-primary"></i>Comments ({{
-                            post.comments.count }})</h4>
+                        <h4 class="text-white mb-4"><i class="fa-regular fa-comments me-2 text-primary"></i>Comments ({{post.comments.count}})</h4>
 
                         <!-- List Comments -->
                         <div class="mb-5">
-                            {% for comment in post.comments.all reversed %}
-                            {% if not comment.parent_comment %}
+                            {%for comment in post.comments.all reversed%}
+                            {%if not comment.parent_comment%}
                             <div class="bg-black border border-secondary p-4 rounded-4 mb-3 position-relative">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <strong class="text-white">{{ comment.author_email }}</strong>
-                                    <small class="text-secondary">{{ comment.created_at|date:"M j, g:i a" }}</small>
+                                    <strong class="text-white">{{comment.author_email}}</strong>
+                                    <small class="text-secondary">{{comment.created_at|date:"M j, g:i a"}}</small>
                                 </div>
-                                <p class="text-secondary mb-3">{{ comment.content }}</p>
+                                <p class="text-secondary mb-3">{{comment.content}}</p>
                                 <div class="d-flex justify-content-end mt-2">
                                     <button class="btn btn-sm btn-outline-danger rounded-pill heart-btn"
-                                        data-comment-id="{{ comment.id }}">
-                                        <i class="fa-solid fa-heart me-1"></i> <span class="heart-count">{{
-                                            comment.heart_reactions }}</span>
+                                        data-comment-id="{{comment.id}}">
+                                        <i class="fa-solid fa-heart me-1"></i> <span class="heart-count">{{comment.heart_reactions}}</span>
                                     </button>
                                 </div>
 
                                 <!-- Dealer Replies -->
-                                {% for reply in comment.replies.all %}
+                                {%for reply in comment.replies.all%}
                                 <div
                                     class="bg-dark border border-primary border-start-0 border-top-0 border-end-0 border-bottom-0 border-4 p-3 rounded-3 mt-3 ms-4 position-relative">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <strong class="text-primary"><i
                                                 class="fa-solid fa-shield-halved me-1"></i>Dealer Reply</strong>
-                                        <small class="text-secondary">{{ reply.created_at|date:"M j, g:i a" }}</small>
+                                        <small class="text-secondary">{{reply.created_at|date:"M j, g:i a"}}</small>
                                     </div>
-                                    <p class="text-light mb-1">{{ reply.content }}</p>
+                                    <p class="text-light mb-1">{{reply.content}}</p>
                                 </div>
-                                {% endfor %}
+                                {%endfor%}
                             </div>
-                            {% endif %}
-                            {% empty %}
+                            {%endif%}
+                            {%empty%}
                             <p class="text-secondary fst-italic">No comments yet. Be the first to share your thoughts!
                             </p>
-                            {% endfor %}
+                            {%endfor%}
                         </div>
 
                         <!-- Add Comment Form -->
-                        {% if post.allow_comments %}
+                        {%if post.allow_comments%}
                         <div class="bg-secondary bg-opacity-10 p-4 rounded-4 border border-secondary">
                             <h5 class="text-white mb-3">Leave a comment</h5>
-                            <form method="POST" action="{% url 'add_comment' post.id %}" class="comment-form">
-                                {% csrf_token %}
+                            <form method="POST" action="{%url 'add_comment' post.id%}" class="comment-form">
+                                {%csrf_token%}
                                 <div class="mb-3">
                                     <input type="email" name="email"
                                         class="form-control bg-black border-secondary text-light email-input"
@@ -158,51 +155,51 @@
                                 </button>
                             </form>
                         </div>
-                        {% else %}
+                        {%else%}
                         <div class="alert bg-black border-secondary text-secondary rounded-4">
                             <i class="fa-solid fa-lock me-2"></i>Comments are disabled for this post.
                         </div>
-                        {% endif %}
+                        {%endif%}
                     </div>
                 </div>
             </div>
         </div>
-        {% empty %}
+        {%empty%}
         <div class="col-12 text-center py-5">
             <i class="fa-solid fa-folder-open fa-3x text-secondary mb-3"></i>
             <h3 class="text-white">No posts found</h3>
             <p class="text-secondary">Try adjusting your search criteria or check back later.</p>
         </div>
-        {% endfor %}
+        {%endfor%}
     </div>
 
     <!-- Pagination -->
-    {% if page_obj.has_other_pages %}
+    {%if page_obj.has_other_pages%}
     <nav class="mt-5">
         <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
+            {%if page_obj.has_previous%}
             <li class="page-item"><a class="page-link bg-dark border-secondary text-light"
-                    href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&date={{ date_query }}">Previous</a>
+                    href="?page={{page_obj.previous_page_number}}&search={{search_query}}&date={{date_query}}">Previous</a>
             </li>
-            {% endif %}
+            {%endif%}
 
-            {% for i in page_obj.paginator.page_range %}
-            {% if page_obj.number == i %}
-            <li class="page-item active"><span class="page-link bg-primary border-primary">{{ i }}</span></li>
-            {% else %}
+            {%for i in page_obj.paginator.page_range%}
+            {%if page_obj.number == i%}
+            <li class="page-item active"><span class="page-link bg-primary border-primary">{{i}}</span></li>
+            {%else%}
             <li class="page-item"><a class="page-link bg-dark border-secondary text-light"
-                    href="?page={{ i }}&search={{ search_query }}&date={{ date_query }}">{{ i }}</a></li>
-            {% endif %}
-            {% endfor %}
+                    href="?page={{i}}&search={{search_query}}&date={{date_query}}">{{i}}</a></li>
+            {%endif%}
+            {%endfor%}
 
-            {% if page_obj.has_next %}
+            {%if page_obj.has_next%}
             <li class="page-item"><a class="page-link bg-dark border-secondary text-light"
-                    href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&date={{ date_query }}">Next</a>
+                    href="?page={{page_obj.next_page_number}}&search={{search_query}}&date={{date_query}}">Next</a>
             </li>
-            {% endif %}
+            {%endif%}
         </ul>
     </nav>
-    {% endif %}
+    {%endif%}
 </section>
 
 <!-- Toast for Invalid Email Validation -->
@@ -274,7 +271,7 @@
                 fetch(`/blog/comment/${commentId}/react/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-CSRFToken': '{{csrf_token}}',
                         'Content-Type': 'application/json'
                     }
                 })
@@ -295,4 +292,4 @@
         });
     });
 </script>
-{% endblock content %}
+{%endblock content%}

@@ -1,6 +1,6 @@
 {%extends 'base.html'%}
 
-{% block page_title %}Dashboard{% endblock %}
+{%block page_title%}Dashboard{%endblock%}
 
 {%block content%}
 <!-- Plotly.js -->
@@ -11,26 +11,26 @@
     <div class="col-12">
         <div class="card card-dark">
             <div class="card-body">
-                <form method="GET" action="{% url 'dashboard' %}" class="row g-3">
+                <form method="GET" action="{%url 'dashboard'%}" class="row g-3">
                     <div class="col-md-3">
                         <label for="start_date" class="form-label text-light">Start Date</label>
                         <input type="text" class="form-control bg-black text-light border-secondary datepicker"
-                            id="start_date" name="start_date" value="{{ start_date }}"
+                            id="start_date" name="start_date" value="{{start_date}}"
                             placeholder="Select start date...">
                     </div>
                     <div class="col-md-3">
                         <label for="end_date" class="form-label text-light">End Date</label>
                         <input type="text" class="form-control bg-black text-light border-secondary datepicker"
-                            id="end_date" name="end_date" value="{{ end_date }}" placeholder="Select end date...">
+                            id="end_date" name="end_date" value="{{end_date}}" placeholder="Select end date...">
                     </div>
                     <div class="col-md-3">
                         <label for="brand" class="form-label text-light">Brand</label>
                         <select class="form-select bg-black text-light border-secondary" id="brand" name="brand">
-                            <option value="All Brands" {% if 'All Brands' in active_brands_list %}selected {% endif %}>
+                            <option value="All Brands" {%if 'All Brands' in active_brands_list%}selected {%endif%}>
                                 All Brands</option>
-                            {% for b in all_brands %}
-                            <option value="{{ b }}" {% if b in active_brands_list %}selected{% endif %}>{{ b }}</option>
-                            {% endfor %}
+                            {%for b in all_brands%}
+                            <option value="{{b}}" {%if b in active_brands_list%}selected{%endif%}>{{b}}</option>
+                            {%endfor%}
                         </select>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
@@ -50,7 +50,7 @@
         <div class="card card-dark text-center h-100">
             <div class="card-body d-flex flex-column justify-content-center">
                 <h6 class="card-subtitle mb-2 text-secondary text-uppercase fw-bold">Total Sales (Closed)</h6>
-                <h2 class="text-light fw-bold mb-0">{{ total_sales }}</h2>
+                <h2 class="text-light fw-bold mb-0">{{total_sales}}</h2>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
         <div class="card card-dark text-center h-100">
             <div class="card-body d-flex flex-column justify-content-center">
                 <h6 class="card-subtitle mb-2 text-secondary text-uppercase fw-bold">Total Revenue</h6>
-                <h2 class="text-success fw-bold mb-0">${{ total_revenue }}</h2>
+                <h2 class="text-success fw-bold mb-0">${{total_revenue}}</h2>
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@
         <div class="card card-dark text-center h-100">
             <div class="card-body d-flex flex-column justify-content-center">
                 <h6 class="card-subtitle mb-2 text-secondary text-uppercase fw-bold">Active Leads</h6>
-                <h2 class="text-info fw-bold mb-0">{{ total_leads }}</h2>
+                <h2 class="text-info fw-bold mb-0">{{total_leads}}</h2>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
         <div class="card card-dark text-center h-100">
             <div class="card-body d-flex flex-column justify-content-center">
                 <h6 class="card-subtitle mb-2 text-secondary text-uppercase fw-bold">Inventory Value</h6>
-                <h2 class="text-warning fw-bold mb-0">${{ inventory_value }}</h2>
+                <h2 class="text-warning fw-bold mb-0">${{inventory_value}}</h2>
             </div>
         </div>
     </div>
@@ -85,22 +85,22 @@
     <div class="col-md-8">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {% if sales_trend_html %}
-                {{ sales_trend_html|safe }}
-                {% else %}
+                {%if sales_trend_html%}
+                {{sales_trend_html|safe}}
+                {%else%}
                 <p class="text-secondary text-center my-5">Not enough data for Revenue Trend.</p>
-                {% endif %}
+                {%endif%}
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {% if lead_status_html %}
-                {{ lead_status_html|safe }}
-                {% else %}
+                {%if lead_status_html%}
+                {{lead_status_html|safe}}
+                {%else%}
                 <p class="text-secondary text-center my-5">Not enough data for Lead Status.</p>
-                {% endif %}
+                {%endif%}
             </div>
         </div>
     </div>
@@ -111,25 +111,25 @@
     <div class="col-md-6">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {% if scatter_html %}
-                {{ scatter_html|safe }}
-                {% else %}
+                {%if scatter_html%}
+                {{scatter_html|safe}}
+                {%else%}
                 <p class="text-secondary text-center my-5">Not enough data for Price vs Mileage.</p>
-                {% endif %}
+                {%endif%}
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {% if inventory_html %}
-                {{ inventory_html|safe }}
-                {% else %}
+                {%if inventory_html%}
+                {{inventory_html|safe}}
+                {%else%}
                 <p class="text-secondary text-center my-5">Not enough data for Inventory by Brand.</p>
-                {% endif %}
+                {%endif%}
             </div>
         </div>
     </div>
 </div>
 
-{% endblock%}
+{%endblock%}

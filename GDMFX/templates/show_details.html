@@ -1,26 +1,25 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block page_title %}Vehicle Details{% endblock %}
+{%block page_title%}Vehicle Details{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'inventory' %}"
+                <li class="breadcrumb-item"><a href="{%url 'inventory'%}"
                         class="text-primary text-decoration-none">Inventory</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">{{ vehicle.brand }} {{ vehicle.model
-                    }}</li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{vehicle.brand}} {{vehicle.model}}</li>
             </ol>
         </nav>
-        <h1 class="h2 mb-0 text-white fw-bold">{{ vehicle.brand }} {{ vehicle.model }}</h1>
+        <h1 class="h2 mb-0 text-white fw-bold">{{vehicle.brand}} {{vehicle.model}}</h1>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'inventory' %}" class="btn btn-outline-secondary me-2 rounded-pill">
+        <a href="{%url 'inventory'%}" class="btn btn-outline-secondary me-2 rounded-pill">
             <i class="fa-solid fa-arrow-left me-2"></i>Back
         </a>
-        <a href="{% url 'update_vehicle' vehicle.id %}" class="btn btn-primary rounded-pill px-4">
+        <a href="{%url 'update_vehicle' vehicle.id%}" class="btn btn-primary rounded-pill px-4">
             <i class="fa-solid fa-pen-to-square me-2"></i>Edit Vehicle
         </a>
     </div>
@@ -38,33 +37,31 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Brand</label>
-                        <p class="text-white fs-5 mb-0">{{ vehicle.brand }}</p>
+                        <p class="text-white fs-5 mb-0">{{vehicle.brand}}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Model</label>
-                        <p class="text-white fs-5 mb-0">{{ vehicle.model }}</p>
+                        <p class="text-white fs-5 mb-0">{{vehicle.model}}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Condition</label>
                         <span
-                            class="badge {% if vehicle.condition == 'New' %}bg-success{% else %}bg-info text-dark{% endif %} rounded-pill px-3 py-2">
-                            {{ vehicle.get_condition_display }}
+                            class="badge {%if vehicle.condition == 'New'%}bg-success{%else%}bg-info text-dark{%endif%} rounded-pill px-3 py-2">
+                            {{vehicle.get_condition_display}}
                         </span>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Mileage</label>
-                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-road me-2 text-secondary"></i>{{
-                            vehicle.km|default:"0" }} km</p>
+                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-road me-2 text-secondary"></i>{{vehicle.km|default:"0"}} km</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Color</label>
-                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-palette me-2 text-secondary"></i>{{
-                            vehicle.color }}</p>
+                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-palette me-2 text-secondary"></i>{{vehicle.color}}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">VIN
                             Number</label>
-                        <p class="text-white font-monospace fs-5 mb-0">{{ vehicle.vin }}</p>
+                        <p class="text-white font-monospace fs-5 mb-0">{{vehicle.vin}}</p>
                     </div>
                 </div>
             </div>
@@ -80,12 +77,12 @@
                     <div class="col-md-6 border-end border-secondary">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Acquisition
                             Cost</label>
-                        <h3 class="text-danger fw-bold mb-0">${{ vehicle.price_adquisition|default:"0.00" }}</h3>
+                        <h3 class="text-danger fw-bold mb-0">${{vehicle.price_adquisition|default:"0.00"}}</h3>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Target Selling
                             Price</label>
-                        <h3 class="text-success fw-bold mb-0">${{ vehicle.selling_price|default:"0.00" }}</h3>
+                        <h3 class="text-success fw-bold mb-0">${{vehicle.selling_price|default:"0.00"}}</h3>
                     </div>
                 </div>
             </div>
@@ -98,15 +95,15 @@
             <div class="card-body p-4">
                 <div class="text-center mb-4">
                     <div class="status-indicator mb-3">
-                        {% if vehicle.status == 'Available' %}
+                        {%if vehicle.status == 'Available'%}
                         <div class="display-4 text-success"><i class="fa-solid fa-circle-check"></i></div>
                         <h4 class="text-white fw-bold mt-2">Available</h4>
                         <p class="text-secondary small">Ready for sale</p>
-                        {% else %}
+                        {%else%}
                         <div class="display-4 text-danger"><i class="fa-solid fa-circle-xmark"></i></div>
                         <h4 class="text-white fw-bold mt-2">Sold</h4>
                         <p class="text-secondary small">Asset liquidated</p>
-                        {% endif %}
+                        {%endif%}
                     </div>
                     <hr class="border-secondary">
                 </div>
@@ -114,8 +111,7 @@
                 <div class="mb-3">
                     <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Integration
                         Date</label>
-                    <p class="text-white mb-0"><i class="fa-regular fa-calendar-days me-2 text-primary"></i>{{
-                        vehicle.integration_date|date:"F j, Y"|default:"Not set" }}</p>
+                    <p class="text-white mb-0"><i class="fa-regular fa-calendar-days me-2 text-primary"></i>{{vehicle.integration_date|date:"F j, Y"|default:"Not set"}}</p>
                 </div>
 
                 <div class="mb-0">
@@ -125,7 +121,7 @@
                             style="width: 24px; height: 24px;">
                             <i class="fa-solid fa-user text-white" style="font-size: 0.7rem;"></i>
                         </div>
-                        <span class="text-white">{{ vehicle.user.username }}</span>
+                        <span class="text-white">{{vehicle.user.username}}</span>
                     </div>
                 </div>
             </div>
@@ -137,7 +133,7 @@
                 <div class="d-flex justify-content-between mb-2">
                     <span>Asset Role:</span>
                     <span class="fw-bold text-dark bg-white rounded px-2 small">
-                        {% if vehicle.status == 'Available' %}Active Asset{% else %}Liquidated Asset{% endif %}
+                        {%if vehicle.status == 'Available'%}Active Asset{%else%}Liquidated Asset{%endif%}
                     </span>
                 </div>
                 <p class="small opacity-75 mb-0">Values are based on initial appraisal and market targeting.</p>
@@ -153,4 +149,4 @@
         color: rgba(255, 255, 255, 0.3);
     }
 </style>
-{% endblock %}
+{%endblock%}

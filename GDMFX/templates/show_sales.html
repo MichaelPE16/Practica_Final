@@ -1,25 +1,25 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block page_title %}Sale Overview{% endblock %}
+{%block page_title%}Sale Overview{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="{% url 'sales' %}"
+                <li class="breadcrumb-item"><a href="{%url 'sales'%}"
                         class="text-primary text-decoration-none">Sales</a></li>
                 <li class="breadcrumb-item active text-white" aria-current="page">Sale Details</li>
             </ol>
         </nav>
-        <h1 class="h2 mb-0 text-white fw-bold">Sale: {{ sales.lead.name }}</h1>
+        <h1 class="h2 mb-0 text-white fw-bold">Sale: {{sales.lead.name}}</h1>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'sales' %}" class="btn btn-outline-secondary me-2 rounded-pill">
+        <a href="{%url 'sales'%}" class="btn btn-outline-secondary me-2 rounded-pill">
             <i class="fa-solid fa-arrow-left me-2"></i>Back
         </a>
-        <a href="{% url 'update_sale' sales.id %}" class="btn btn-primary rounded-pill px-4">
+        <a href="{%url 'update_sale' sales.id%}" class="btn btn-primary rounded-pill px-4">
             <i class="fa-solid fa-arrows-rotate me-2"></i>Advance Phase
         </a>
     </div>
@@ -48,33 +48,33 @@
                 <h5 class="card-title mb-0 text-white"><i
                         class="fa-solid fa-chart-line me-2 text-primary"></i>Negotiation Progress</h5>
                 <span
-                    class="badge {% if sales.phase == 'Closed' %}bg-success{% elif sales.phase == 'Test Drive' %}bg-warning text-dark{% else %}bg-primary{% endif %} rounded-pill px-3">
-                    {{ sales.get_phase_display }}
+                    class="badge {%if sales.phase == 'Closed'%}bg-success{%elif sales.phase == 'Test Drive'%}bg-warning text-dark{%else%}bg-primary{%endif%} rounded-pill px-3">
+                    {{sales.get_phase_display}}
                 </span>
             </div>
             <div class="card-body p-4">
                 <div class="row text-center mb-5">
                     <div class="col-4">
                         <div
-                            class="phase-step {% if sales.phase != 'Test Drive' %}completed text-success{% else %}active text-primary{% endif %}">
+                            class="phase-step {%if sales.phase != 'Test Drive'%}completed text-success{%else%}active text-primary{%endif%}">
                             <i
-                                class="fa-solid {% if sales.phase != 'Test Drive' %}fa-circle-check{% else %}fa-circle-dot{% endif %} fs-4 mb-2"></i>
+                                class="fa-solid {%if sales.phase != 'Test Drive'%}fa-circle-check{%else%}fa-circle-dot{%endif%} fs-4 mb-2"></i>
                             <p class="small fw-bold mb-0">Test Drive</p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div
-                            class="phase-step {% if sales.phase == 'Closed' %}completed text-success{% elif sales.phase == 'In progress' %}active text-warning{% else %}pending text-secondary{% endif %}">
+                            class="phase-step {%if sales.phase == 'Closed'%}completed text-success{%elif sales.phase == 'In progress'%}active text-warning{%else%}pending text-secondary{%endif%}">
                             <i
-                                class="fa-solid {% if sales.phase == 'Closed' %}fa-circle-check{% elif sales.phase == 'In progress' %}fa-circle-dot{% else %}fa-circle{% endif %} fs-4 mb-2"></i>
+                                class="fa-solid {%if sales.phase == 'Closed'%}fa-circle-check{%elif sales.phase == 'In progress'%}fa-circle-dot{%else%}fa-circle{%endif%} fs-4 mb-2"></i>
                             <p class="small fw-bold mb-0">In Progress</p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div
-                            class="phase-step {% if sales.phase == 'Closed' %}active text-success{% else %}pending text-secondary{% endif %}">
+                            class="phase-step {%if sales.phase == 'Closed'%}active text-success{%else%}pending text-secondary{%endif%}">
                             <i
-                                class="fa-solid {% if sales.phase == 'Closed' %}fa-circle-dot{% else %}fa-circle{% endif %} fs-4 mb-2"></i>
+                                class="fa-solid {%if sales.phase == 'Closed'%}fa-circle-dot{%else%}fa-circle{%endif%} fs-4 mb-2"></i>
                             <p class="small fw-bold mb-0">Closed</p>
                         </div>
                     </div>
@@ -89,35 +89,34 @@
                                 <i class="fa-solid fa-user-tie text-primary fs-3"></i>
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-0">{{ sales.lead.name }}</h6>
-                                <p class="text-secondary small mb-0">{{ sales.lead.source }}</p>
+                                <h6 class="text-white fw-bold mb-0">{{sales.lead.name}}</h6>
+                                <p class="text-secondary small mb-0">{{sales.lead.source}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-2">Negotiation
                             Vehicle</label>
-                        {% if sales.vehicle_sold %}
+                        {%if sales.vehicle_sold%}
                         <div class="d-flex align-items-center">
                             <div class="bg-secondary bg-opacity-25 rounded p-2 me-3">
                                 <i class="fa-solid fa-car text-success fs-3"></i>
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-0">{{ sales.vehicle_sold.brand }} {{
-                                    sales.vehicle_sold.model }}</h6>
-                                <p class="text-secondary font-monospace small mb-0">{{ sales.vehicle_sold.vin }}</p>
+                                <h6 class="text-white fw-bold mb-0">{{sales.vehicle_sold.brand}} {{sales.vehicle_sold.model}}</h6>
+                                <p class="text-secondary font-monospace small mb-0">{{sales.vehicle_sold.vin}}</p>
                             </div>
                         </div>
-                        {% else %}
+                        {%else%}
                         <p class="text-secondary fst-italic py-2">No vehicle assigned to this sale</p>
-                        {% endif %}
+                        {%endif%}
                     </div>
                 </div>
             </div>
             <div class="progress rounded-0" style="height: 4px;">
-                <div class="progress-bar {% if sales.phase == 'Closed' %}bg-success w-phase-closed{% elif sales.phase == 'In progress' %}bg-warning w-phase-progress{% else %}bg-primary w-phase-test{% endif %}"
+                <div class="progress-bar {%if sales.phase == 'Closed'%}bg-success w-phase-closed{%elif sales.phase == 'In progress'%}bg-warning w-phase-progress{%else%}bg-primary w-phase-test{%endif%}"
                     role="progressbar"
-                    aria-valuenow="{% if sales.phase == 'Closed' %}100{% elif sales.phase == 'In progress' %}66{% elif sales.phase == 'Test Drive' %}33{% else %}0{% endif %}"
+                    aria-valuenow="{%if sales.phase == 'Closed'%}100{%elif sales.phase == 'In progress'%}66{%elif sales.phase == 'Test Drive'%}33{%else%}0{%endif%}"
                     aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
@@ -132,14 +131,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="text-center">
                             <p class="text-white small mb-0 fw-bold">Started</p>
-                            <p class="text-secondary extra-small">{{ sales.created_at|date:"M d" }}</p>
+                            <p class="text-secondary extra-small">{{sales.created_at|date:"M d"}}</p>
                         </div>
                         <div class="bg-secondary opacity-25" style="width: 40px; height: 1px;"></div>
                         <div class="text-center">
                             <p class="text-white small mb-0 fw-bold">Closed</p>
                             <p
-                                class="{% if sales.selling_date %}text-success{% else %}text-secondary{% endif %} extra-small">
-                                {{ sales.selling_date|date:"M d"|default:"TBD" }}
+                                class="{%if sales.selling_date%}text-success{%else%}text-secondary{%endif%} extra-small">
+                                {{sales.selling_date|date:"M d"|default:"TBD"}}
                             </p>
                         </div>
                     </div>
@@ -153,7 +152,7 @@
                             <i class="fa-solid fa-briefcase text-white small"></i>
                         </div>
                         <div>
-                            <p class="text-white mb-0 fw-bold">{{ sales.user.username }}</p>
+                            <p class="text-white mb-0 fw-bold">{{sales.user.username}}</p>
                             <p class="text-secondary extra-small mb-0">Senior Representative</p>
                         </div>
                     </div>
@@ -190,4 +189,4 @@
         color: rgba(255, 255, 255, 0.3);
     }
 </style>
-{% endblock %}
+{%endblock%}

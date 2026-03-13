@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
-{% load static %}
+{%extends 'base.html'%}
+{%load static%}
 
-{% block page_title %}Meetings & Appointments{% endblock %}
+{%block page_title%}Meetings & Appointments{%endblock%}
 
-{% block content %}
+{%block content%}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h1 class="h3 mb-0 text-white fw-bold">My Meetings</h1>
@@ -13,7 +13,7 @@
 
 <!-- Search & Filters -->
 <form method="POST">
-    {% csrf_token %}
+    {%csrf_token%}
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card bg-dark border-secondary">
@@ -25,7 +25,7 @@
                                         class="fa-solid fa-magnifying-glass"></i></span>
                                 <input type="text" class="form-control bg-dark text-light border-secondary"
                                     placeholder="Search by name or email..." name="search"
-                                    value="{{ request.POST.search }}">
+                                    value="{{request.POST.search}}">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -52,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for meet in meetings %}
+                {%for meet in meetings%}
                 <tr>
                     <td class="ps-4">
                         <div class="d-flex align-items-center">
@@ -62,29 +62,29 @@
                             </div>
                             <div>
                                 <h6 class="mb-0 text-white">{{meet.name}}</h6>
-                                <small class="text-white">{{ meet.id }}</small>
+                                <small class="text-white">{{meet.id}}</small>
                             </div>
                         </div>
                     </td>
                     <td>
                         <div class="text-light">
-                            <i class="fa-regular fa-calendar-check me-1 text-primary"></i> {{ meet.date|date:"F j, Y" }}
+                            <i class="fa-regular fa-calendar-check me-1 text-primary"></i> {{meet.date|date:"F j, Y"}}
                         </div>
                         <div class="small text-white">
-                            <i class="fa-regular fa-clock me-1"></i> {{ meet.date|date:"g:i A" }}
+                            <i class="fa-regular fa-clock me-1"></i> {{meet.date|date:"g:i A"}}
                         </div>
                     </td>
                     <td>
                         <div class="small text-white"><i class="fa-solid fa-envelope me-1 text-secondary"></i>
-                            {{meet.email }} </div>
+                            {{meet.email}} </div>
                         <div class="small text-white"><i class="fa-solid fa-phone me-1 text-secondary"></i>
-                            {{meet.phone }}</div>
+                            {{meet.phone}}</div>
                     </td>
                     <td>
                         <p class="small text-white mb-0"
                             style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                            title="{{ meet.message }}">
-                            {{ meet.message }}
+                            title="{{meet.message}}">
+                            {{meet.message}}
                         </p>
                     </td>
                     <td class="text-end pe-4">
@@ -92,7 +92,7 @@
                             class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 pb-1">Scheduled</span>
                     </td>
                 </tr>
-                {% empty %}
+                {%empty%}
                 <tr>
                     <td colspan="5" class="text-center py-5">
                         <div class="text-white">
@@ -101,33 +101,33 @@
                         </div>
                     </td>
                 </tr>
-                {% endfor %}
+                {%endfor%}
             </tbody>
         </table>
     </div>
 </div>
 
 <!-- Pagination -->
-{% if meetings.paginator.num_pages > 1 %}
+{%if meetings.paginator.num_pages > 1%}
 <nav aria-label="Page navigation" class="mt-4">
     <ul class="pagination justify-content-center">
-        {% if meetings.has_previous %}
+        {%if meetings.has_previous%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary"
                 href="?page={{meetings.previous_page_number}}">Previous</a>
         </li>
-        {% endif %}
+        {%endif%}
 
         <li class="page-item active"><span
                 class="page-link border-primary bg-primary text-white">{{meetings.number}}</span></li>
 
-        {% if meetings.has_next %}
+        {%if meetings.has_next%}
         <li class="page-item">
             <a class="page-link bg-dark text-white border-secondary" href="?page={{meetings.next_page_number}}">Next</a>
         </li>
-        {% endif %}
+        {%endif%}
     </ul>
 </nav>
-{% endif %}
+{%endif%}
 
-{% endblock %}
+{%endblock%}

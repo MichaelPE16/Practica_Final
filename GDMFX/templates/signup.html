@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{%extends 'base.html'%}
 
-{% block auth_content %}
+{%block auth_content%}
 <div class="row w-100 justify-content-center">
     <div class="col-md-6 col-lg-5 col-xl-4">
         <div class="card card-premium border-0">
@@ -10,14 +10,14 @@
                     <p class="text-white small">Create your dealer account today</p>
                 </div>
 
-                {% if error %}
+                {%if error%}
                 <div class="alert alert-danger text-center mb-4 text-small" role="alert">
-                    <i class="fa-solid fa-circle-exclamation me-2"></i> {{ error }}
+                    <i class="fa-solid fa-circle-exclamation me-2"></i> {{error}}
                 </div>
-                {% endif %}
+                {%endif%}
 
                 <form method="POST">
-                    {% csrf_token %}
+                    {%csrf_token%}
 
                     <div class="mb-3">
                         <label class="form-label" for="username">Username</label>
@@ -57,11 +57,11 @@
 
                     <div class="text-center mt-4">
                         <span class="text-white">Already have an account?</span>
-                        <a href="{% url 'login' %}" class="fw-bold ms-1">Login</a>
+                        <a href="{%url 'login'%}" class="fw-bold ms-1">Login</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+{%endblock%}

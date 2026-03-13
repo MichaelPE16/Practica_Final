@@ -4,7 +4,7 @@
         <p class="text-white small mb-0">Experience premium service at our dealership</p>
     </div>
     <div class="card-body p-4 p-md-5">
-        {% if success %}
+        {%if success%}
         <div class="text-center py-5">
             <div class="mb-4">
                 <i class="fa-solid fa-circle-check text-success display-1"></i>
@@ -12,69 +12,69 @@
             <h3 class="text-white mb-3">Appointment Confirmed!</h3>
             <p class="text-secondary mb-4">Thank you for choosing GDMFX. One of our agents will contact you shortly to
                 confirm the details.</p>
-            <a href="{% url 'home' %}" class="btn btn-primary px-4 rounded-pill">Return Home</a>
+            <a href="{%url 'home'%}" class="btn btn-primary px-4 rounded-pill">Return Home</a>
         </div>
-        {% else %}
+        {%else%}
         <form method="post" novalidate>
-            {% csrf_token %}
+            {%csrf_token%}
 
-            {% if form.non_field_errors %}
+            {%if form.non_field_errors%}
             <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                {%for error in form.non_field_errors%}{{error}}{%endfor%}
             </div>
-            {% endif %}
+            {%endif%}
 
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Full Name</label>
-                    {{ form.name }}
-                    {{ form.name.errors }}
+                    {{form.name}}
+                    {{form.name.errors}}
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Phone Number</label>
-                    {{ form.phone }}
-                    {{ form.phone.errors }}
+                    {{form.phone}}
+                    {{form.phone.errors}}
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Email Address</label>
-                    {{ form.email }}
-                    {{ form.email.errors }}
+                    {{form.email}}
+                    {{form.email.errors}}
                 </div>
 
                 <div class="col-12">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Preferred Dealer /
                         Agent</label>
-                    {{ form.user }}
-                    {{ form.user.errors }}
+                    {{form.user}}
+                    {{form.user.errors}}
                 </div>
 
                 <div class="col-12">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Requested Date & Time</label>
-                    {{ form.date }}
-                    {{ form.date.errors }}
+                    {{form.date}}
+                    {{form.date.errors}}
                 </div>
 
                 <div class="col-12">
                     <label class="form-label text-secondary small text-uppercase fw-bold">Your Message
                         (Optional)</label>
-                    {{ form.message }}
-                    {{ form.message.errors }}
+                    {{form.message}}
+                    {{form.message.errors}}
                 </div>
 
                 <div class="col-12 mt-4">
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-bold text-uppercase tracking-wider">
                         Book Appointment Now
                     </button>
-                    <a href="{% url 'home' %}"
+                    <a href="{%url 'home'%}"
                         class="btn btn-link w-100 mt-2 text-secondary text-decoration-none small">
                         <i class="fa-solid fa-arrow-left me-1"></i> Back to Home
                     </a>
                 </div>
             </div>
         </form>
-        {% endif %}
+        {%endif%}
     </div>
 </div>
 

@@ -1,7 +1,7 @@
-{% extends 'home.html' %}
-{% load static %}
+{%extends 'home.html'%}
+{%load static%}
 
-{% block content %}
+{%block content%}
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -13,18 +13,18 @@
                 </div>
 
                 <div class="card-body p-5">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show"
+                    {%if messages%}
+                    {%for message in messages%}
+                    <div class="alert {%if message.tags == 'success'%}alert-success{%else%}alert-danger{%endif%} alert-dismissible fade show"
                         role="alert">
-                        {{ message }}
+                        {{message}}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    {% endfor %}
-                    {% endif %}
+                    {%endfor%}
+                    {%endif%}
 
-                    <form action="{% url 'contact' %}" method="POST">
-                        {% csrf_token %}
+                    <form action="{%url 'contact'%}" method="POST">
+                        {%csrf_token%}
 
                         <div class="mb-4">
                             <label for="name" class="form-label text-white fw-bold">Full Name</label>
@@ -100,4 +100,4 @@
         color: #fff;
     }
 </style>
-{% endblock content %}
+{%endblock content%}
