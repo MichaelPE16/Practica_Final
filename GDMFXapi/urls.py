@@ -17,4 +17,13 @@ urlpatterns = [
 
     path('sales/', views.sales_list, name='sales-list'),
     path('sales/<int:pk>/', views.sales_detail, name='sales-detail'),
+
+    path('blogs/', views.blogs_list, name='blogs-list'),
+    path('blogs/<int:pk>/', views.blogs_detail, name='blogs-detail'),
+
+    path('postimages/', views.postimages_list, name='postimages-list'),
+    path('postimages/<int:pk>/', views.postimages_detail, name='postimages-detail'),
+
+    path('postcomments/', views.postcomments_list, name='postcomments-list'),
+    path('postcomments/<int:pk>/', views.postcomments_detail, name='postcomments-detail'),
 ]

@@ -10,6 +10,7 @@ urlpatterns =[
     path('inventory', views.inventory, name='inventory'),
     path('inventory_new', views.new_vehicle, name='new_vehicle'),
     path('inventory_update/<int:id_vehicle>', views.update_vehicle, name='update_vehicle'),
+    path('delete_vehicle_image/<int:image_id>', views.delete_vehicle_image, name='delete_vehicle_image'),
     path('leads', views.leads, name='leads'),
     path('leads_new', views.new_lead, name='new_lead'),
     path('leads_update/<int:id_lead>', views.update_lead, name='update_lead'),
@@ -32,6 +33,8 @@ urlpatterns =[
     path('appt', views.appt, name='appt'),
     path('aboutus', views.aboutus, name='aboutus'),
     path('contact/', views.contact_view, name='contact'),
+    path('settings/', views.user_settings, name='user_settings'),
+    path('manage_users/', views.manage_users, name='manage_users'),
     #creating the links for update: 
     # path('update_lead/<int:id_lead>', views.update_lead, name='update_lead'),
     

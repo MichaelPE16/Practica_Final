@@ -10,7 +10,8 @@
             <ol class="breadcrumb mb-2">
                 <li class="breadcrumb-item"><a href="{%url 'inventory'%}"
                         class="text-primary text-decoration-none">Inventory</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">{{vehicle.brand}} {{vehicle.model}}</li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{vehicle.brand}} {{vehicle.model}}
+                </li>
             </ol>
         </nav>
         <h1 class="h2 mb-0 text-white fw-bold">{{vehicle.brand}} {{vehicle.model}}</h1>
@@ -52,11 +53,13 @@
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Mileage</label>
-                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-road me-2 text-secondary"></i>{{vehicle.km|default:"0"}} km</p>
+                        <p class="text-white fs-5 mb-0"><i
+                                class="fa-solid fa-road me-2 text-secondary"></i>{{vehicle.km|default:"0"}} km</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Color</label>
-                        <p class="text-white fs-5 mb-0"><i class="fa-solid fa-palette me-2 text-secondary"></i>{{vehicle.color}}</p>
+                        <p class="text-white fs-5 mb-0"><i
+                                class="fa-solid fa-palette me-2 text-secondary"></i>{{vehicle.color}}</p>
                     </div>
                     <div class="col-md-6">
                         <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">VIN
@@ -111,7 +114,9 @@
                 <div class="mb-3">
                     <label class="text-white small text-uppercase fw-bold opacity-50 d-block mb-1">Integration
                         Date</label>
-                    <p class="text-white mb-0"><i class="fa-regular fa-calendar-days me-2 text-primary"></i>{{vehicle.integration_date|date:"F j, Y"|default:"Not set"}}</p>
+                    <p class="text-white mb-0"><i
+                            class="fa-regular fa-calendar-days me-2 text-primary"></i>{{vehicle.integration_date|date:"F
+                        j, Y"|default:"Not set"}}</p>
                 </div>
 
                 <div class="mb-0">
@@ -140,6 +145,74 @@
             </div>
             <i class="fa-solid fa-chart-line position-absolute bottom-0 end-0 opacity-25 p-3"
                 style="font-size: 5rem; transform: translateY(20px);"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <!-- Image Gallery Section -->
+    <div class="col-12">
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary d-flex justify-content-between align-items-center py-3">
+                <h5 class="card-title mb-0 text-white"><i class="fa-solid fa-images me-2 text-primary"></i>Vehicle
+                    Gallery</h5>
+            </div>
+            <div class="card-body p-4">
+                {% if vehicle.images.all %}
+                <!-- Bootstrap Carousel -->
+                <div id="vehicleCarousel" class="carousel slide mb-4 rounded overflow-hidden shadow-sm"
+                    data-bs-ride="carousel" style="max-height: 600px;">
+                    <div class="carousel-inner h-100 bg-black">
+                        {% for img in vehicle.images.all %}
+                        <div
+                            class="carousel-item {% if forloop.first %}active{% endif %} h-100 position-relative text-center">
+                            <img src="{{ img.image.url }}" class="d-inline-block object-fit-contain" alt="Vehicle image"
+                                style="max-height: 600px; width: 100%;">
+                            <div class="position-absolute top-0 end-0 p-3 z-3">
+                                <a href="{% url 'delete_vehicle_image' img.id %}" class="btn btn-danger btn-sm shadow"
+                                    title="Delete Image">
+                                    <i class="fa-solid fa-trash me-1"></i>Delete
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if vehicle.images.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#vehicleCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon shadow p-2 rounded-circle bg-dark"
+                            aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#vehicleCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon shadow p-2 rounded-circle bg-dark"
+                            aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="alert alert-secondary bg-transparent border-secondary text-center py-5">
+                    <i class="fa-solid fa-camera fa-3x text-muted mb-3"></i>
+                    <p class="mb-0 text-muted">No images have been uploaded for this vehicle yet.</p>
+                </div>
+                {% endif %}
+
+                <!-- Upload Form -->
+                <form method="post" action="{% url 'show_details' vehicle.id %}" enctype="multipart/form-data"
+                    class="mt-4 border-top border-secondary pt-4">
+                    {% csrf_token %}
+                    <label for="images" class="form-label text-white small text-uppercase fw-bold opacity-75">Upload New
+                        Images</label>
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-white border-secondary" type="file" id="images"
+                            name="images" accept="image/*" multiple required>
+                        <button class="btn btn-primary px-4" type="submit"><i
+                                class="fa-solid fa-upload me-2"></i>Upload</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from GDMFX.models import Leads, Vehicles, Contract, Meets, Sales
+from GDMFX.models import Leads, Vehicles, Contract, Meets, Sales, BlogPost, PostImage, PostComment
 
 class LeadsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,4 +24,19 @@ class MeetsSerializer(serializers.ModelSerializer):
 class SalesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sales
+        fields = '__all__'
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields = '__all__'
+
+class PostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostImage
+        fields = '__all__'
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostComment
         fields = '__all__'

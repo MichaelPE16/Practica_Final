@@ -15,7 +15,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.http import JsonResponse
 from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform, BlogPostForm
-from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComment, PostImage
+from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComment, PostImage, VehicleImage, UserProfile
 
 ITEMS_PER_PAGE = 10
 
@@ -25,16 +25,19 @@ def home(request):
 
 @login_required
 def contract(request): 
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    base_qs = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
+
     if request.method == "POST": 
         search =request.POST['search']
         idcontact = request.POST['ID']
-        contract = Contract.objects.filter(user=request.user, customer_name__contains = search, id_document__contains =idcontact )
+        contract = base_qs.filter(customer_name__contains = search, id_document__contains =idcontact )
         paginator = Paginator(contract, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'contract.html',{'contracts': page_obj} )
     else: 
-        contract = Contract.objects.filter(user=request.user)
+        contract = base_qs
     # Pagination
     paginator = Paginator(contract, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -48,11 +51,13 @@ def dashboard(request):
     end_date = request.GET.get('end_date')
     brand_filter = request.GET.get('brand')
 
-    # Base QuerySets
-    sales_qs = Sales.objects.filter(user=request.user)
-    vehicles_qs = Vehicles.objects.filter(user=request.user)
-    leads_qs = Leads.objects.filter(user=request.user)
-    contracts_qs = Contract.objects.filter(user=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+
+    # Base QuerySets (Inventory and Leads: All can see. Sales and Contracts: RBAC)
+    sales_qs = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
+    contracts_qs = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
+    vehicles_qs = Vehicles.objects.all()
+    leads_qs = Leads.objects.all()
 
     # Apply date filters if provided
     if start_date:
@@ -135,7 +140,7 @@ def dashboard(request):
         fig.update_layout(**dark_layout)
         inventory_html = plot(fig, output_type='div', include_plotlyjs=False)
         
-    all_brands = Vehicles.objects.filter(user=request.user).values_list('brand', flat=True).distinct()
+    all_brands = Vehicles.objects.values_list('brand', flat=True).distinct()
 
     context = {
         'total_sales': total_sales,
@@ -156,23 +161,25 @@ def dashboard(request):
 
 @login_required
 def inventory(request): 
+    base_qs = Vehicles.objects.all()
+
     if request.method == 'POST': 
         search = request.POST['search']
         status = request.POST['status']
-        vehicle = Vehicles.objects.filter(user=request.user, brand__contains = search, status = status)
+        vehicle = base_qs.filter(brand__contains = search, status = status)
         if status == 'All Statuses':
-            vehicle = Vehicles.objects.filter(user=request.user, brand__contains = search)
+            vehicle = base_qs.filter(brand__contains = search)
         if search == '':
-            vehicle = Vehicles.objects.filter(user=request.user, status = status)
+            vehicle = base_qs.filter(status = status)
         if search == '' and status == 'All Statuses':
-            vehicle = Vehicles.objects.filter(user=request.user)
+            vehicle = base_qs.all()
         paginator = Paginator(vehicle, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'inventory.html',
         {'vehicles': page_obj} )
     else: 
-        vehicle = Vehicles.objects.filter(user=request.user)
+        vehicle = base_qs.all()
     # Pagination
     paginator = Paginator(vehicle, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -182,23 +189,25 @@ def inventory(request):
 
 @login_required
 def leads(request):
+    base_qs = Leads.objects.all()
+
     if request.method == 'POST':
         search = request.POST['search']
         status = request.POST['status']
-        leads = Leads.objects.filter(user=request.user, name__contains=search, status=status)
+        leads = base_qs.filter(name__contains=search, status=status)
         if status == 'All Statuses':
-            leads = Leads.objects.filter(user=request.user, name__contains=search)
+            leads = base_qs.filter(name__contains=search)
         if search == '':
-            leads = Leads.objects.filter(user=request.user, status=status)
+            leads = base_qs.filter(status=status)
         if search == '' and status == 'All Statuses':
-            leads = Leads.objects.filter(user=request.user)
+            leads = base_qs.all()
         
         paginator = Paginator(leads, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'leads.html', {'leads': page_obj})
     else:
-        leads = Leads.objects.filter(user=request.user)
+        leads = base_qs.all()
         # Pagination
         paginator = Paginator(leads, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
@@ -237,14 +246,16 @@ def signup_page(request):
 
 @login_required
 def meets(request):
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    base_qs = Meets.objects.all() if is_admin else Meets.objects.filter(user=request.user)
+
     search = request.POST.get('search', '')
     if request.method == 'POST' and search:
-        meetings = Meets.objects.filter(
-            Q(name__icontains=search) | Q(email__icontains=search),
-            user=request.user
+        meetings = base_qs.filter(
+            Q(name__icontains=search) | Q(email__icontains=search)
         ).order_by('-date')
     else:
-        meetings = Meets.objects.filter(user=request.user).order_by('-date')
+        meetings = base_qs.order_by('-date')
     
     paginator = Paginator(meetings, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -271,21 +282,23 @@ def reports(request):
 
 @login_required
 def sales(request): 
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    base_qs = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
+
     if request.method == "POST": 
         search = request.POST['search']
         if search:
-            sale = Sales.objects.filter(
-                Q(lead__name__contains=search) | Q(vehicle_sold__vin__contains=search),
-                user=request.user
+            sale = base_qs.filter(
+                Q(lead__name__contains=search) | Q(vehicle_sold__vin__contains=search)
             )
         else:
-            sale = Sales.objects.filter(user=request.user)
+            sale = base_qs.all()
         paginator = Paginator(sale, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'sales.html',{'sales': page_obj} )
     else: 
-        sale = Sales.objects.filter(user=request.user)
+        sale = base_qs.all()
         # Pagination
         paginator = Paginator(sale, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
@@ -295,8 +308,17 @@ def sales(request):
 #Este muestra los detalles de un vehiculo
 @login_required
 def show_details(request, id_details): 
+    # All users can see inventory details
+    vehicle = get_object_or_404(Vehicles, pk= id_details)
+    
+    if request.method == 'POST':
+        images = request.FILES.getlist('images')
+        if images:
+            for image in images:
+                VehicleImage.objects.create(vehicle=vehicle, image=image)
+            messages.success(request, 'Image(s) uploaded successfully.')
+        return redirect('show_details', id_details=id_details)
 
-    vehicle = get_object_or_404(Vehicles, pk= id_details, user = request.user)
     return render(request, 'show_details.html', {'vehicle': vehicle})
 
 @login_required
@@ -352,12 +374,15 @@ def new_vehicle(request):
         form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
         form.fields['user'].initial = request.user
         return render(request, 'inventory_form.html', {'form': form})
-    form = VehicleForm(request.POST)
+    form = VehicleForm(request.POST, request.FILES)
     form.fields['user'].queryset = User.objects.filter(pk=request.user.pk)
     if form.is_valid():
         vehicle = form.save(commit=False)
         vehicle.user = request.user
         vehicle.save()
+        images = request.FILES.getlist('images')
+        for image in images:
+            VehicleImage.objects.create(vehicle=vehicle, image=image)
         return redirect('inventory')
     return render(request, 'inventory_form.html', {'form': form})
 
@@ -414,20 +439,34 @@ def new_contract(request):
 """ Here the update for the diferent modules"""
 @login_required
 def update_vehicle(request, id_vehicle):
-    vehicle = get_object_or_404(Vehicles, pk=id_vehicle, user=request.user)
+    # Depending on RBAC, let's allow all or owner. For now, matching original mostly, but anyone can view inventory, maybe only owner/admin can edit.
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    vehicle = get_object_or_404(Vehicles, pk=id_vehicle) if is_admin else get_object_or_404(Vehicles, pk=id_vehicle, user=request.user)
+
     if request.method == 'GET':
         form = VehicleForm(instance=vehicle)
         form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
         form.fields['user'].initial = request.user
-        return render(request, 'update_inventory.html', {'form': form})
-    form = VehicleForm(request.POST, instance=vehicle)
+        return render(request, 'update_inventory.html', {'form': form, 'vehicle': vehicle})
+    form = VehicleForm(request.POST, request.FILES, instance=vehicle)
     form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
     if form.is_valid():
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
         return redirect('inventory')
-    return render(request, 'update_inventory.html', {'form': form})
+    return render(request, 'update_inventory.html', {'form': form, 'vehicle': vehicle})
+
+@login_required
+def delete_vehicle_image(request, image_id):
+    image = get_object_or_404(VehicleImage, id=image_id)
+    # Ensure the user deleting the image owns the vehicle
+    if image.vehicle.user == request.user or getattr(request.user, 'is_superuser', False) or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin'):
+        vehicle_id = image.vehicle.id
+        image.delete()
+        messages.success(request, 'Image deleted successfully.')
+        return redirect('show_details', id_details=vehicle_id)
+    return redirect('inventory')
 
 @login_required
 def update_lead(request, id_lead):
@@ -688,3 +727,58 @@ def dealer_reply(request, comment_id):
             messages.error(request, 'Reply content cannot be empty.')
             
     return redirect('dealer_post_detail', post_id=post.id)
+
+@login_required
+def user_settings(request):
+    if request.method == 'POST':
+        user = request.user
+        display_name = request.POST.get('display_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        profile_picture = request.FILES.get('profile_picture')
+
+        try:
+            if display_name:
+                user.first_name = display_name
+            if email:
+                user.email = email
+            if password:
+                user.set_password(password)
+                
+            if profile_picture:
+                user.userprofile.profile_picture = profile_picture
+                user.userprofile.save()
+
+            user.save()
+            
+            if password:
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)  # Keep user logged in
+            
+            messages.success(request, 'Profile updated successfully.')
+        except IntegrityError:
+            messages.error(request, 'Username already exists. Please choose a different one.')
+
+        return redirect('user_settings')
+    
+    return render(request, 'user_settings.html')
+
+@login_required
+def manage_users(request):
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    if not is_admin:
+        messages.error(request, 'You do not have permission to view this page.')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        new_role = request.POST.get('role')
+        target_user = get_object_or_404(User, id=user_id)
+        if hasattr(target_user, 'userprofile'):
+            target_user.userprofile.role = new_role
+            target_user.userprofile.save()
+            messages.success(request, f"Updated role for {target_user.username} to {new_role}.")
+        return redirect('manage_users')
+
+    users = User.objects.all().select_related('userprofile').order_by('id')
+    return render(request, 'manage_users.html', {'users_list': users})

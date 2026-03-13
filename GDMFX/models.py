@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -27,6 +29,49 @@ class Vehicles(models.Model):
     def __str__(self) -> str:
         return self.vin
     
+
+class VehicleImage(models.Model):
+    vehicle = models.ForeignKey(Vehicles, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='vehicle_images/')
+
+    def __str__(self):
+        return f"Image for {self.vehicle.vin}"
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    ROLE_CHOICES = [
+        ('Admin', 'Admin'),
+        ('Employee', 'Employee'),
+    ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Employee')
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+    @property
+    def is_admin(self):
+        return self.role == 'Admin'
+
+    @property
+    def is_employee(self):
+        return self.role == 'Employee'
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        role = 'Admin' if instance.is_superuser else 'Employee'
+        UserProfile.objects.create(user=instance, role=role)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    try:
+        instance.userprofile.save()
+    except UserProfile.DoesNotExist:
+        role = 'Admin' if instance.is_superuser else 'Employee'
+        UserProfile.objects.create(user=instance, role=role)
+
 
 class Leads(models.Model): 
     name = models.CharField(max_length=150)

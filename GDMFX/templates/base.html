@@ -51,8 +51,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a href="{%url 'contract'%}"
-                        class="sidebar-link {%if 'contract' in request.path%}active{%endif%}">
+                    <a href="{%url 'contract'%}" class="sidebar-link {%if 'contract' in request.path%}active{%endif%}">
                         <i class="fa-solid fa-file-signature"></i>
                         <span>Contracts</span>
                     </a>
@@ -134,11 +133,55 @@
             <nav class="navbar navbar-top mb-4">
                 <div class="container-fluid px-0">
                     <h2 class="h5 mb-0 fw-bold">{%block page_title%}Overview{%endblock%}</h2>
+
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="text-secondary small me-3 d-none d-md-inline">{{user.username}}</span>
-                        <div class="bg-primary rounded-circle"
-                            style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-user text-white small"></i>
+                        <div class="dropdown">
+                            <button
+                                class="btn btn-link text-decoration-none text-white dropdown-toggle d-flex align-items-center p-0 border-0 bg-transparent"
+                                type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span
+                                    class="text-secondary small me-2 d-none d-md-inline">{{user.first_name|default:user.username}}</span>
+                                {%if user.userprofile and user.userprofile.profile_picture%}
+                                <img src="{{user.userprofile.profile_picture.url}}"
+                                    class="rounded-circle object-fit-cover shadow-sm" style="width: 32px; height: 32px;"
+                                    alt="Profile">
+                                {%else%}
+                                <div class="bg-primary rounded-circle shadow-sm"
+                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-user text-white small"></i>
+                                </div>
+                                {%endif%}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-secondary bg-dark mt-2"
+                                aria-labelledby="profileDropdown">
+                                <li>
+                                    <h6 class="dropdown-header text-secondary border-bottom border-secondary mb-2 pb-2">
+                                        Signed in as <br><strong class="text-white">{{user.username}}</strong></h6>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-white" href="{%url 'user_settings'%}">
+                                        <i class="fa-solid fa-gear fa-fw me-2 text-secondary"></i> Settings
+                                    </a>
+                                </li>
+                                {%if user.is_superuser or user.userprofile.is_admin%}
+                                <li>
+                                    <a class="dropdown-item text-white" href="{%url 'manage_users'%}">
+                                        <i class="fa-solid fa-users-gear fa-fw me-2 text-secondary"></i> Manage Users /
+                                        Roles
+                                    </a>
+                                </li>
+                                {%endif%}
+                                <li>
+                                    <hr class="dropdown-divider border-secondary">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-white" href="#" onclick="toggleTheme()"
+                                        style="cursor: pointer;">
+                                        <i class="fa-solid fa-circle-half-stroke fa-fw me-2 text-secondary"></i> Toggle
+                                        Theme
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -217,7 +260,21 @@
                 altFormat: "F j, Y H:i",
                 theme: "dark",
             });
+
+            // Check theme
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-theme');
+            }
         });
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
     </script>
 </body>
 

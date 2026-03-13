@@ -30,6 +30,53 @@
     --border-color: #333333;
 }
 
+/* --- Light Theme Overrides --- */
+body.light-theme {
+    --main-bg: #f8f9fa;
+    --secondary-bg: #e9ecef;
+    --card-bg: #ffffff;
+    
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --text-light: #000000;
+    
+    --sidebar-bg: #ffffff;
+    --sidebar-link-hover: #f1f3f5;
+    
+    --border-color: #dee2e6;
+    --box-shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --box-shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .form-control,
+body.light-theme .form-select {
+    background-color: #ffffff;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+body.light-theme .form-control:focus,
+body.light-theme .form-select:focus {
+    background-color: #ffffff;
+    color: #495057;
+}
+
+body.light-theme .sidebar-link {
+    color: #495057;
+}
+
+body.light-theme .sidebar-link:hover,
+body.light-theme .sidebar-link.active {
+    color: #000000;
+}
+
+body.light-theme .table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    color: #212529;
+}
+
 body {
     background-color: var(--main-bg);
     color: var(--text-main);

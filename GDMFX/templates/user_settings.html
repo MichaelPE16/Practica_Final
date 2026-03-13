@@ -1,0 +1,78 @@
+{%extends 'base.html'%}
+
+{%block page_title%}User Settings{%endblock%}
+
+{%block content%}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-secondary bg-dark text-white">
+                <div class="card-header border-secondary d-flex justify-content-between align-items-center pt-3 pb-3">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-user-gear me-2 text-primary"></i> Account Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {%csrf_token%}
+
+                        <!-- Profile Picture Section -->
+                        <div class="d-flex align-items-center mb-4 pb-4 border-bottom border-secondary">
+                            <div class="me-4">
+                                {%if user.userprofile and user.userprofile.profile_picture%}
+                                <img src="{{user.userprofile.profile_picture.url}}"
+                                    class="rounded-circle object-fit-cover shadow-sm border border-secondary"
+                                    style="width: 100px; height: 100px;" alt="Profile">
+                                {%else%}
+                                <div class="bg-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                    style="width: 100px; height: 100px;">
+                                    <i class="fa-solid fa-user text-white fa-2x"></i>
+                                </div>
+                                {%endif%}
+                            </div>
+                            <div class="flex-grow-1">
+                                <label for="profile_picture"
+                                    class="form-label text-secondary small text-uppercase fw-bold">Update Profile
+                                    Picture</label>
+                                <input class="form-control bg-dark border-secondary text-white" type="file"
+                                    id="profile_picture" name="profile_picture" accept="image/*">
+                                <small class="text-muted mt-1 d-block">Recommended size 400x400px</small>
+                            </div>
+                        </div>
+
+                        <!-- User Info Form -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="display_name"
+                                    class="form-label text-secondary small text-uppercase fw-bold">Display Name</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white"
+                                    id="display_name" name="display_name"
+                                    value="{{user.first_name|default:user.username}}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label text-secondary small text-uppercase fw-bold">Email
+                                    Address</label>
+                                <input type="email" class="form-control bg-dark border-secondary text-white" id="email"
+                                    name="email" value="{{user.email|default:''}}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label text-secondary small text-uppercase fw-bold">New
+                                Password</label>
+                            <input type="password" class="form-control bg-dark border-secondary text-white"
+                                id="password" name="password" placeholder="Leave blank to keep current password">
+                            <small class="text-muted mt-1 d-block">Enter a new secure password if you wish to change
+                                it.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end border-top border-secondary pt-4 mt-4">
+                            <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-2"></i>
+                                Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
