@@ -8,3 +8,5 @@ pipfile.lock
 venv
 pipfile
 .env
+media
+staticfiles

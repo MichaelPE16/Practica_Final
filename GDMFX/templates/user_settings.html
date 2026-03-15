@@ -56,6 +56,28 @@
                             </div>
                         </div>
 
+                        {% if user.userprofile.role == 'Admin' %}
+                        <div class="card bg-dark border-secondary mb-4">
+                            <div class="card-header border-secondary text-primary fw-bold">
+                                Admin Email Configuration
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="contact_email" class="form-label text-secondary small text-uppercase fw-bold">Contact/Sender Email</label>
+                                    <input type="email" class="form-control bg-dark border-secondary text-white" id="contact_email"
+                                        name="contact_email" value="{{ user.userprofile.contact_email|default:'' }}">
+                                    <small class="text-muted mt-1 d-block">This email will receive contact form submissions and be used as the sender.</small>
+                                </div>
+                                <div class="mb-0">
+                                    <label for="email_password" class="form-label text-secondary small text-uppercase fw-bold">Email App Password</label>
+                                    <input type="password" class="form-control bg-dark border-secondary text-white" id="email_password"
+                                        name="email_password" placeholder="Leave blank to keep current email password" value="">
+                                    <small class="text-muted mt-1 d-block">This password is used to authenticate the SMTP server.</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
                         <div class="mb-4">
                             <label for="password" class="form-label text-secondary small text-uppercase fw-bold">New
                                 Password</label>

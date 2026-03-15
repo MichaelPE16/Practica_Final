@@ -41,6 +41,8 @@ class VehicleImage(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    contact_email = models.EmailField(blank=True, null=True)
+    email_password = models.CharField(max_length=255, blank=True, null=True)
     ROLE_CHOICES = [
         ('Admin', 'Admin'),
         ('Employee', 'Employee'),

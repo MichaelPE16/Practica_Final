@@ -577,8 +577,26 @@ def contact_view(request):
         full_message = f"Message from: {name} ({email})\n\nSubject: {subject}\n\nMessage:\n{message}"
         
         try:
+            from django.core.mail import get_connection
+            
             # Dealer email where messages will be received
-            dealer_email = getattr(settings, 'EMAIL_HOST_USER', 'your_email@gmail.com')
+            admin_profile = UserProfile.objects.filter(role='Admin').exclude(contact_email__isnull=True).exclude(contact_email='').first()
+            
+            if admin_profile and admin_profile.contact_email and admin_profile.email_password:
+                dealer_email = admin_profile.contact_email
+                # Use dynamic connection
+                connection = get_connection(
+                    username=admin_profile.contact_email,
+                    password=admin_profile.email_password,
+                    fail_silently=False,
+                )
+            elif admin_profile and admin_profile.contact_email:
+                # If only email, fallback to using default connection for sending, but receiver is still contact_email
+                dealer_email = admin_profile.contact_email
+                connection = None
+            else:
+                dealer_email = getattr(settings, 'EMAIL_HOST_USER', 'your_email@gmail.com')
+                connection = None
             
             send_mail(
                 subject=f"New Contact Form Submission: {subject}",
@@ -586,6 +604,7 @@ def contact_view(request):
                 from_email=email,
                 recipient_list=[dealer_email],
                 fail_silently=False,
+                connection=connection,
             )
             messages.success(request, 'Your message has been sent successfully. We will get back to you shortly!')
         except Exception as e:
@@ -734,6 +753,8 @@ def user_settings(request):
         user = request.user
         display_name = request.POST.get('display_name')
         email = request.POST.get('email')
+        contact_email = request.POST.get('contact_email')
+        email_password = request.POST.get('email_password')
         password = request.POST.get('password')
         profile_picture = request.FILES.get('profile_picture')
 
@@ -745,9 +766,16 @@ def user_settings(request):
             if password:
                 user.set_password(password)
                 
+            if user.userprofile.role == 'Admin':
+                if contact_email is not None:
+                    user.userprofile.contact_email = contact_email
+                if email_password:
+                    user.userprofile.email_password = email_password
+                    
             if profile_picture:
                 user.userprofile.profile_picture = profile_picture
-                user.userprofile.save()
+                
+            user.userprofile.save()
 
             user.save()
             
