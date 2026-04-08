@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card bg-dark border-secondary shadow-lg">
-                <div class="card-header bg-black border-bottom border-secondary p-4 text-center">
+                <div class="card-header bg-dark border-bottom border-secondary p-4 text-center">
                     <i class="fa-solid fa-envelope fa-3x text-primary mb-3"></i>
                     <h2 class="text-white fw-bold mb-0">Contact Us</h2>
                     <p class="text-secondary mt-2 mb-0">We normally attempt to respond within 24 hours.</p>
@@ -28,32 +28,49 @@
 
                         <div class="mb-4">
                             <label for="name" class="form-label text-white fw-bold">Full Name</label>
-                            <input type="text" class="form-control bg-black border-secondary text-white" id="name"
-                                name="name" required placeholder="John Doe">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                        class="fa-solid fa-user"></i></span>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="name"
+                                    name="name" required placeholder="John Doe">
+                            </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="email" class="form-label text-white fw-bold">Email Address</label>
-                            <input type="email" class="form-control bg-black border-secondary text-white" id="email"
-                                name="email" required placeholder="john@example.com">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                        class="fa-solid fa-envelope"></i></span>
+                                <input type="email" class="form-control bg-dark text-light border-secondary" id="email"
+                                    name="email" required placeholder="john@example.com">
+                            </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="subject" class="form-label text-white fw-bold">Subject</label>
-                            <select class="form-select bg-black border-secondary text-white" id="subject" name="subject"
-                                required>
-                                <option value="" selected disabled>Select a reason...</option>
-                                <option value="Vehicle Inquiry">Vehicle Inquiry</option>
-                                <option value="Finance Question">Finance Question</option>
-                                <option value="General Support">General Support</option>
-                                <option value="Feedback">Feedback</option>
-                            </select>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                        class="fa-solid fa-tag"></i></span>
+                                <select class="form-select bg-dark text-light border-secondary" id="subject"
+                                    name="subject" required>
+                                    <option value="" selected disabled>Select a reason...</option>
+                                    <option value="Vehicle Inquiry">Vehicle Inquiry</option>
+                                    <option value="Finance Question">Finance Question</option>
+                                    <option value="General Support">General Support</option>
+                                    <option value="Feedback">Feedback</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="message" class="form-label text-white fw-bold">Your Message</label>
-                            <textarea class="form-control bg-black border-secondary text-white" id="message"
-                                name="message" rows="6" required placeholder="How can we help you today?"></textarea>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                        class="fa-solid fa-comment"></i></span>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="message"
+                                    name="message" rows="6" required
+                                    placeholder="How can we help you today?"></textarea>
+                            </div>
                         </div>
 
                         <div class="d-grid mt-5">
@@ -64,7 +81,7 @@
                     </form>
                 </div>
 
-                <div class="card-footer bg-black border-top border-secondary p-4 text-center">
+                <div class="card-footer bg-dark border-top border-secondary p-4 text-center">
                     <div class="row text-secondary">
                         <div class="col-md-4 mb-3 mb-md-0">
                             <i class="fa-solid fa-phone text-primary mb-2 fs-4"></i>
@@ -91,13 +108,35 @@
     .form-select:focus {
         background-color: #1a1d20;
         border-color: #0d6efd;
-        color: #fff;
+        color: #f8f9fa;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
 
+    .input-group-text {
+        border-right: none;
+    }
+
+    .form-control,
+    .form-select {
+        border-left: none;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-left: none;
+    }
+
+    /* Ensure the input group prepend also gets highlighted nicely or at least looks neat */
+    .input-group:focus-within .input-group-text {
+        border-color: #0d6efd;
+        color: #0d6efd !important;
+    }
+
     .form-select option {
-        background-color: #000;
-        color: #fff;
+        background-color: #212529;
+        /* Match bg-dark */
+        color: #f8f9fa;
+        /* Match text-light */
     }
 </style>
 {%endblock content%}

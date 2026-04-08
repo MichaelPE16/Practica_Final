@@ -82,7 +82,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="badge bg-primary px-3 py-2 rounded-pill"><i
                                 class="fa-regular fa-calendar me-2"></i>{{post.publication_date|date:"F j, Y"}}</span>
-                        <span class="text-secondary small fw-bold"><i class="fa-solid fa-user me-2"></i>{{post.author.username}}</span>
+                        <span class="text-secondary small fw-bold"><i
+                                class="fa-solid fa-user me-2"></i>{{post.author.username}}</span>
                     </div>
 
                     <h2 class="card-title text-white fw-bold mb-4">{{post.title}}</h2>
@@ -94,37 +95,72 @@
 
                     <!-- Comments Section -->
                     <div class="comments-section mt-4">
-                        <h4 class="text-white mb-4"><i class="fa-regular fa-comments me-2 text-primary"></i>Comments ({{post.comments.count}})</h4>
+                        <h4 class="text-white mb-4"><i class="fa-regular fa-comments me-2 text-primary"></i>Comments
+                            ({{post.comments.count}})</h4>
 
                         <!-- List Comments -->
                         <div class="mb-5">
                             {%for comment in post.comments.all reversed%}
                             {%if not comment.parent_comment%}
-                            <div class="bg-black border border-secondary p-4 rounded-4 mb-3 position-relative">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <strong class="text-white">{{comment.author_email}}</strong>
-                                    <small class="text-secondary">{{comment.created_at|date:"M j, g:i a"}}</small>
-                                </div>
-                                <p class="text-secondary mb-3">{{comment.content}}</p>
-                                <div class="d-flex justify-content-end mt-2">
-                                    <button class="btn btn-sm btn-outline-danger rounded-pill heart-btn"
-                                        data-comment-id="{{comment.id}}">
-                                        <i class="fa-solid fa-heart me-1"></i> <span class="heart-count">{{comment.heart_reactions}}</span>
-                                    </button>
+                            <div class="d-flex mb-3 position-relative">
+                                <!-- Avatar -->
+                                <div class="me-2 flex-shrink-0 mt-1">
+                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center text-white"
+                                        style="width: 38px; height: 38px;">
+                                        <i class="fa-solid fa-user small"></i>
+                                    </div>
                                 </div>
 
-                                <!-- Dealer Replies -->
-                                {%for reply in comment.replies.all%}
-                                <div
-                                    class="bg-dark border border-primary border-start-0 border-top-0 border-end-0 border-bottom-0 border-4 p-3 rounded-3 mt-3 ms-4 position-relative">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <strong class="text-primary"><i
-                                                class="fa-solid fa-shield-halved me-1"></i>Dealer Reply</strong>
-                                        <small class="text-secondary">{{reply.created_at|date:"M j, g:i a"}}</small>
+                                <!-- Comment Content -->
+                                <div class="flex-grow-1">
+                                    <!-- Bubble -->
+                                    <div class="bg-dark border border-secondary p-2 px-3 rounded-4"
+                                        style="display: inline-block;">
+                                        <div class="fw-bold text-white small" style="line-height: 1;">
+                                            {{comment.author_email}}</div>
+                                        <div class="text-light small mt-1">{{comment.content}}</div>
                                     </div>
-                                    <p class="text-light mb-1">{{reply.content}}</p>
+
+                                    <!-- Actions below bubble -->
+                                    <div class="ms-2 mt-1 d-flex align-items-center gap-2 small">
+                                        <a href="#"
+                                            class="text-secondary fw-bold text-decoration-none heart-btn hover-primary"
+                                            data-comment-id="{{comment.id}}">
+                                            Like
+                                        </a>
+                                        <span class="text-secondary">&middot;</span>
+                                        <div class="text-danger small">
+                                            <i class="fa-solid fa-heart me-1"></i><span
+                                                class="heart-count">{{comment.heart_reactions}}</span>
+                                        </div>
+                                        <span class="text-secondary">&middot;</span>
+                                        <span class="text-secondary">{{comment.created_at|date:"M j, Y"}}</span>
+                                    </div>
+
+                                    <!-- Dealer Replies -->
+                                    {%for reply in comment.replies.all%}
+                                    <div class="d-flex mt-2">
+                                        <div class="me-2 flex-shrink-0 mt-1">
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white"
+                                                style="width: 28px; height: 28px;">
+                                                <i class="fa-solid fa-shield-halved text-white"
+                                                    style="font-size: 0.70rem;"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="bg-dark border border-primary p-2 px-3 rounded-4"
+                                                style="display: inline-block;">
+                                                <div class="fw-bold text-primary small" style="line-height: 1;">Dealer
+                                                    Reply</div>
+                                                <div class="text-light small mt-1">{{reply.content}}</div>
+                                            </div>
+                                            <div class="ms-2 mt-1 small">
+                                                <span class="text-secondary">{{reply.created_at|date:"M j, Y"}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {%endfor%}
                                 </div>
-                                {%endfor%}
                             </div>
                             {%endif%}
                             {%empty%}
@@ -221,6 +257,11 @@
     .object-fit-cover {
         object-fit: cover;
     }
+
+    .hover-primary:hover {
+        color: #0d6efd !important;
+        text-decoration: underline !important;
+    }
 </style>
 
 <!-- Flatpickr (Date Picker) -->
@@ -265,8 +306,11 @@
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 const commentId = this.getAttribute('data-comment-id');
-                const countSpan = this.querySelector('.heart-count');
-                const icon = this.querySelector('i');
+                const actionsContainer = this.parentElement;
+                const countSpan = actionsContainer.querySelector('.heart-count');
+                const icon = actionsContainer.querySelector('i.fa-heart');
+
+                if (!countSpan || !icon) return; // Defensive check
 
                 fetch(`/blog/comment/${commentId}/react/`, {
                     method: 'POST',
@@ -284,7 +328,9 @@
                             setTimeout(() => icon.classList.remove('fa-beat'), 1000);
 
                             // Disable the button after click to prevent spam
-                            this.disabled = true;
+                            this.classList.add('disabled');
+                            this.style.pointerEvents = 'none';
+                            this.style.opacity = '0.5';
                         }
                     })
                     .catch(error => console.error('Error:', error));

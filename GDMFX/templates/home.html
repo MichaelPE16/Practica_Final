@@ -29,18 +29,18 @@
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item mx-2">
-                        <a class="nav-link active" href="{%url 'aboutus'%}"><i
-                                class="fa-solid fa-gauge-high me-1"></i>About us</a>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'aboutus'%}active{%endif%}" href="{%url 'aboutus'%}"><i
+                                class="fa-solid fa-gauge-high me-1"></i>About Us</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="{%url 'contact'%}"><i class="fa-solid fa-car me-1"></i>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'contact'%}active{%endif%}" href="{%url 'contact'%}"><i class="fa-solid fa-car me-1"></i>
                             Contact</a>
                     </li>
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="#"><i class="fa-solid fa-calendar-check me-1"></i> Services</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="{%url 'blog_list'%}"><i class="fa-solid fa-users me-1"></i> Blog</a>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'blog_list'%}active{%endif%}" href="{%url 'blog_list'%}"><i class="fa-solid fa-users me-1"></i> Blog</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-3">
                         <a class="nav-link btn btn-outline-secondary px-3 rounded-pill" href="#" role="button"
