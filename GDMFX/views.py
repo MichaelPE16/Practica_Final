@@ -32,13 +32,13 @@ def contract(request):
     if request.method == "POST": 
         search =request.POST['search']
         idcontact = request.POST['ID']
-        contract = base_qs.filter(customer_name__contains = search, id_document__contains =idcontact )
+        contract = base_qs.filter(customer_name__contains = search, id_document__contains =idcontact ).order_by('-id')
         paginator = Paginator(contract, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'contract.html',{'contracts': page_obj} )
     else: 
-        contract = base_qs
+        contract = base_qs.order_by('-id')
     # Pagination
     paginator = Paginator(contract, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -174,13 +174,15 @@ def inventory(request):
             vehicle = base_qs.filter(status = status)
         if search == '' and status == 'All Statuses':
             vehicle = base_qs.all()
+            
+        vehicle = vehicle.order_by('-id')
         paginator = Paginator(vehicle, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'inventory.html',
         {'vehicles': page_obj} )
     else: 
-        vehicle = base_qs.all()
+        vehicle = base_qs.all().order_by('-id')
     # Pagination
     paginator = Paginator(vehicle, ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -203,12 +205,13 @@ def leads(request):
         if search == '' and status == 'All Statuses':
             leads = base_qs.all()
         
+        leads = leads.order_by('-id')
         paginator = Paginator(leads, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'leads.html', {'leads': page_obj})
     else:
-        leads = base_qs.all()
+        leads = base_qs.all().order_by('-id')
         # Pagination
         paginator = Paginator(leads, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
@@ -417,15 +420,15 @@ def sales(request):
         if search:
             sale = base_qs.filter(
                 Q(lead__name__contains=search) | Q(vehicle_sold__vin__contains=search)
-            )
+            ).order_by('-id')
         else:
-            sale = base_qs.all()
+            sale = base_qs.all().order_by('-id')
         paginator = Paginator(sale, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'sales.html',{'sales': page_obj} )
     else: 
-        sale = base_qs.all()
+        sale = base_qs.all().order_by('-id')
         # Pagination
         paginator = Paginator(sale, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
