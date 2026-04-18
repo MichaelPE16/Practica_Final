@@ -14,3 +14,6 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gestor_DMFX.settings')
 
 application = get_wsgi_application()
+
+# Alias designed for Vercel deployment compatibility
+app = application
