@@ -18,7 +18,7 @@ import csv
 from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform, BlogPostForm
 from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComment, PostImage, VehicleImage, UserProfile
 
-ITEMS_PER_PAGE = 10
+ITEMS_PER_PAGE = 9
 
 # Create your views here.
 def home(request): 
