@@ -4,7 +4,18 @@ from django import forms
 
 
 
+from django.db.models import Q
+
 class SalesForm(ModelForm): 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and getattr(self.instance, 'vehicle_sold_id', None):
+            self.fields['vehicle_sold'].queryset = Vehicles.objects.filter(
+                Q(status='Available') | Q(id=self.instance.vehicle_sold_id)
+            )
+        else:
+            self.fields['vehicle_sold'].queryset = Vehicles.objects.filter(status='Available')
+ 
     class Meta: 
         model = Sales
         fields = ['lead', 'vehicle_sold', 'phase', 'selling_date', 'user']
@@ -21,6 +32,15 @@ class SalesForm(ModelForm):
         }
 
 class ContractForm(ModelForm): 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and getattr(self.instance, 'vehicle_sold_id', None):
+            self.fields['vehicle_sold'].queryset = Vehicles.objects.filter(
+                Q(status='Available') | Q(id=self.instance.vehicle_sold_id)
+            )
+        else:
+            self.fields['vehicle_sold'].queryset = Vehicles.objects.filter(status='Available')
+ 
     class Meta: 
         model = Contract
         fields = ['customer_name', 'id_document', 'email', 'phone', 'address', 'vehicle_sold', 'price_sold', 'sign_date', 'received', 'file_pdf', 'customer_type', 'user']

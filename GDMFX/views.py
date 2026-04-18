@@ -581,7 +581,7 @@ def update_vehicle(request, id_vehicle):
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
-        return redirect('inventory')
+        return redirect('show_details', id_details=obj.id)
     return render(request, 'update_inventory.html', {'form': form, 'vehicle': vehicle})
 
 @login_required
@@ -609,7 +609,7 @@ def update_lead(request, id_lead):
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
-        return redirect('leads')
+        return redirect('show_lead', id_lead=obj.id)
     return render(request, 'update_lead.html', {'form': form})
     
 
@@ -648,7 +648,7 @@ def update_sale(request, id_sale):
                     )
 
         obj.save()
-        return redirect('sales')
+        return redirect('show_sales', id_sales=obj.id)
 
     return render(request, 'update_sell.html', {'form': form})
 
@@ -666,7 +666,7 @@ def update_contract(request, id_contract):
         obj = form.save(commit=False)
         obj.user = request.user
         obj.save()
-        return redirect('contract')
+        return redirect('show_contract', id_contract=obj.id)
     return render(request, 'update_contract.html', {'form': form})
 
 def aboutus(request):
