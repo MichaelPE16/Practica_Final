@@ -13,7 +13,8 @@ from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+import csv
 from .forms import ContractForm, LeadsForm, SalesForm, VehicleForm, Apptform, BlogPostForm
 from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComment, PostImage, VehicleImage, UserProfile
 
@@ -278,7 +279,133 @@ def appt(request):
 
 @login_required
 def reports(request): 
-    return render(request, 'reports.html')
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    
+    module = request.GET.get('module', 'sales')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    search_query = request.GET.get('search', '')
+    export = request.GET.get('export', '')
+
+    queryset = None
+    headers = []
+    
+    # Process queries based on module
+    if module == 'sales':
+        queryset = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
+        if start_date: queryset = queryset.filter(selling_date__gte=start_date)
+        if end_date: queryset = queryset.filter(selling_date__lte=end_date)
+        if search_query:
+            queryset = queryset.filter(
+                Q(lead__name__icontains=search_query) |
+                Q(phase__icontains=search_query) |
+                Q(vehicle_sold__vin__icontains=search_query)
+            )
+        headers = ['ID', 'Lead Name', 'Vehicle VIN', 'Phase', 'Selling Date']
+        
+    elif module == 'leads':
+        queryset = Leads.objects.all() if is_admin else Leads.objects.filter(user=request.user)
+        if start_date: queryset = queryset.filter(contact_date__gte=start_date)
+        if end_date: queryset = queryset.filter(contact_date__lte=end_date)
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(status__icontains=search_query) |
+                Q(source__icontains=search_query)
+            )
+        headers = ['ID', 'Name', 'Status', 'Source', 'Contact Date']
+        
+    elif module == 'inventory':
+        queryset = Vehicles.objects.all() # all can see inventory
+        if start_date: queryset = queryset.filter(integration_date__gte=start_date)
+        if end_date: queryset = queryset.filter(integration_date__lte=end_date)
+        if search_query:
+            queryset = queryset.filter(
+                Q(vin__icontains=search_query) |
+                Q(brand__icontains=search_query) |
+                Q(model__icontains=search_query) |
+                Q(condition__icontains=search_query) |
+                Q(status__icontains=search_query)
+            )
+        headers = ['VIN', 'Brand', 'Model', 'Condition', 'Status', 'Integration Date', 'Selling Price']
+
+    elif module == 'contracts':
+        queryset = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
+        if start_date: queryset = queryset.filter(sign_date__gte=start_date)
+        if end_date: queryset = queryset.filter(sign_date__lte=end_date)
+        if search_query:
+            queryset = queryset.filter(
+                Q(customer_name__icontains=search_query) |
+                Q(id_document__icontains=search_query) |
+                Q(vehicle_sold__vin__icontains=search_query)
+            )
+        headers = ['ID', 'Customer Name', 'Document ID', 'Vehicle VIN', 'Price Sold', 'Sign Date']
+
+    else:
+        module = 'sales'
+        queryset = Sales.objects.none()
+
+    # Form rows
+    rows = []
+    if queryset is not None:
+        for item in queryset:
+            if module == 'sales':
+                rows.append((item.id, [
+                    item.id, 
+                    item.lead.name if getattr(item, 'lead', None) else '', 
+                    item.vehicle_sold.vin if getattr(item, 'vehicle_sold', None) else '', 
+                    item.phase, 
+                    item.selling_date
+                ]))
+            elif module == 'leads':
+                dt = getattr(item, 'contact_date', None)
+                rows.append((item.id, [
+                    item.id, 
+                    item.name, 
+                    item.status, 
+                    item.source, 
+                    dt.strftime('%Y-%m-%d %H:%M') if dt else ''
+                ]))
+            elif module == 'inventory':
+                rows.append((item.pk, [
+                    item.vin, 
+                    item.brand, 
+                    item.model, 
+                    item.condition, 
+                    item.status, 
+                    item.integration_date, 
+                    item.selling_price
+                ]))
+            elif module == 'contracts':
+                rows.append((item.id, [
+                    item.id, 
+                    item.customer_name, 
+                    item.id_document, 
+                    item.vehicle_sold.vin if getattr(item, 'vehicle_sold', None) else '', 
+                    item.price_sold, 
+                    item.sign_date
+                ]))
+
+    # If Export CSV
+    if export == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="gdmfx_{module}_report.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(headers)
+        for _, row_data in rows:
+            writer.writerow(row_data)
+        return response
+
+    context = {
+        'current_module': module,
+        'start_date': start_date,
+        'end_date': end_date,
+        'search_query': search_query,
+        'table_headers': headers,
+        'table_rows': rows,
+    }
+    return render(request, 'reports.html', context)
 
 @login_required
 def sales(request): 
