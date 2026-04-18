@@ -823,12 +823,17 @@ def create_post(request):
 
 @login_required
 def manage_posts(request):
-    posts = BlogPost.objects.filter(author=request.user).order_by('-publication_date')
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    if is_admin:
+        posts = BlogPost.objects.all().order_by('-publication_date')
+    else:
+        posts = BlogPost.objects.filter(author=request.user).order_by('-publication_date')
     return render(request, 'manage_posts.html', {'posts': posts})
 
 @login_required
 def delete_post(request, post_id):
-    post = get_object_or_404(BlogPost, id=post_id, author=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    post = get_object_or_404(BlogPost, id=post_id) if is_admin else get_object_or_404(BlogPost, id=post_id, author=request.user)
     if request.method == "POST":
         post.delete()
         messages.success(request, 'Post deleted successfully.')
@@ -836,7 +841,8 @@ def delete_post(request, post_id):
 
 @login_required
 def update_post(request, post_id):
-    post = get_object_or_404(BlogPost, id=post_id, author=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    post = get_object_or_404(BlogPost, id=post_id) if is_admin else get_object_or_404(BlogPost, id=post_id, author=request.user)
     if request.method == 'POST':
         form = BlogPostForm(request.POST, instance=post)
         if form.is_valid():
