@@ -640,7 +640,7 @@ def update_sale(request, id_sale):
             obj.lead.save()
 
             if obj.vehicle_sold:
-                car = get_object_or_404(Vehicles, pk=obj.vehicle_sold.id, user=request.user)
+                car = obj.vehicle_sold
                 car.status = "Sold"
                 car.save()
 
