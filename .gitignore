@@ -10,4 +10,4 @@ pipfile
 .env
 media
 staticfiles
-Gestor_DMFX/__pycache__
+Gestor_DMFX.__pycache__

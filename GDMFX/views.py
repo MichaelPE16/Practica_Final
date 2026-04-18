@@ -54,11 +54,11 @@ def dashboard(request):
 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
 
-    # Base QuerySets (Inventory and Leads: All can see. Sales and Contracts: RBAC)
+    # Base QuerySets
     sales_qs = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
     contracts_qs = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
-    vehicles_qs = Vehicles.objects.all()
-    leads_qs = Leads.objects.all()
+    vehicles_qs = Vehicles.objects.all() if is_admin else Vehicles.objects.filter(user=request.user)
+    leads_qs = Leads.objects.all() if is_admin else Leads.objects.filter(user=request.user)
 
     # Apply date filters if provided
     if start_date:
@@ -162,7 +162,8 @@ def dashboard(request):
 
 @login_required
 def inventory(request): 
-    base_qs = Vehicles.objects.all()
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    base_qs = Vehicles.objects.all() if is_admin else Vehicles.objects.filter(user=request.user)
 
     if request.method == 'POST': 
         search = request.POST['search']
@@ -192,7 +193,8 @@ def inventory(request):
 
 @login_required
 def leads(request):
-    base_qs = Leads.objects.all()
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    base_qs = Leads.objects.all() if is_admin else Leads.objects.filter(user=request.user)
 
     if request.method == 'POST':
         search = request.POST['search']
@@ -319,7 +321,7 @@ def reports(request):
         headers = ['ID', 'Name', 'Status', 'Source', 'Contact Date']
         
     elif module == 'inventory':
-        queryset = Vehicles.objects.all() # all can see inventory
+        queryset = Vehicles.objects.all() if is_admin else Vehicles.objects.filter(user=request.user)
         if start_date: queryset = queryset.filter(integration_date__gte=start_date)
         if end_date: queryset = queryset.filter(integration_date__lte=end_date)
         if search_query:
@@ -438,8 +440,8 @@ def sales(request):
 #Este muestra los detalles de un vehiculo
 @login_required
 def show_details(request, id_details): 
-    # All users can see inventory details
-    vehicle = get_object_or_404(Vehicles, pk= id_details)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    vehicle = get_object_or_404(Vehicles, pk=id_details) if is_admin else get_object_or_404(Vehicles, pk=id_details, user=request.user)
     
     if request.method == 'POST':
         images = request.FILES.getlist('images')
