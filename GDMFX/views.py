@@ -54,11 +54,11 @@ def dashboard(request):
 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
 
-    # Base QuerySets
-    sales_qs = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
-    contracts_qs = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
-    vehicles_qs = Vehicles.objects.all() if is_admin else Vehicles.objects.filter(user=request.user)
-    leads_qs = Leads.objects.all() if is_admin else Leads.objects.filter(user=request.user)
+    # Base QuerySets - Dashboard shows all data to reflect global progress
+    sales_qs = Sales.objects.all()
+    contracts_qs = Contract.objects.all()
+    vehicles_qs = Vehicles.objects.all()
+    leads_qs = Leads.objects.all()
 
     # Apply date filters if provided
     if start_date:
@@ -95,6 +95,7 @@ def dashboard(request):
     if contracts_list:
         df_contracts = pd.DataFrame(contracts_list)
         df_contracts['sign_date'] = pd.to_datetime(df_contracts['sign_date'])
+        df_contracts['price_sold'] = pd.to_numeric(df_contracts['price_sold'], errors='coerce').fillna(0)
         df_contracts = df_contracts.dropna(subset=['sign_date'])
         if not df_contracts.empty:
             df_trend = df_contracts.groupby(df_contracts['sign_date'].dt.to_period('M')).agg({'price_sold':'sum'}).reset_index()
