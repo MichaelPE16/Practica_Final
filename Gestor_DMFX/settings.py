@@ -156,6 +156,11 @@ AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
+if AWS_S3_ENDPOINT_URL and AWS_STORAGE_BUCKET_NAME:
+    # Ensure correct public Supabase URL format instead of raw S3 API URL
+    domain = AWS_S3_ENDPOINT_URL.split('//')[1].split('/')[0]
+    AWS_S3_CUSTOM_DOMAIN = f"{domain}/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
+
 # Media files
 STORAGES = {
     "default": {
