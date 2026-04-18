@@ -6,13 +6,17 @@ name = "pypi"
 [packages]
 pytest = "*"
 django = "*"
-psycopg2-binary = "*"
-dj-database-url = "*"
 djangorestframework = "*"
 plotly = "*"
 pandas = "*"
 python-dotenv = "*"
 pillow = "*"
+psycopg2-binary = "*"
+dj-database-url = "*"
+whitenoise = "*"
+gunicorn = "*"
+django-storages = "*"
+boto3 = "*"
 
 [dev-packages]
 
