@@ -453,20 +453,20 @@ def show_details(request, id_details):
 
 @login_required
 def show_sales(request, id_sales): 
-
-    sale = get_object_or_404(Sales, pk= id_sales, user = request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    sale = get_object_or_404(Sales, pk= id_sales) if is_admin else get_object_or_404(Sales, pk= id_sales, user = request.user)
     return render(request, 'show_sales.html', {'sales': sale})
 
 @login_required
 def show_lead(request, id_lead): 
-
-    lead = get_object_or_404(Leads, pk= id_lead, user = request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    lead = get_object_or_404(Leads, pk= id_lead) if is_admin else get_object_or_404(Leads, pk= id_lead, user = request.user)
     return render(request, 'show_lead.html', {'leads': lead})
 
 @login_required
 def show_contract(request, id_contract): 
-
-    contract = get_object_or_404(Contract, pk= id_contract, user = request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    contract = get_object_or_404(Contract, pk= id_contract) if is_admin else get_object_or_404(Contract, pk= id_contract, user = request.user)
     pdf_exists = False
     if contract.file_pdf and contract.file_pdf.name:
         try:
@@ -477,7 +477,8 @@ def show_contract(request, id_contract):
 
 @login_required
 def upload_contract_pdf(request, id_contract):
-    contract = get_object_or_404(Contract, pk=id_contract, user=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    contract = get_object_or_404(Contract, pk=id_contract) if is_admin else get_object_or_404(Contract, pk=id_contract, user=request.user)
     if request.method != 'POST' or 'pdf_file' not in request.FILES:
         return redirect('show_contract', id_contract=id_contract)
     pdf = request.FILES['pdf_file']
@@ -600,7 +601,8 @@ def delete_vehicle_image(request, image_id):
 
 @login_required
 def update_lead(request, id_lead):
-    lead = get_object_or_404(Leads, pk=id_lead, user=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    lead = get_object_or_404(Leads, pk=id_lead) if is_admin else get_object_or_404(Leads, pk=id_lead, user=request.user)
     if request.method == 'GET':
         form = LeadsForm(instance=lead)
         form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
@@ -618,7 +620,8 @@ def update_lead(request, id_lead):
 
 @login_required
 def update_sale(request, id_sale):
-    sale = get_object_or_404(Sales, pk=id_sale, user=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    sale = get_object_or_404(Sales, pk=id_sale) if is_admin else get_object_or_404(Sales, pk=id_sale, user=request.user)
     if request.method == 'GET':
         form = SalesForm(instance=sale)
         form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
@@ -657,7 +660,8 @@ def update_sale(request, id_sale):
 
 @login_required
 def update_contract(request, id_contract):
-    contract = get_object_or_404(Contract, pk=id_contract, user=request.user)
+    is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
+    contract = get_object_or_404(Contract, pk=id_contract) if is_admin else get_object_or_404(Contract, pk=id_contract, user=request.user)
     if request.method == 'GET':
         form = ContractForm(instance=contract)
         form.fields['user'].queryset = User.objects.filter(pk = request.user.pk)
