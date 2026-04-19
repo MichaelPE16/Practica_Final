@@ -32,7 +32,7 @@ def contract(request):
     if request.method == "POST": 
         search =request.POST['search']
         idcontact = request.POST['ID']
-        contract = base_qs.filter(customer_name__contains = search, id_document__contains =idcontact ).order_by('-id')
+        contract = base_qs.filter(customer_name__icontains = search, id_document__icontains =idcontact ).order_by('-id')
         paginator = Paginator(contract, ITEMS_PER_PAGE)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -107,7 +107,7 @@ def dashboard(request):
 
     # 2. Lead Status Distribution (Pie Chart)
     lead_status_html = ""
-    leads_list = list(leads_qs.values('status'))
+    leads_list = list(leads_qs.values('status', 'id'))
     if leads_list:
         df_leads = pd.DataFrame(leads_list)
         df_lead_status = df_leads['status'].value_counts().reset_index()
@@ -169,9 +169,9 @@ def inventory(request):
     if request.method == 'POST': 
         search = request.POST['search']
         status = request.POST['status']
-        vehicle = base_qs.filter(brand__contains = search, status = status)
+        vehicle = base_qs.filter(brand__icontains = search, status = status)
         if status == 'All Statuses':
-            vehicle = base_qs.filter(brand__contains = search)
+            vehicle = base_qs.filter(brand__icontains = search)
         if search == '':
             vehicle = base_qs.filter(status = status)
         if search == '' and status == 'All Statuses':
@@ -200,9 +200,9 @@ def leads(request):
     if request.method == 'POST':
         search = request.POST['search']
         status = request.POST['status']
-        leads = base_qs.filter(name__contains=search, status=status)
+        leads = base_qs.filter(name__icontains=search, status=status)
         if status == 'All Statuses':
-            leads = base_qs.filter(name__contains=search)
+            leads = base_qs.filter(name__icontains=search)
         if search == '':
             leads = base_qs.filter(status=status)
         if search == '' and status == 'All Statuses':
@@ -422,7 +422,7 @@ def sales(request):
         search = request.POST['search']
         if search:
             sale = base_qs.filter(
-                Q(lead__name__contains=search) | Q(vehicle_sold__vin__contains=search)
+                Q(lead__name__icontains=search) | Q(vehicle_sold__vin__icontains=search)
             ).order_by('-id')
         else:
             sale = base_qs.all().order_by('-id')
