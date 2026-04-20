@@ -81,68 +81,41 @@ def dashboard(request):
     total_leads = leads_qs.count()
     inventory_value = vehicles_qs.filter(status='Available').aggregate(total=Sum('price_adquisition'))['total'] or 0
 
-    # Common layout for dark theme
-    dark_layout = dict(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#e0e0e0', family="Inter, sans-serif"),
-        margin=dict(l=40, r=20, t=40, b=40)
-    )
+    import json
+    from django.db.models.functions import TruncMonth
 
     # 1. Sales Trend (Line Chart) over Months
-    sales_trend_html = ""
-    # Use register_date as it is auto_now_add and always present, whereas sign_date can be null
-    contracts_list = list(contracts_qs.values('register_date', 'price_sold'))
-    if contracts_list:
-        df_contracts = pd.DataFrame(contracts_list)
-        df_contracts['register_date'] = pd.to_datetime(df_contracts['register_date'])
-        df_contracts['price_sold'] = pd.to_numeric(df_contracts['price_sold'], errors='coerce').fillna(0)
-        df_contracts = df_contracts.dropna(subset=['register_date'])
-        if not df_contracts.empty:
-            df_trend = df_contracts.groupby(df_contracts['register_date'].dt.to_period('M')).agg({'price_sold':'sum'}).reset_index()
-            df_trend['register_date'] = df_trend['register_date'].dt.to_timestamp()
-            fig = px.line(df_trend, x='register_date', y='price_sold', title='Revenue Trend ($)', markers=True)
-            fig.update_layout(**dark_layout)
-            fig.update_traces(line_color='#0d6efd')
-            sales_trend_html = plot(fig, output_type='div', include_plotlyjs=False)
+    trend_data = (
+        contracts_qs
+        .annotate(month=TruncMonth('register_date'))
+        .values('month')
+        .annotate(total_revenue=Sum('price_sold'))
+        .order_by('month')
+    )
+    sales_trend_labels = [dt['month'].strftime('%b %Y') for dt in trend_data if dt['month']]
+    sales_trend_values = [float(dt['total_revenue'] or 0) for dt in trend_data if dt['month']]
 
     # 2. Lead Status Distribution (Pie Chart)
-    lead_status_html = ""
-    leads_list = list(leads_qs.values('status', 'id'))
-    if leads_list:
-        df_leads = pd.DataFrame(leads_list)
-        df_lead_status = df_leads['status'].value_counts().reset_index()
-        df_lead_status.columns = ['status', 'count']
-        fig = px.pie(df_lead_status, names='status', values='count', hole=0.4, title='Leads by Status',
-                     color_discrete_sequence=px.colors.sequential.Teal)
-        fig.update_layout(**dark_layout)
-        lead_status_html = plot(fig, output_type='div', include_plotlyjs=False)
+    lead_status_data = leads_qs.values('status').annotate(count=Count('id'))
+    lead_status_labels = [item['status'] for item in lead_status_data]
+    lead_status_values = [item['count'] for item in lead_status_data]
 
     # 3. Dispersions: Price vs KM (Scatter)
-    scatter_html = ""
-    vehicles_list = list(vehicles_qs.filter(condition='Used').values('km', 'selling_price', 'brand', 'model'))
-    if vehicles_list:
-        df_veh = pd.DataFrame(vehicles_list)
-        df_veh['selling_price'] = df_veh['selling_price'].astype(float)
-        df_veh = df_veh.dropna(subset=['km', 'selling_price'])
-        if not df_veh.empty:
-            df_veh['vehicle_name'] = df_veh['brand'] + " " + df_veh['model']
-            fig = px.scatter(df_veh, x='km', y='selling_price', color='brand', hover_name='vehicle_name', title='Price vs Mileage (Used)')
-            fig.update_layout(**dark_layout)
-            scatter_html = plot(fig, output_type='div', include_plotlyjs=False)
+    used_vehicles = vehicles_qs.filter(condition='Used').exclude(selling_price__isnull=True).exclude(km__isnull=True)
+    scatter_data = []
+    for v in used_vehicles:
+        scatter_data.append({
+            'x': v.km,
+            'y': float(v.selling_price),
+            'brand': v.brand,
+            'vehicle_name': f"{v.brand} {v.model}"
+        })
 
     # 4. Inventory by Brand
-    inventory_html = ""
-    avail_veh_list = list(vehicles_qs.filter(status='Available').values('brand'))
-    if avail_veh_list:
-        df_inv = pd.DataFrame(avail_veh_list)
-        df_inv_counts = df_inv['brand'].value_counts().reset_index()
-        df_inv_counts.columns = ['brand', 'count']
-        fig = px.bar(df_inv_counts, x='brand', y='count', title='Available Inventory by Brand', color='brand',
-                     color_discrete_sequence=px.colors.qualitative.Pastel)
-        fig.update_layout(**dark_layout)
-        inventory_html = plot(fig, output_type='div', include_plotlyjs=False)
-        
+    inventory_data = vehicles_qs.filter(status='Available').values('brand').annotate(count=Count('id'))
+    inventory_labels = [item['brand'] for item in inventory_data]
+    inventory_values = [item['count'] for item in inventory_data]
+
     all_brands = Vehicles.objects.values_list('brand', flat=True).distinct()
 
     context = {
@@ -150,10 +123,13 @@ def dashboard(request):
         'total_revenue': total_revenue,
         'total_leads': total_leads,
         'inventory_value': inventory_value,
-        'sales_trend_html': sales_trend_html,
-        'lead_status_html': lead_status_html,
-        'scatter_html': scatter_html,
-        'inventory_html': inventory_html,
+        'sales_trend_labels_json': json.dumps(sales_trend_labels),
+        'sales_trend_values_json': json.dumps(sales_trend_values),
+        'lead_status_labels_json': json.dumps(lead_status_labels),
+        'lead_status_values_json': json.dumps(lead_status_values),
+        'scatter_data_json': json.dumps(scatter_data),
+        'inventory_labels_json': json.dumps(inventory_labels),
+        'inventory_values_json': json.dumps(inventory_values),
         'all_brands': sorted(list(all_brands)),
         'start_date': start_date or '',
         'end_date': end_date or '',
