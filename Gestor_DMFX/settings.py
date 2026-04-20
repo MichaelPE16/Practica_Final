@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'GDMFX',
     'GDMFXapi',
     'rest_framework',
+    'rest_framework.authtoken',
     'storages',
 ]
 
@@ -174,3 +175,13 @@ STORAGES = {
 # Static files
 # If you want to store static files in S3 as well, uncomment the line below:
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Django Rest Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
