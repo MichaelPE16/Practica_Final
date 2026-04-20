@@ -3,8 +3,8 @@
 {%block page_title%}Dashboard{%endblock%}
 
 {%block content%}
-<!-- Plotly.js -->
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="row mb-4">
     <!-- Slicers Form -->
@@ -85,22 +85,14 @@
     <div class="col-md-8">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {%if sales_trend_html%}
-                {{sales_trend_html|safe}}
-                {%else%}
-                <p class="text-secondary text-center my-5">Not enough data for Revenue Trend.</p>
-                {%endif%}
+                <canvas id="revenueChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {%if lead_status_html%}
-                {{lead_status_html|safe}}
-                {%else%}
-                <p class="text-secondary text-center my-5">Not enough data for Lead Status.</p>
-                {%endif%}
+                <canvas id="leadStatusChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
@@ -111,25 +103,127 @@
     <div class="col-md-6">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {%if scatter_html%}
-                {{scatter_html|safe}}
-                {%else%}
-                <p class="text-secondary text-center my-5">Not enough data for Price vs Mileage.</p>
-                {%endif%}
+                <canvas id="scatterChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card card-dark h-100">
             <div class="card-body">
-                {%if inventory_html%}
-                {{inventory_html|safe}}
-                {%else%}
-                <p class="text-secondary text-center my-5">Not enough data for Inventory by Brand.</p>
-                {%endif%}
+                <canvas id="inventoryChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Chart.defaults.color = '#e0e0e0';
+    Chart.defaults.font.family = 'Inter, sans-serif';
+
+    // 1. Revenue Chart
+    const revLabels = JSON.parse('{{ sales_trend_labels_json|escapejs }}');
+    const revData = JSON.parse('{{ sales_trend_values_json|escapejs }}');
+    if (revLabels.length > 0) {
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: revLabels,
+                datasets: [{
+                    label: 'Revenue Trend ($)',
+                    data: revData,
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // 2. Lead Status Chart
+    const leadLabels = JSON.parse('{{ lead_status_labels_json|escapejs }}');
+    const leadData = JSON.parse('{{ lead_status_values_json|escapejs }}');
+    if (leadLabels.length > 0) {
+        new Chart(document.getElementById('leadStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: leadLabels,
+                datasets: [{
+                    data: leadData,
+                    backgroundColor: ['#20c997', '#0dcaf0', '#0d6efd', '#6f42c1', '#d63384'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { title: {display: true, text: 'Leads by Status'} } }
+        });
+    }
+
+    // 3. Scatter Chart
+    const scatterJson = JSON.parse('{{ scatter_data_json|escapejs }}');
+    const datasets = [];
+    if (scatterJson.length > 0) {
+        const grouped = {};
+        const colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0'];
+        scatterJson.forEach(d => {
+            if (!grouped[d.brand]) grouped[d.brand] = [];
+            grouped[d.brand].push(d);
+        });
+        let colorIdx = 0;
+        for (const brand in grouped) {
+            datasets.push({
+                label: brand,
+                data: grouped[brand],
+                backgroundColor: colors[colorIdx % colors.length]
+            });
+            colorIdx++;
+        }
+        new Chart(document.getElementById('scatterChart'), {
+            type: 'scatter',
+            data: { datasets: datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Price vs Mileage (Used)' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) { return ctx.raw.vehicle_name + ': $' + ctx.raw.y + ' at ' + ctx.raw.x + 'km'; }
+                        }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Km' } },
+                    y: { title: { display: true, text: 'Selling Price ($)' } }
+                }
+            }
+        });
+    }
+
+    // 4. Inventory by Brand
+    const invLabels = JSON.parse('{{ inventory_labels_json|escapejs }}');
+    const invData = JSON.parse('{{ inventory_values_json|escapejs }}');
+    if (invLabels.length > 0) {
+        new Chart(document.getElementById('inventoryChart'), {
+            type: 'bar',
+            data: {
+                labels: invLabels,
+                datasets: [{
+                    label: 'Available Quantity',
+                    data: invData,
+                    backgroundColor: 'rgba(32, 201, 151, 0.7)',
+                    borderColor: '#20c997',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { title: { display: true, text: 'Available Inventory by Brand' } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+    }
+});
+</script>
 
 {%endblock%}
