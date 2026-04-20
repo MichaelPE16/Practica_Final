@@ -63,11 +63,11 @@ def dashboard(request):
     # Apply date filters if provided
     if start_date:
         sales_qs = sales_qs.filter(selling_date__gte=start_date)
-        contracts_qs = contracts_qs.filter(sign_date__gte=start_date)
+        contracts_qs = contracts_qs.filter(register_date__gte=start_date)
         leads_qs = leads_qs.filter(contact_date__gte=start_date)
     if end_date:
         sales_qs = sales_qs.filter(selling_date__lte=end_date)
-        contracts_qs = contracts_qs.filter(sign_date__lte=end_date)
+        contracts_qs = contracts_qs.filter(register_date__lte=end_date)
         leads_qs = leads_qs.filter(contact_date__lte=end_date)
     
     if brand_filter and brand_filter != 'All Brands':
@@ -91,16 +91,17 @@ def dashboard(request):
 
     # 1. Sales Trend (Line Chart) over Months
     sales_trend_html = ""
-    contracts_list = list(contracts_qs.values('sign_date', 'price_sold'))
+    # Use register_date as it is auto_now_add and always present, whereas sign_date can be null
+    contracts_list = list(contracts_qs.values('register_date', 'price_sold'))
     if contracts_list:
         df_contracts = pd.DataFrame(contracts_list)
-        df_contracts['sign_date'] = pd.to_datetime(df_contracts['sign_date'])
+        df_contracts['register_date'] = pd.to_datetime(df_contracts['register_date'])
         df_contracts['price_sold'] = pd.to_numeric(df_contracts['price_sold'], errors='coerce').fillna(0)
-        df_contracts = df_contracts.dropna(subset=['sign_date'])
+        df_contracts = df_contracts.dropna(subset=['register_date'])
         if not df_contracts.empty:
-            df_trend = df_contracts.groupby(df_contracts['sign_date'].dt.to_period('M')).agg({'price_sold':'sum'}).reset_index()
-            df_trend['sign_date'] = df_trend['sign_date'].dt.to_timestamp()
-            fig = px.line(df_trend, x='sign_date', y='price_sold', title='Revenue Trend ($)', markers=True)
+            df_trend = df_contracts.groupby(df_contracts['register_date'].dt.to_period('M')).agg({'price_sold':'sum'}).reset_index()
+            df_trend['register_date'] = df_trend['register_date'].dt.to_timestamp()
+            fig = px.line(df_trend, x='register_date', y='price_sold', title='Revenue Trend ($)', markers=True)
             fig.update_layout(**dark_layout)
             fig.update_traces(line_color='#0d6efd')
             sales_trend_html = plot(fig, output_type='div', include_plotlyjs=False)
