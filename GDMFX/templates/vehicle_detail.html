@@ -1,0 +1,106 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container my-5 py-5">
+    <!-- Top Navigation -->
+    <div class="mb-4">
+        <a href="{% url 'services' %}" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+            <i class="fa-solid fa-arrow-left me-2"></i> Go Back to Catalog
+        </a>
+    </div>
+
+    <div class="row g-5">
+        <!-- Left Column: Image Carousel -->
+        <div class="col-lg-7">
+            <div id="vehicleCarousel" class="carousel slide border border-secondary rounded-4 shadow-lg overflow-hidden" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for img in vehicle.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" class="d-block w-100 object-fit-cover" style="height: 500px;" alt="{{ vehicle.brand }} {{ vehicle.model }}">
+                    </div>
+                    {% empty %}
+                    <div class="carousel-item active">
+                        <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-secondary" style="height: 500px;">
+                            <i class="fa-solid fa-image fa-5x"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if vehicle.images.all|length > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                
+                <div class="carousel-indicators">
+                    {% for img in vehicle.images.all %}
+                    <button type="button" data-bs-target="#vehicleCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                            {% if forloop.first %}class="active"{% endif %} aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Vehicle Data -->
+        <div class="col-lg-5">
+            <div class="card bg-dark border-secondary rounded-4 shadow-lg h-100">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill mb-3">
+                            <i class="fa-solid fa-check-double me-1"></i> Verified Unit
+                        </span>
+                        <h1 class="display-5 fw-bold text-white mb-2">{{ vehicle.brand }}</h1>
+                        <h2 class="h3 text-secondary fw-normal mb-4">{{ vehicle.model }}</h2>
+                        <div class="display-4 fw-bold text-primary mb-5">${{ vehicle.selling_price|default:"0" }}</div>
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="row g-4">
+                            <div class="col-6">
+                                <div class="p-3 bg-black bg-opacity-50 rounded-4 border border-secondary text-center">
+                                    <div class="text-secondary small text-uppercase tracking-wider fw-bold mb-1">Condition</div>
+                                    <div class="text-white fw-bold">{{ vehicle.condition }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-black bg-opacity-50 rounded-4 border border-secondary text-center">
+                                    <div class="text-secondary small text-uppercase tracking-wider fw-bold mb-1">Stock Status</div>
+                                    <div class="text-white fw-bold">{{ vehicle.status }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-black bg-opacity-50 rounded-4 border border-secondary text-center">
+                                    <div class="text-secondary small text-uppercase tracking-wider fw-bold mb-1">Mileage</div>
+                                    <div class="text-white fw-bold">{{ vehicle.km }} KM</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-black bg-opacity-50 rounded-4 border border-secondary text-center">
+                                    <div class="text-secondary small text-uppercase tracking-wider fw-bold mb-1">Color</div>
+                                    <div class="text-white fw-bold">{{ vehicle.color }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'contact' %}" class="btn btn-primary btn-lg rounded-pill fw-bold py-3 shadow">
+                            <i class="fa-solid fa-headset me-2"></i> Inquire Now
+                        </a>
+                        <a href="{% url 'appt' %}" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold py-3">
+                            <i class="fa-solid fa-calendar-check me-2"></i> Schedule Test Drive
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

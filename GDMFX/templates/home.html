@@ -29,18 +29,21 @@
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'aboutus'%}active{%endif%}" href="{%url 'aboutus'%}"><i
-                                class="fa-solid fa-gauge-high me-1"></i>About Us</a>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'aboutus'%}active{%endif%}"
+                            href="{%url 'aboutus'%}"><i class="fa-solid fa-gauge-high me-1"></i>About Us</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'contact'%}active{%endif%}" href="{%url 'contact'%}"><i class="fa-solid fa-car me-1"></i>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'contact'%}active{%endif%}"
+                            href="{%url 'contact'%}"><i class="fa-solid fa-car me-1"></i>
                             Contact</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="#"><i class="fa-solid fa-calendar-check me-1"></i> Services</a>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'services'%}active{%endif%}"
+                            href="{%url 'services'%}"><i class="fa-solid fa-calendar-check me-1"></i> Services</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'blog_list'%}active{%endif%}" href="{%url 'blog_list'%}"><i class="fa-solid fa-users me-1"></i> Blog</a>
+                        <a class="nav-link {%if request.resolver_match.url_name == 'blog_list'%}active{%endif%}"
+                            href="{%url 'blog_list'%}"><i class="fa-solid fa-users me-1"></i> Blog</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-3">
                         <a class="nav-link btn btn-outline-secondary px-3 rounded-pill" href="#" role="button"
@@ -75,7 +78,7 @@
                     <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
                     <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
                         your margins.</p>
-                    <a href="#" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
                         Inventory</a>
                 </div>
             </div>
@@ -146,33 +149,26 @@
 
     <!-- Quick Stats Section -->
     <section class="container my-5 py-4">
-        <div class="row g-4 text-center">
-            <div class="col-md-3">
-                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow">
+        <div class="row g-4 text-center justify-content-center">
+            <div class="col-md-4">
+                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow h-100">
                     <i class="fa-solid fa-car-rear fa-2x text-primary mb-3"></i>
-                    <h3 class="h2 fw-bold text-white">124</h3>
+                    <h3 class="h2 fw-bold text-white">{{ current_inventory_count|default:"0" }}</h3>
                     <p class="text-white mb-0 fw-bold">Current Inventory</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow">
-                    <i class="fa-solid fa-file-signature fa-2x text-success mb-3"></i>
-                    <h3 class="h2 fw-bold text-white">42</h3>
-                    <p class="text-white mb-0 fw-bold">Closed Contracts</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow">
+            <div class="col-md-4">
+                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow h-100">
                     <i class="fa-solid fa-user-check fa-2x text-warning mb-3"></i>
-                    <h3 class="h2 fw-bold text-white">156</h3>
+                    <h3 class="h2 fw-bold text-white">{{ qualified_leads_count|default:"0" }}</h3>
                     <p class="text-white mb-0 fw-bold">Qualified Leads</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow">
+            <div class="col-md-4">
+                <div class="stat-card bg-secondary p-4 rounded-3 border border-dark shadow h-100">
                     <i class="fa-solid fa-chart-line fa-2x text-info mb-3"></i>
-                    <h3 class="h2 fw-bold text-white">$2.4M</h3>
-                    <p class="text-white mb-0 fw-bold">YTD Revenue</p>
+                    <h3 class="h2 fw-bold text-white">${{ ytd_revenue|floatformat:1 }}</h3>
+                    <p class="text-white mb-0 fw-bold">Overall Revenue</p>
                 </div>
             </div>
         </div>
@@ -207,61 +203,44 @@
                 <h2 class="text-white fw-bold h1">Featured Inventory</h2>
                 <div class="bg-primary rounded" style="width: 80px; height: 4px;"></div>
             </div>
-            <a href="#" class="btn btn-primary rounded-pill px-4">View Full List</a>
+            <a href="{%url 'services'%}" class="btn btn-primary rounded-pill px-4">View Full List</a>
         </div>
 
         <div class="row g-4">
-            <!-- Sample 1 -->
+            {% for vehicle in featured_vehicles %}
             <div class="col-lg-4 col-md-6">
-                <div class="card bg-dark border-secondary h-100 car-card shadow">
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2Fyc3xlbnwwfHwwfHx8MA%3D%3D"
-                        class="card-img-top" alt="Audi R8">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge bg-primary px-3 py-2 rounded-pill">Available</span>
-                            <span class="text-primary fw-bold fs-5">$162,500</span>
+                <a href="{% url 'vehicle_detail' vehicle.pk %}" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100 car-card shadow">
+                        {% if vehicle.images.all %}
+                        <img src="{{ vehicle.images.first.image.url }}" class="card-img-top object-fit-cover"
+                            style="height: 250px;" alt="{{ vehicle.brand }} {{ vehicle.model }}">
+                        {% else %}
+                        <div class="bg-secondary d-flex align-items-center justify-content-center text-dark"
+                            style="height: 250px;">
+                            <i class="fa-solid fa-car fa-3x"></i>
                         </div>
-                        <h5 class="card-title text-white">2023 Audi R8 Coupe</h5>
-                        <p class="card-text text-secondary small mb-0"><i class="fa-solid fa-id-card me-1"></i> VIN:
-                            ZWBA8263... </p>
-                        <p class="card-text text-secondary small"><i class="fa-solid fa-road me-1"></i> 542 Miles</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Sample 2 -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card bg-dark border-secondary h-100 car-card shadow">
-                    <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&q=80&w=800"
-                        class="card-img-top" alt="BMW M4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge bg-success px-3 py-2 rounded-pill">Sold</span>
-                            <span class="text-primary fw-bold fs-5">$84,000</span>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary px-3 py-2 rounded-pill">{{ vehicle.status }}</span>
+                                <span class="text-primary fw-bold fs-5">${{ vehicle.selling_price|default:"N/A" }}</span>
+                            </div>
+                            <h5 class="card-title text-white">{{ vehicle.brand }} {{ vehicle.model }}</h5>
+                            <p class="card-text text-secondary small mb-0">
+                                <i class="fa-solid fa-gear me-1"></i> {{ vehicle.condition }}
+                            </p>
+                            <p class="card-text text-secondary small">
+                                <i class="fa-solid fa-road me-1"></i> {{ vehicle.km }} KM
+                            </p>
                         </div>
-                        <h5 class="card-title text-white">2024 BMW M4 Competition</h5>
-                        <p class="card-text text-secondary small mb-0"><i class="fa-solid fa-id-card me-1"></i> VIN:
-                            WBA53AK0... </p>
-                        <p class="card-text text-secondary small"><i class="fa-solid fa-road me-1"></i> 1,200 Miles</p>
                     </div>
-                </div>
+                </a>
             </div>
-            <!-- Sample 3 -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card bg-dark border-secondary h-100 car-card shadow">
-                    <img src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80&w=800"
-                        class="card-img-top" alt="Ferrari">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">In Progress</span>
-                            <span class="text-primary fw-bold fs-5">$312,000</span>
-                        </div>
-                        <h5 class="card-title text-white">2022 Ferrari 488 GTB</h5>
-                        <p class="card-text text-secondary small mb-0"><i class="fa-solid fa-id-card me-1"></i> VIN:
-                            ZFF85BMA... </p>
-                        <p class="card-text text-secondary small"><i class="fa-solid fa-road me-1"></i> 890 Miles</p>
-                    </div>
-                </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-secondary">No featured vehicles at the moment.</p>
             </div>
+            {% endfor %}
         </div>
     </section>
     {%endblock content%}

@@ -1,0 +1,69 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container my-5 py-5">
+    <div class="mb-5">
+        <h1 class="display-4 fw-bold text-white mb-2">Our Vehicle Fleet</h1>
+        <div class="bg-primary rounded" style="width: 100px; height: 5px;"></div>
+        <p class="text-secondary mt-3 lead">Explore our curated selection of high-quality vehicles. All units are inspected and ready for delivery.</p>
+    </div>
+
+    <!-- Catalog Grid -->
+    <div class="row g-4">
+        {% for vehicle in vehicles %}
+        <div class="col-lg-4 col-md-6">
+            <a href="{% url 'vehicle_detail' vehicle.pk %}" class="text-decoration-none">
+                <div class="card bg-dark border-secondary h-100 car-card shadow-sm hover-shadow transition">
+                    {% if vehicle.images.all %}
+                    <img src="{{ vehicle.images.first.image.url }}" class="card-img-top object-fit-cover" 
+                         style="height: 250px;" alt="{{ vehicle.brand }} {{ vehicle.model }}">
+                    {% else %}
+                    <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-secondary" style="height: 250px;">
+                        <i class="fa-solid fa-image fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title text-white fw-bold mb-0">{{ vehicle.brand }}</h5>
+                                <p class="text-secondary mb-0">{{ vehicle.model }}</p>
+                            </div>
+                            <span class="text-primary fw-bold fs-4">${{ vehicle.selling_price|default:"N/A" }}</span>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mb-3">
+                            <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary px-3 py-2 rounded-pill">
+                                <i class="fa-solid fa-calendar-day me-1 text-primary"></i> {{ vehicle.condition }}
+                            </span>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-outline-primary rounded-pill fw-bold">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="mb-4">
+                <i class="fa-solid fa-car-on fa-4x text-secondary opacity-25"></i>
+            </div>
+            <h3 class="text-white">Inventory Currently Empty</h3>
+            <p class="text-secondary">We are currently updating our fleet. Please check back later or contact us directly.</p>
+            <a href="{% url 'contact' %}" class="btn btn-primary rounded-pill px-5 mt-3">Contact Sales</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .transition { transition: all 0.3s ease; }
+    .hover-shadow:hover { 
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(13, 110, 253, 0.15) !important;
+        border-color: var(--bs-primary) !important;
+    }
+</style>
+{% endblock content %}

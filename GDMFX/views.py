@@ -21,8 +21,32 @@ from .models import Contract, Leads, Sales, Vehicles, Meets, BlogPost, PostComme
 ITEMS_PER_PAGE = 9
 
 # Create your views here.
-def home(request): 
-    return render(request, 'home.html')
+def home(request):
+    current_inventory_count = Vehicles.objects.filter(status='Available').count()
+    qualified_leads_count = Leads.objects.filter(status='Qualified').count()
+    # Overall gains/revenue from all contracts
+    total_revenue = Contract.objects.all().aggregate(total=Sum('price_sold'))['total'] or 0
+    
+    # 3 most recently added available vehicles
+    featured_vehicles = Vehicles.objects.filter(status='Available').order_by('-integration_date')[:3]
+    
+    context = {
+        'current_inventory_count': current_inventory_count,
+        'qualified_leads_count': qualified_leads_count,
+        'ytd_revenue': total_revenue,
+        'featured_vehicles': featured_vehicles,
+    }
+    return render(request, 'home.html', context)
+
+def services(request):
+    # Public catalog of all available vehicles
+    vehicles = Vehicles.objects.filter(status='Available').order_by('-integration_date')
+    return render(request, 'services.html', {'vehicles': vehicles})
+
+def vehicle_detail(request, pk):
+    # specific vehicle details view
+    vehicle = get_object_or_404(Vehicles.objects.prefetch_related('images'), pk=pk)
+    return render(request, 'vehicle_detail.html', {'vehicle': vehicle})
 
 @login_required
 def contract(request): 
