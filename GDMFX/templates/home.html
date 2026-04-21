@@ -87,11 +87,11 @@
                 <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1920&auto=format&fit=crop"
                     class="d-block w-100 h-carousel" alt="Customer Relations">
                 <div class="carousel-caption d-none d-md-block text-start mb-5">
-                    <h1 class="display-3 fw-bold">Smart Lead Management</h1>
-                    <p class="lead text-light opacity-75">Qualify leads, schedule test drives, and close contracts
-                        seamlessly.</p>
-                    <a href="{%url 'leads'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">Manage
-                        Leads</a>
+                    <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
+                    <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
+                        your margins.</p>
+                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                        Inventory</a>
                 </div>
             </div>
             <div class="carousel-item" data-bs-interval="4500">
@@ -99,10 +99,11 @@
                 <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1920&auto=format&fit=crop"
                     class="d-block w-100 h-carousel" alt="Analytics">
                 <div class="carousel-caption d-none d-md-block text-start mb-5">
-                    <h1 class="display-3 fw-bold">Real-time Analytics</h1>
-                    <p class="lead text-light opacity-75">Visualize your sales performance and revenue growth in one
-                        central dashboard.</p>
-                    <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">Dashboard Access</button>
+                    <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
+                    <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
+                        your margins.</p>
+                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                        Inventory</a>
                 </div>
             </div>
         </div>
@@ -223,7 +224,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="badge bg-primary px-3 py-2 rounded-pill">{{ vehicle.status }}</span>
-                                <span class="text-primary fw-bold fs-5">${{ vehicle.selling_price|default:"N/A" }}</span>
+                                <span class="text-primary fw-bold fs-5">${{ vehicle.selling_price|default:"N/A"
+                                    }}</span>
                             </div>
                             <h5 class="card-title text-white">{{ vehicle.brand }} {{ vehicle.model }}</h5>
                             <p class="card-text text-secondary small mb-0">

@@ -5,6 +5,7 @@ import plotly.express as px
 from plotly.offline import plot
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -49,6 +50,7 @@ def vehicle_detail(request, pk):
     return render(request, 'vehicle_detail.html', {'vehicle': vehicle})
 
 @login_required
+@never_cache
 def contract(request): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     base_qs = Contract.objects.all() if is_admin else Contract.objects.filter(user=request.user)
@@ -70,6 +72,7 @@ def contract(request):
     return render(request, 'contract.html',{'contracts': page_obj} )
 
 @login_required
+@never_cache
 def dashboard(request):
     # Get filters
     start_date = request.GET.get('start_date')
@@ -163,6 +166,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 @login_required
+@never_cache
 def inventory(request): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     base_qs = Vehicles.objects.all() if is_admin else Vehicles.objects.filter(user=request.user)
@@ -194,6 +198,7 @@ def inventory(request):
     {'vehicles': page_obj} )
 
 @login_required
+@never_cache
 def leads(request):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     base_qs = Leads.objects.all() if is_admin else Leads.objects.filter(user=request.user)
@@ -253,6 +258,7 @@ def signup_page(request):
     return render(request, 'signup.html', {'form': UserCreationForm, 'error': 'Passwords do not match'})
 
 @login_required
+@never_cache
 def meets(request):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     base_qs = Meets.objects.all() if is_admin else Meets.objects.filter(user=request.user)
@@ -285,6 +291,7 @@ def appt(request):
     return render(request, 'appt.html', {'form': form})
 
 @login_required
+@never_cache
 def reports(request): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     
@@ -415,6 +422,7 @@ def reports(request):
     return render(request, 'reports.html', context)
 
 @login_required
+@never_cache
 def sales(request): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     base_qs = Sales.objects.all() if is_admin else Sales.objects.filter(user=request.user)
@@ -441,6 +449,7 @@ def sales(request):
 
 #Este muestra los detalles de un vehiculo
 @login_required
+@never_cache
 def show_details(request, id_details): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     vehicle = get_object_or_404(Vehicles, pk=id_details) if is_admin else get_object_or_404(Vehicles, pk=id_details, user=request.user)
@@ -456,18 +465,21 @@ def show_details(request, id_details):
     return render(request, 'show_details.html', {'vehicle': vehicle})
 
 @login_required
+@never_cache
 def show_sales(request, id_sales): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     sale = get_object_or_404(Sales, pk= id_sales) if is_admin else get_object_or_404(Sales, pk= id_sales, user = request.user)
     return render(request, 'show_sales.html', {'sales': sale})
 
 @login_required
+@never_cache
 def show_lead(request, id_lead): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     lead = get_object_or_404(Leads, pk= id_lead) if is_admin else get_object_or_404(Leads, pk= id_lead, user = request.user)
     return render(request, 'show_lead.html', {'leads': lead})
 
 @login_required
+@never_cache
 def show_contract(request, id_contract): 
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     contract = get_object_or_404(Contract, pk= id_contract) if is_admin else get_object_or_404(Contract, pk= id_contract, user = request.user)
@@ -503,6 +515,7 @@ def signout(request):
     return redirect('login')
 
 @login_required
+@never_cache
 def new_vehicle(request):
     if request.method == 'GET':
         form = VehicleForm()
@@ -522,6 +535,7 @@ def new_vehicle(request):
     return render(request, 'inventory_form.html', {'form': form})
 
 @login_required
+@never_cache
 def new_lead(request):
     if request.method == 'GET':
         form = LeadsForm()
@@ -538,6 +552,7 @@ def new_lead(request):
     return render(request, 'lead_form.html', {'form': form})
 
 @login_required
+@never_cache
 def new_sale(request):
     if request.method == 'GET':
         form = SalesForm()
@@ -554,6 +569,7 @@ def new_sale(request):
     return render(request, 'sales_form.html', {'form': form})
 
 @login_required
+@never_cache
 def new_contract(request):
     if request.method == 'GET':
         form = ContractForm()
@@ -573,6 +589,7 @@ def new_contract(request):
 
 """ Here the update for the diferent modules"""
 @login_required
+@never_cache
 def update_vehicle(request, id_vehicle):
     # Depending on RBAC, let's allow all or owner. For now, matching original mostly, but anyone can view inventory, maybe only owner/admin can edit.
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
@@ -604,6 +621,7 @@ def delete_vehicle_image(request, image_id):
     return redirect('inventory')
 
 @login_required
+@never_cache
 def update_lead(request, id_lead):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     lead = get_object_or_404(Leads, pk=id_lead) if is_admin else get_object_or_404(Leads, pk=id_lead, user=request.user)
@@ -623,6 +641,7 @@ def update_lead(request, id_lead):
     
 
 @login_required
+@never_cache
 def update_sale(request, id_sale):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     sale = get_object_or_404(Sales, pk=id_sale) if is_admin else get_object_or_404(Sales, pk=id_sale, user=request.user)
@@ -663,6 +682,7 @@ def update_sale(request, id_sale):
     return render(request, 'update_sell.html', {'form': form})
 
 @login_required
+@never_cache
 def update_contract(request, id_contract):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     contract = get_object_or_404(Contract, pk=id_contract) if is_admin else get_object_or_404(Contract, pk=id_contract, user=request.user)
@@ -806,6 +826,7 @@ def react_comment(request, comment_id):
     return JsonResponse({'success': False}, status=400)
 
 @login_required
+@never_cache
 def create_post(request):
     if request.method == 'POST':
         form = BlogPostForm(request.POST)
@@ -826,6 +847,7 @@ def create_post(request):
     return render(request, 'create_post.html', {'form': form})
 
 @login_required
+@never_cache
 def manage_posts(request):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     if is_admin:
@@ -835,6 +857,7 @@ def manage_posts(request):
     return render(request, 'manage_posts.html', {'posts': posts})
 
 @login_required
+@never_cache
 def delete_post(request, post_id):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     post = get_object_or_404(BlogPost, id=post_id) if is_admin else get_object_or_404(BlogPost, id=post_id, author=request.user)
@@ -844,6 +867,7 @@ def delete_post(request, post_id):
     return redirect('manage_posts')
 
 @login_required
+@never_cache
 def update_post(request, post_id):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     post = get_object_or_404(BlogPost, id=post_id) if is_admin else get_object_or_404(BlogPost, id=post_id, author=request.user)
@@ -864,6 +888,7 @@ def update_post(request, post_id):
     return render(request, 'update_post.html', {'form': form, 'post': post})
 
 @login_required
+@never_cache
 def dealer_post_detail(request, post_id):
     post = get_object_or_404(BlogPost, id=post_id)
     # Get all top-level comments (not replies)
@@ -871,6 +896,7 @@ def dealer_post_detail(request, post_id):
     return render(request, 'post_detail_internal.html', {'post': post, 'comments': comments})
 
 @login_required
+@never_cache
 def dealer_reply(request, comment_id):
     parent_comment = get_object_or_404(PostComment, id=comment_id)
     post = parent_comment.post
@@ -892,6 +918,7 @@ def dealer_reply(request, comment_id):
     return redirect('dealer_post_detail', post_id=post.id)
 
 @login_required
+@never_cache
 def user_settings(request):
     if request.method == 'POST':
         user = request.user
@@ -936,6 +963,7 @@ def user_settings(request):
     return render(request, 'user_settings.html')
 
 @login_required
+@never_cache
 def manage_users(request):
     is_admin = request.user.is_superuser or (hasattr(request.user, 'userprofile') and request.user.userprofile.role == 'Admin')
     if not is_admin:
