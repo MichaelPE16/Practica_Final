@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    {%load static%}
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap 5.3.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=2797&format=png&color=000000">
-    <link rel="stylesheet" href="{%static 'css/home.css'%}?v=4">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=4">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>GDMFX CRM | Home</title>
@@ -61,7 +61,7 @@
             </div>
         </div>
     </nav>
-    {%block content%}
+
     <!-- Main Hero Carousel -->
     <header id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -141,10 +141,10 @@
                         <div class="ticker-item"><img
                                 src="https://imgs.search.brave.com/t-bEiMXJyK5Vq9bWk4xwZhIUqOI4DwWopDCNBrg8NVo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/ZnJlZXBuZ2xvZ29z/LmNvbS91cGxvYWRz/L2ZvcmQtYmxhY2st/bG9nby12ZWN0b3It/MTUucG5n"
                                 alt="Ford"></div>
-                        <div class="ticker-item"><img
-                                src="https://imgs.search.brave.com/LHjPuTyaZpcg5yvrxAVJmS7INjtqHTiym_SQMXj1vGs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sb2dv/cy13b3JsZC5uZXQv/d3AtY29udGVudC91/cGxvYWRzLzIwMjEv/MDMvQ2hldnJvbGV0/LUxvZ28tMTkzNC0x/OTQwLTcwMHgzOTQu/cG5n"
-                                alt="Chevrolet"></div>
-                        <div class="ticker-item"><img>
+                        <div class="ticker-item"><img src="https://imgs.search.brave.com/LHjPuTyaZpcg5yvrxAVJmS7INjtqHTiym_SQMXj1vGs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sb2dv/cy13b3JsZC5uZXQv/d3AtY29udGVudC91/cGxvYWRzLzIwMjEv/MDMvQ2hldnJvbGV0/LUxvZ28tMTkzNC0x/OTQwLTcwMHgzOTQu/cG5n" alt="Chevrolet"></div>
+                    </div>
+                </div>
+            </div>
         </nav>
     </section>
 
@@ -224,8 +224,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="badge bg-primary px-3 py-2 rounded-pill">{{ vehicle.status }}</span>
-                                <span class="text-primary fw-bold fs-5">${{ vehicle.selling_price|default:"N/A"
-                                    }}</span>
+                                <span class="text-primary fw-bold fs-5">${{ vehicle.selling_price|default:"N/A" }}</span>
                             </div>
                             <h5 class="card-title text-white">{{ vehicle.brand }} {{ vehicle.model }}</h5>
                             <p class="card-text text-secondary small mb-0">
@@ -245,7 +244,7 @@
             {% endfor %}
         </div>
     </section>
-    {%endblock content%}
+
 
     <!-- Footer -->
     <footer class="bg-black py-5 border-top border-dark mt-5">
