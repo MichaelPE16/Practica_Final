@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}?v=4">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>GDMFX CRM | Home</title>
+    <title>{% block title %}GDMFX CRM | Home{% endblock %}</title>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     <!-- Professional Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{%url 'home'%}">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <i class="fa-solid fa-car-side me-2 text-primary"></i>
                 <span class="fw-bold tracking-tight">GDMFX<span class="text-primary">CRM</span></span>
             </a>
@@ -29,21 +29,21 @@
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'aboutus'%}active{%endif%}"
-                            href="{%url 'aboutus'%}"><i class="fa-solid fa-gauge-high me-1"></i>About Us</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'aboutus' %}active{% endif %}"
+                            href="{% url 'aboutus' %}"><i class="fa-solid fa-circle-info me-1"></i>About Us</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'contact'%}active{%endif%}"
-                            href="{%url 'contact'%}"><i class="fa-solid fa-car me-1"></i>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                            href="{% url 'contact' %}"><i class="fa-solid fa-envelope me-1"></i>
                             Contact</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'services'%}active{%endif%}"
-                            href="{%url 'services'%}"><i class="fa-solid fa-calendar-check me-1"></i> Services</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}"
+                            href="{% url 'services' %}"><i class="fa-solid fa-car-side me-1"></i> Services</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link {%if request.resolver_match.url_name == 'blog_list'%}active{%endif%}"
-                            href="{%url 'blog_list'%}"><i class="fa-solid fa-users me-1"></i> Blog</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'blog_list' %}active{% endif %}"
+                            href="{% url 'blog_list' %}"><i class="fa-solid fa-newspaper me-1"></i> Blog</a>
                     </li>
                     <li class="nav-item dropdown ms-lg-3">
                         <a class="nav-link btn btn-outline-secondary px-3 rounded-pill" href="#" role="button"
@@ -51,10 +51,22 @@
                             <i class="fa-solid fa-circle-user"></i> Account
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-secondary bg-dark text-white">
-                            <li><a class="dropdown-item text-white" href="{%url 'login'%}"><i
+                            {% if user.is_authenticated %}
+                            <li><a class="dropdown-item text-white" href="{% url 'dashboard' %}"><i
+                                        class="fa-solid fa-gauge-high me-2 text-primary"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item text-white" href="{% url 'user_settings' %}"><i
+                                        class="fa-solid fa-user-gear me-2 text-primary"></i>Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider border-secondary">
+                            </li>
+                            <li><a class="dropdown-item text-white" href="{% url 'logout' %}"><i
+                                        class="fa-solid fa-right-from-bracket me-2 text-danger"></i>Logout</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item text-white" href="{% url 'login' %}"><i
                                         class="fa-solid fa-right-to-bracket me-2 text-primary"></i>Login</a></li>
-                            <li><a class="dropdown-item text-white" href="{%url 'signup'%}"><i
+                            <li><a class="dropdown-item text-white" href="{% url 'signup' %}"><i
                                         class="fa-solid fa-user-plus me-2 text-primary"></i>Sign Up</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
@@ -62,6 +74,7 @@
         </div>
     </nav>
 
+    {% block content %}
     <!-- Main Hero Carousel -->
     <header id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -78,7 +91,7 @@
                     <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
                     <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
                         your margins.</p>
-                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                    <a href="{% url 'services' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
                         Inventory</a>
                 </div>
             </div>
@@ -90,7 +103,7 @@
                     <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
                     <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
                         your margins.</p>
-                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                    <a href="{% url 'services' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
                         Inventory</a>
                 </div>
             </div>
@@ -102,7 +115,7 @@
                     <h1 class="display-3 fw-bold">Manage Your Fleet</h1>
                     <p class="lead text-light opacity-75">Optimize your stock, track acquisition costs, and maximize
                         your margins.</p>
-                    <a href="{%url 'services'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
+                    <a href="{% url 'services' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">View
                         Inventory</a>
                 </div>
             </div>
@@ -190,7 +203,7 @@
                     Schedule a private viewing or test drive with our expert agents. We'll have everything ready for
                     your arrival.
                 </p>
-                <a href="{%url 'appt'%}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow">
+                <a href="{% url 'appt' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow">
                     Book Your Appointment
                 </a>
             </div>
@@ -204,7 +217,7 @@
                 <h2 class="text-white fw-bold h1">Featured Inventory</h2>
                 <div class="bg-primary rounded" style="width: 80px; height: 4px;"></div>
             </div>
-            <a href="{%url 'services'%}" class="btn btn-primary rounded-pill px-4">View Full List</a>
+            <a href="{% url 'services' %}" class="btn btn-primary rounded-pill px-4">View Full List</a>
         </div>
 
         <div class="row g-4">
@@ -244,6 +257,7 @@
             {% endfor %}
         </div>
     </section>
+    {% endblock content %}
 
 
     <!-- Footer -->
